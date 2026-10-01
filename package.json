@@ -1,15 +1,11 @@
 {
-  "name": "dailykart-localdelivery",
+  "name": "dailykart",
   "version": "1.0.0",
-  "description": "DailyKart Local Delivery - 27 Areas",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^7.6.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1"
+    "express": "^4.18.2"
   }
 }
