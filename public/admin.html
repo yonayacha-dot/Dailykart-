@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin - DailyKart</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-gray-100">
+<div class="max-w-6xl mx-auto p-4">
+<h1 class="text-3xl font-bold mb-4">DailyKart Admin - Full Control</h1>
+<div class="grid md:grid-cols-4 gap-4">
+<div class="md:col-span-1 bg-white rounded-2xl p-4 h-fit space-y-2 sticky top-4">
+<button onclick="showTab('shop')" id="btn-shop" class="w-full text-left p-3 rounded-xl bg-black text-white">🏪 Shop Settings</button>
+<button onclick="showTab('areas')" id="btn-areas" class="w-full text-left p-3 rounded-txl bg-gray-100">📍 27 Areas</button>
+<button onclick="showTab('products')" id="btn-products" class="w-full text-left p-3 rounded-xl bg-gray-100">📦 Products</button>
+<button onclick="showTab('orders')" id="btn-orders" class="w-full text-left p-3 rounded-xl bg-gray-100">🧾 Orders <span id="orderBadge" class="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">0</span></button>
+<button onclick="showTab('coupons')" id="btn-coupons" class="w-full text-left p-3 rounded-xl bg-gray-100">🏷 Coupons</button>
+<button onclick="showTab('staff')" id="btn-staff" class="w-full text-left p-3 rounded-xl bg-gray-100">🛵 Delivery & Staff</button>
+<a href="/" class="block w-full text-center p-3 rounded-xl bg-green-100 mt-4">Go to Shop →</a>
+</div>
+<div class="md:col-span-3 space-y-4">
+
+<div id="tab-shop" class="bg-white rounded-2xl p-6">
+<h2 class="font-bold text-xl mb-4">Shop Settings - Everything Edit</h2>
+<div class="grid md:grid-cols-2 gap-3">
+<input id="appName" placeholder="App Name - DailyKart- LocalDelivery" class="border p-3 rounded-xl">
+<input id="tagline" placeholder="Tagline" class="border p-3 rounded-xl">
+<input id="logo" placeholder="Logo URL https://..." class="border p-3 rounded-xl col-span-2">
+<textarea id="address" placeholder="Address" class="border p-3 rounded-xl col-span-2"></textarea>
+<input id="phone" placeholder="Phone" class="border p-3 rounded-xl"><input id="whatsapp" placeholder="WhatsApp numbers comma e.g. 91xxx,91xxx" class="border p-3 rounded-xl">
+<input id="email" placeholder="Email" class="border p-3 rounded-xl"><input id="upiId" placeholder="UPI ID" class="border p-3 rounded-xl">
+<input id="qrCode" placeholder="QR Code Image URL" class="border p-3 rounded-xl col-span-2">
+<input id="deliveryCharge" type="number" placeholder="Delivery Charge (0)" class="border p-3 rounded-xl"><input id="minOrder" type="number" placeholder="Min Order 200" class="border p-3 rounded-xl">
+<input id="extraCharge" type="number" placeholder="Extra Charge if < Min (30)" class="border p-3 rounded-xl"><input id="openTime" placeholder="Opening 8AM" class="border p-3 rounded-xl">
+<input id="closeTime" placeholder="Closing 9PM" class="border p-3 rounded-xl">
+<label class="flex items-center gap-2 col-span-2"><input id="shopOff" type="checkbox"> Shop OFF / Holiday Mode</label>
+<input id="bannerTitle" placeholder="Banner Title" class="border p-3 rounded-xl col-span-2"><input id="bannerSubtitle" placeholder="Banner Subtitle" class="border p-3 rounded-xl col-span-2"><input id="bannerImg" placeholder="Banner Image URL" class="border p-3 rounded-xl col-span-2">
+</div>
+<button onclick="saveConfig()" class="w-full bg-black text-white py-3 rounded-xl mt-4 font-bold">SAVE SHOP SETTINGS</button>
+<p id="shopMsg" class="text-green-600 font-bold mt-2"></p>
+</div>
+
+<div id="tab-areas" class="hidden bg-white rounded-2xl p-6">
+<h2 class="font-bold text-xl mb-2">27 Areas - Edit Time & Charge</h2>
+<p class="text-xs text-gray-500 mb-3">Dirak Charali, Aamguri, Bordirak... 27 areas already added</p>
+<div class="flex gap-2 mb-3"><input id="newAreaName" placeholder="New Area Name" class="border p-2 rounded-xl flex-1"><input id="newAreaTime" placeholder="10 min" class="border p-2 rounded-xl w-24"><input id="newAreaCharge" type="number" placeholder="₹" class="border p-2 rounded-xl w-20"><button onclick="addArea()" class="bg-black text-white px-4 rounded-xl">Add</button></div>
+<div id="areaList" class="space-y-2"></div>
+<button onclick="saveConfig()" class="w-full bg-black text-white py-3 rounded-xl mt-4">SAVE AREAS</button>
+</div>
+
+<div id="tab-products" class="hidden bg-white rounded-2xl p-6">
+<h2 class="font-bold text-xl mb-2">Products - 24 Mock Added</h2>
+<p class="text-xs text-gray-500 mb-4">Admin can Delete/Edit - these show in Index highlights</p>
+<div class="grid md:grid-cols-3 gap-3 mb-6 p-4 bg-gray-50 rounded-xl">
+<input id="pName" placeholder="Product Name" class="border p-2 rounded"><input id="pPrice" type="number" placeholder="Price" class="border p-2 rounded"><input id="pMrp" type="number" placeholder="MRP" class="border p-2 rounded">
+<input id="pCat" placeholder="Category: FastFood/Grocery/Vegetables/Hardware/Daily Needs/Work/workers" class="border p-2 rounded col-span-2"><input id="pUnit" placeholder="1kg/1L/1pc" class="border p-2 rounded">
+<input id="pStock" type="number" placeholder="Stock" class="border p-2 rounded"><select id="pHighlight" class="border p-2 rounded"><option value="discount">discount</option><option value="fast">fast delivery</option><option value="fav">Customer fav</option><option value="new">New on Dailykart</option><option value="top">highest order</option></select>
+<input id="pImage" placeholder="Image URL https://..." class="border p-2 rounded col-span-3">
+<label class="flex items-center gap-2"><input id="pFast" type="checkbox"> Fast Delivery tag</label>
+<button onclick="addProduct()" class="bg-black text-white py-2 rounded-xl col-span-3">Add Product</button>
+</div>
+<div id="prodList" class="grid md:grid-cols-2 gap-3"></div>
+</div>
+
+<div id="tab-orders" class="hidden bg-white rounded-2xl p-6">
+<h2 class="font-bold text-xl mb-2">Orders - Sound Alert ON</h2>
+<audio id="ding" src="https://www.soundjay.com/buttons/sounds/beep-07a.mp3"></audio>
+<div class="flex gap-2 mb-4"><button onclick="loadOrders()" class="bg-black text-white px-4 py-2 rounded-full text-sm">Refresh</button><label class="flex items-center gap-2 text-sm"><input id="soundOn" type="checkbox" checked> Sound</label></div>
+<div id="orderList" class="space-y-3"></div>
+<div class="mt-6 grid grid-cols-3 gap-3 text-sm"><div class="bg-gray-50 p-3 rounded-xl">Today: <b id="todaySale">₹0</b></div><div class="bg-gray-50 p-3 rounded-xl">Total: <b id="totalOrders">0</b></div><div class="bg-gray-50 p-3 rounded-xl">Profit 20%: <b id="profit">₹0</b></div></div>
+</div>
+
+<div id="tab-coupons" class="hidden bg-white rounded-2xl p-6">
+<h2 class="font-bold text-xl mb-2">Coupon Codes</h2>
+<div class="flex gap-2 mb-3"><input id="coupCode" placeholder="MODARKHAT10" class="border p-2 rounded flex-1"><input id="coupDisc" type="number" placeholder="10%" class="border p-2 rounded w-24"><button onclick="addCoupon()" class="bg-black text-white px-4 rounded">Add</button></div>
+<div id="coupList" class="space-y-2"></div>
+</div>
+
+<div id="tab-staff" class="hidden bg-white rounded-2xl p-6 space-y-6">
+<div><h2 class="font-bold text-xl mb-2">Delivery Boy Login</h2><div class="flex gap-2 mb-2"><input id="boyName" placeholder="Name" class="border p-2 rounded flex-1"><input id="boyPhone" placeholder="Phone" class="border p-2 rounded flex-1"><button onclick="addBoy()" class="bg-black text-white px-4 rounded">Add</button></div><div id="boyList"></div></div>
+<div><h2 class="font-bold text-xl mb-2">Customer List</h2><div id="custList" class="space-y-2 text-sm"></div></div>
+</div>
+
+</div>
+</div>
+</div>
+<script>
+let CFG={},products=[];
+const defaultAreas=[{name:"Dirak Charali",time:"15 min",charge:0},{name:"Aamguri",time:"20 min",charge:0},{name:"Bordirak",time:"15 min",charge:0},{name:"Khatua",time:"20 min",charge:0},{name:"Hunjan",time:"10 min",charge:0},{name:"Navajyoti",time:"25 min",charge:0},{name:"Simoluguri",time:"30 min",charge:0},{name:"Uttar Bisrampur",time:"20 min",charge:0},{name:"Dakhin Bisrampur",time:"25 min",charge:0},{name:"Kailashpur",time:"10 min",charge:0},{name:"Dimbujora",time:"20 min",charge:0},{name:"Tongona",time:"15 min",charge:0},{name:"Gutibari",time:"15 min",charge:0},{name:"Tongona-Nagaon",time:"25 min",charge:0},{name:"Dirakgate",time:"10 min",charge:0},{name:"Modarkhat",time:"20 min",charge:0},{name:"Digholi-pothar",time:"35 min",charge:0},{name:"Huwonipothar",time:"40 min",charge:0},{name:"Namhullung",time:"30 min",charge:0},{name:"Tiniali Nagaon",time:"20 min",charge:0},{name:"Betoni",time:"25 min",charge:0},{name:"Wathoi",time:"30 min",charge:0},{name:"Litong",time:"35 min",charge:0},{name:"Talpothar",time:"60 min",charge:0},{name:"Hatigarh",time:"30 min",charge:0},{name:"Dumsi",time:"35 min",charge:0},{name:"Sitpani",time:"40 min",charge:0}];
+async function init(){try{const r=await fetch('/api/config');CFG=await r.json();}catch{CFG=JSON.parse(localStorage.getItem('dk_config')||'{}');} CFG.areas=CFG.areas&&CFG.areas.length?(typeof CFG.areas[0]==='string'?CFG.areas.map(n=>({name:n,time:"30 min",charge:0})):CFG.areas):defaultAreas; CFG.coupons=CFG.coupons||[{code:"MODARKHAT10",discount:10},{code:"DAILY10",discount:10}]; CFG.boys=CFG.boys||[]; fillShop(); renderAreas(); loadProducts(); renderCoupons(); renderBoys(); loadOrders();}
+function fillShop(){appName.value=CFG.appName||'DailyKart- LocalDelivery'; tagline.value=CFG.tagline||''; logo.value=CFG.logo||''; address.value=CFG.address||''; phone.value=CFG.phone||''; whatsapp.value=Array.isArray(CFG.whatsapp)?CFG.whatsapp.join(','):CFG.whatsapp||''; email.value=CFG.email||''; upiId.value=CFG.upiId||''; qrCode.value=CFG.qrCode||''; deliveryCharge.value=CFG.deliveryCharge||0; minOrder.value=CFG.minOrder||200; extraCharge.value=CFG.extraCharge||30; openTime.value=CFG.openTime||'8AM'; closeTime.value=CFG.closeTime||'9PM'; shopOff.checked=CFG.shopOff||false; bannerTitle.value=CFG.bannerTitle||''; bannerSubtitle.value=CFG.bannerSubtitle||''; bannerImg.value=CFG.bannerImg||'';}
+function renderAreas(){areaList.innerHTML=CFG.areas.map((a,i)=>`<div class="flex gap-2 items-center bg-gray-50 p-2 rounded-xl"><span class="flex-1 text-sm font-semibold">${a.name}</span><input value="${a.time}" onchange="CFG.areas[${i}].time=this.value" class="border p-1 rounded w-20 text-sm"><input type="number" value="${a.charge}" onchange="CFG.areas[${i}].charge=Number(this.value)" class="border p-1 rounded w-16 text-sm"><button onclick="CFG.areas.splice(${i},1);renderAreas()" class="text-red-500">✕</button></div>`).join('');}
+function addArea(){const n=newAreaName.value.trim(); if(!n) return; CFG.areas.push({name:n,time:newAreaTime.value||'30 min',charge:Number(newAreaCharge.value||0)}); newAreaName.value=''; renderAreas();}
+async function loadProducts(){try{const r=await fetch('/api/products');const d=await r.json();products=Array.isArray(d)?d:d.products||[];}catch{products=JSON.parse(localStorage.getItem('dk_admin_mock')||'[]');} renderProds();}
+function renderProds(){prodList.innerHTML=products.map((p,i)=>`<div class="border rounded-xl p-3 flex gap-3"><img src="${p.image}" class="w-16 h-16 rounded object-cover"><div class="flex-1"><p class="font-bold text-sm">${p.name}</p><p class="text-xs">₹${p.price} MRP ₹${p.mrp} • ${p.category}</p><div class="flex gap-2 mt-1"><button onclick="delProd(${i})" class="text-xs bg-red-100 px-2 py-1 rounded">Delete</button><button onclick="toggleProd(${i})" class="text-xs bg-yellow-100 px-2 py-1 rounded">${p.active===false?'Enable':'Disable'}</button></div></div></div>`).join('')||'<p class=text-sm>No backend products - mock in Index shows. Add here will show after save.</p>';}
+async function addProduct(){const p={name:pName.value,price:Number(pPrice.value),mrp:Number(pMrp.value||pPrice.value),category:pCat.value,unit:pUnit.value,stock:Number(pStock.value),image:pImage.value,highlight:pHighlight.value,fast:pFast.checked,active:true,_id:Date.now().toString()}; if(!p.name) return alert('Name required'); try{await fetch('/api/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});}catch{} products.push(p); localStorage.setItem('dk_admin_mock',JSON.stringify(products)); renderProds(); alert('Added - Now visible in Shop after reload');}
+function delProd(i){if(!confirm('Delete?')) return; products.splice(i,1); localStorage.setItem('dk_admin_mock',JSON.stringify(products)); renderProds();}
+function toggleProd(i){products[i].active=!products[i].active; renderProds();}
+function showTab(t){document.querySelectorAll('[id^=tab-]').forEach(e=>e.classList.add('hidden')); document.getElementById('tab-'+t).classList.remove('hidden'); document.querySelectorAll('[id^=btn-]').forEach(e=>e.className='w-full text-left p-3 rounded-xl bg-gray-100'); document.getElementById('btn-'+t).className='w-full text-left p-3 rounded-xl bg-black text-white';}
+async function saveConfig(){CFG.appName=appName.value; CFG.tagline=tagline.value; CFG.logo=logo.value; CFG.address=address.value; CFG.phone=phone.value; CFG.whatsapp=whatsapp.value.split(',').map(s=>s.trim()).filter(Boolean); CFG.email=email.value; CFG.upiId=upiId.value; CFG.qrCode=qrCode.value; CFG.deliveryCharge=Number(deliveryCharge.value); CFG.minOrder=Number(minOrder.value); CFG.extraCharge=Number(extraCharge.value); CFG.openTime=openTime.value; CFG.closeTime=closeTime.value; CFG.shopOff=shopOff.checked; CFG.bannerTitle=bannerTitle.value; CFG.bannerSubtitle=bannerSubtitle.value; CFG.bannerImg=bannerImg.value; try{await fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(CFG)}); shopMsg.innerText='Saved to Backend ✅';}catch{localStorage.setItem('dk_config',JSON.stringify(CFG)); shopMsg.innerText='Saved Locally ✅';} setTimeout(()=>shopMsg.innerText='',2000);}
+function addCoupon(){const c=coupCode.value.toUpperCase().trim(); if(!c) return; CFG.coupons.push({code:c,discount:Number(coupDisc.value)}); renderCoupons(); saveConfig(); coupCode.value='';}
+function renderCoupons(){coupList.innerHTML=CFG.coupons.map((c,i)=>`<div class="flex justify-between bg-gray-50 p-2 rounded"><span>${c.code} - ${c.discount}%</span><button onclick="CFG.coupons.splice(${i},1);renderCoupons();saveConfig()" class="text-red-500">Delete</button></div>`).join('');}
+function addBoy(){CFG.boys.push({name:boyName.value,phone:boyPhone.value}); renderBoys(); saveConfig(); boyName.value=''; boyPhone.value='';}
+function renderBoys(){boyList.innerHTML=CFG.boys.map((b,i)=>`<div class="flex justify-between bg-gray-50 p-2 rounded mb-1"><span>${b.name} - ${b.phone}</span><button onclick="CFG.boys.splice(${i},1);renderBoys();saveConfig()" class="text-red-500">Delete</button></div>`).join('');}
+async function loadOrders(){let orders=[]; try{const r=await fetch('/api/orders');const d=await r.json(); orders=Array.isArray(d)?d:d.orders||[];}catch{orders=JSON.parse(localStorage.getItem('dk_orders')||'[]').reverse();} if(orders.length>(window.lastCount||0)&&document.getElementById('soundOn').checked){document.getElementById('ding').play().catch(()=>{});} window.lastCount=orders.length; document.getElementById('orderBadge').innerText=orders.length; orderList.innerHTML=orders.map((o,idx)=>`<div class="border rounded-xl p-3"><div class="flex justify-between"><b>₹${o.totalAmount} - ${o.customerName||'Customer'}</b><span class="text-xs bg-yellow-100 px-2 py-1 rounded">${o.status||'Pending'}</span></div><p class="text-xs mt-1">📞 ${o.phone} | 📍 ${o.area}, ${o.address}</p><p class="text-xs">OTP: <b>${o.otp||'----'}</b> | ${o.paymentMethod}</p><p class="text-xs">Items: ${(o.products||[]).map(p=>p.name+' x'+p.qty).join(', ')}</p><div class="flex gap-2 mt-2 flex-wrap"><select onchange="updateStatus('${o._id||idx}',this.value)" class="border p-1 rounded text-xs"><option>Pending</option><option>Processing</option><option>Packed</option><option>Out for Delivery</option><option>Delivered</option></select><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.area+' '+o.address)}" target="_blank" class="text-xs bg-blue-100 px-2 py-1 rounded">Map</a><a href="https://wa.me/${o.phone}?text=Your OTP ${o.otp}" target="_blank" class="text-xs bg-green-100 px-2 py-1 rounded">WhatsApp OTP</a></div></div>`).join('')||'No orders'; const today=new Date().toDateString(); const todayOrders=orders.filter(o=>new Date(o.createdAt||Date.now()).toDateString()===today); const sale=todayOrders.reduce((a,b)=>a+(b.totalAmount||0),0); document.getElementById('todaySale').innerText='₹'+sale; document.getElementById('totalOrders').innerText=orders.length; document.getElementById('profit').innerText='₹'+(sale*0.2).toFixed(0); const uniq={}; orders.forEach(o=>{if(o.phone) uniq[o.phone]=o;}); custList.innerHTML=Object.values(uniq).map(c=>`<div class="flex justify-between bg-gray-50 p-2 rounded"><span>${c.customerName} - ${c.phone}</span></div>`).join('');}
+function updateStatus(id,val){let arr=JSON.parse(localStorage.getItem('dk_orders')||'[]'); arr=arr.map(o=> (o._id==id)?{...o,status:val}:o); localStorage.setItem('dk_orders',JSON.stringify(arr)); loadOrders();}
+init(); setInterval(loadOrders,10000);
+</script>
+</body></html>
