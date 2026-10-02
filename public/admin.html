@@ -1,115 +1,366 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="as">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DailyKart Pro Admin - Server Sync</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest"></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>DK Pro - Admin Staff Rider</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
-:root{--orange:#FF6B00;--bg:#0A0A0A;--card:#151515;--card2:#1E1E1E;--border:#2A2A2A;--text:#fff;--muted:#8A8A8A}
-body{background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-.side{width:260px;background:var(--card);border-right:1px solid var(--border);padding:18px;position:fixed;height:100vh;overflow:auto}
-.main{margin-left:260px;flex:1;padding:20px;background:var(--bg)}
-.logo{display:flex;gap:10px;align-items:center;margin-bottom:18px}.logoI{width:38px;height:38px;background:var(--orange);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#000;font-weight:900}
-.navI{padding:11px 12px;border-radius:12px;display:flex;gap:9px;align-items:center;font-weight:700;font-size:12px;cursor:pointer;margin-bottom:4px;color:var(--muted)}
-.navI.on{background:var(--orange);color:#000}.card{background:var(--card2);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:12px}
-.inp{width:100%;background:#0A0A0A;border:1.5px solid var(--border);border-radius:12px;padding:11px;color:#fff;margin-top:8px;outline:none;font-size:13px}
-.btn{background:var(--orange);color:#000;border:0;padding:11px 16px;border-radius:100px;font-weight:800;cursor:pointer;margin-top:8px}
-.btnLine{background:transparent;border:1.5px solid var(--border);color:#fff;padding:9px 14px;border-radius:100px;font-weight:700;cursor:pointer}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:10px}
-.gItem{border-radius:14px;overflow:hidden;border:2px solid transparent;cursor:pointer;position:relative;background:#000}.gItem.on{border-color:var(--orange)}.gItem img{width:100%;height:90px;object-fit:cover;display:block}
-.gItem span{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));color:#fff;font-size:9px;padding:5px;font-weight:700}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:90;display:flex;align-items:center;justify-content:center;padding:12px}
-.mCard{background:var(--card2);border:1px solid var(--border);border-radius:22px;padding:18px;width:100%;max-width:560px;max-height:90vh;overflow:auto}
-.hidden{display:none!important}
-table{width:100%;border-collapse:collapse}th{font-size:10px;color:var(--muted);text-align:left;padding:8px}td{padding:10px 8px;border-top:1px solid var(--border);font-size:13px}
-@media(max-width:900px){.side{width:100%;height:auto;position:relative}.main{margin-left:0}.grid2{grid-template-columns:1fr}}
+:root{--orange:#FF6B00;--orange2:#FF8C32;--orange-light:#FFF0E5;--bg:#FDF5FF;--card:#FFFFFF;--border:#E9D5FF;--text:#1A1025;--text2:#7C6A8A;--black:#101010;--green:#00C950;--red:#FF2D2D;--shadow:0 8px 30px rgba(255,107,0,.10)}
+body.dark{--bg:#080808;--card:#171717;--border:#2A1F0A;--text:#FFF5E5;--text2:#A89878;--orange-light:#1F1400;--shadow:0 8px 30px rgba(0,0,0,.5)}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif}
+body{background:var(--bg);color:var(--text)}
+.loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--orange),#101010);z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px}
+.loginBox{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:18px;width:100%;max-width:400px;box-shadow:var(--shadow)}
+.roleTab{display:flex;gap:6px;margin-top:10px}
+.roleTab div{flex:1;padding:9px;border-radius:10px;border:2px solid var(--border);text-align:center;font-weight:800;font-size:11px;cursor:pointer}
+.roleTab div.active{background:var(--orange);color:#fff;border-color:var(--orange)}
+.top{position:sticky;top:0;z-index:60;background:var(--card);border-bottom:2px solid var(--border);padding:10px 12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;box-shadow:var(--shadow)}
+.switch{width:50px;height:28px;background:#ccc;border-radius:30px;position:relative;cursor:pointer;transition:.3s}
+.switch.on{background:var(--green)}.switch div{width:24px;height:24px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.3s}
+.switch.on div{left:24px}
+.side{display:none}
+.content{padding:12px;padding-bottom:110px;max-width:500px;margin:0 auto}
+.card{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:12px;margin-bottom:10px;box-shadow:var(--shadow)}
+.input{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-weight:600;font-size:13px;outline:none;margin-top:6px}
+.btn{border:none;padding:9px 12px;border-radius:10px;font-weight:800;cursor:pointer;font-size:11px}
+.btn-p{background:linear-gradient(135deg,var(--orange),var(--orange2));color:#fff}.btn-g{background:var(--orange-light);color:var(--orange);border:1.5px solid var(--border)}.btn-d{background:#FFE1E1;color:#c00}.btn-black{background:var(--black);color:#fff}.btn-green{background:var(--green);color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{text-align:center;padding:14px}.stat b{font-size:22px;color:var(--orange);display:block}
+.badge{background:var(--orange);color:#fff;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800}
+.thumb{width:50px;height:50px;object-fit:cover;border-radius:10px;border:2px solid var(--border)}
+.notif{position:fixed;top:65px;left:50%;transform:translateX(-50%);z-index:999;background:var(--card);border:3px solid var(--orange);border-radius:16px;padding:12px;width:94%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,.4);display:none;animation:pop.3s ease}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(.8)}to{transform:translate(-50%,0) scale(1)}}
+.bottomNav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:var(--card);border-top:2px solid var(--border);display:flex;overflow-x:auto;gap:4px;padding:8px;z-index:70;box-shadow:0 -4px 20px rgba(0,0,0,.1)}
+.bNavItem{flex:1;min-width:62px;text-align:center;padding:6px 4px;border-radius:12px;font-size:9px;font-weight:800;cursor:pointer;color:var(--text2);border:2px solid transparent}
+.bNavItem.active{background:var(--orange);color:#fff;border-color:var(--orange)}
+.bNavItem span{display:block;font-size:16px}
+.orderBox{border-left:4px solid var(--orange)}
+.vault{border:2px dashed #666;background:linear-gradient(135deg,#111,#222);color:#aaa;border-radius:16px;padding:12px}
+@media(min-width:800px){.side{display:block;width:240px;background:var(--card);border-right:2px solid var(--border);min-height:calc(100vh - 60px);padding:10px;position:fixed;top:60px;left:0;bottom:70px;overflow:auto}.content{margin-left:240px;max-width:calc(100% - 240px)}.bottomNav{max-width:100%} }
+.mItem{padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:700;font-size:12px;margin-bottom:6px;border:2px solid transparent}
+.mItem.active{background:var(--orange);color:#fff}
+.mItem.hide{display:none}
 </style>
 </head>
 <body>
-<div id="login" style="position:fixed;inset:0;background:var(--bg);z-index:99;display:flex;align-items:center;justify-content:center;padding:16px">
-<div class="card" style="width:100%;max-width:360px;text-align:center"><div style="font-size:26px;font-weight:900">DAILYKART <span style="color:var(--orange)">PRO</span></div><div style="font-size:10px;color:var(--muted);letter-spacing:1px">SERVER SYNC ADMIN</div>
-<input id="lUser" class="inp" placeholder="admin"><input id="lPass" type="password" class="inp" placeholder="admin123">
-<button class="btn" style="width:100%" onclick="doLogin()">Login</button></div>
+<!-- LOGIN -->
+<div class="loginScreen" id="loginScreen">
+<div class="loginBox">
+<div style="text-align:center"><div style="font-size:28px">🔐</div><h3>DailyKart Control</h3><p style="font-size:10px;color:var(--text2)">Admin / Staff / Rider</p></div>
+<div class="roleTab"><div class="active" id="roleAdmin" onclick="setRole('admin')">👑 Admin</div><div id="roleStaff" onclick="setRole('staff')">👔 Staff</div><div id="roleRider" onclick="setRole('rider')">🏍️ Rider</div></div>
+<div id="loginAdmin"><input id="adminPin" class="input" type="password" placeholder="Admin PIN 1234" style="text-align:center;letter-spacing:4px;margin-top:10px"><button class="btn btn-p" style="width:100%;margin-top:10px;padding:12px" onclick="loginAdmin()">Login Admin - Full Access</button></div>
+<div id="loginStaff" style="display:none"><select id="staffSelect" class="input" style="margin-top:10px"></select><input id="staffPin" class="input" type="password" placeholder="Staff PIN"><button class="btn btn-p" style="width:100%;margin-top:10px;padding:12px" onclick="loginStaff()">Login Staff - Orders + Location + Notif Loop</button></div>
+<div id="loginRider" style="display:none"><select id="riderSelect" class="input" style="margin-top:10px"></select><input id="riderPin" class="input" type="password" placeholder="Rider PIN"><button class="btn btn-green" style="width:100%;margin-top:10px;padding:12px" onclick="loginRider()">Login Rider - Pick to Deliver + OTP + Loop</button></div>
 </div>
-<div id="gModal" class="hidden modal"><div class="mCard"><div style="display:flex;justify-content:space-between"><h3>Image Gallery Picker</h3><span onclick="gModal.classList.add('hidden')" style="cursor:pointer">✕</span></div>
-<div class="card" style="margin-top:10px"><b style="font-size:12px">1. Upload</b><input type="file" id="fileInp" accept="image/*" class="inp" onchange="uploadImg(this)"></div>
-<div class="card"><b style="font-size:12px">2. URL</b><div style="display:flex;gap:8px"><input id="urlInp" class="inp" style="margin:0" placeholder="https://..."><button class="btn" style="margin:0" onclick="addUrl()">Add</button></div></div>
-<div class="card"><b style="font-size:12px">3. Select</b><div id="galGrid" class="gallery"></div></div>
-</div></div>
-<div class="side">
-<div class="logo"><div class="logoI">DK</div><div><b>DAILY</b><span style="color:var(--orange)">KART</span><div style="font-size:10px;color:var(--muted)">Server Sync v4</div></div></div>
-<div style="padding:10px;background:var(--card2);border-radius:12px;margin:12px 0"><div style="font-size:10px;color:var(--muted)">Logged as</div><b id="roleL" style="color:var(--orange)">Admin</b> • <span id="userL" style="font-size:12px">admin</span><br><button onclick="logout()" style="background:none;border:0;color:var(--muted);font-size:11px;text-decoration:underline;cursor:pointer;margin-top:4px">Logout</button></div>
-<div id="sideNav"></div>
-<div style="margin-top:14px;padding:10px;background:#FF6B0020;border:1px solid var(--orange);border-radius:12px"><div style="font-size:11px;font-weight:800">Gallery: <span id="galCount">0</span> | Products: <span id="pCount">0</span></div><div style="font-size:10px;color:var(--muted)" id="stat">Server Sync ON</div><button class="btn" style="width:100%;padding:7px;font-size:11px;margin-top:6px" onclick="window.open('/','_blank')">View Live Site</button></div>
 </div>
-<div class="main">
-<div id="dash"></div><div id="products" class="hidden"></div><div id="cats" class="hidden"></div><div id="banners" class="hidden"></div><div id="orders" class="hidden"></div><div id="riders" class="hidden"></div><div id="staff" class="hidden"></div><div id="galleryTab" class="hidden"></div><div id="settings" class="hidden"></div>
-</div>
-<script>
-let curTarget=null, role=localStorage.getItem('dk_role')||'', user=localStorage.getItem('dk_user')||'';
-function get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
-function set(k,v){localStorage.setItem(k,JSON.stringify(v)); upd()}
-function ensure(key,def){let v=get(key); if(!v){ set(key,def); return def;} return v;}
-let gallery=ensure('dk_gallery',[]); let products=ensure('dk_products_final',[]); let cats=ensure('dk_cats_final',[]); let banners=ensure('dk_banners_final',[]); let orders=ensure('dk_orders_final',[]), riders=ensure('dk_riders',[]), staffs=ensure('dk_staff',[{id:'1',name:'Admin',user:'admin',pass:'admin123',role:'Admin'}]);
 
-async function syncFromServer(){
-  try{
-    let res = await fetch('/api/products');
-    if(res.ok){
-      let data = await res.json();
-      set('dk_products_final', data);
-      products = data;
-      upd();
-    }
-  }catch(e){}
+<div class="notif" id="notifBox">
+<div style="display:flex;justify-content:space-between"><b style="color:var(--orange)">🔔 New Order Placed!</b><span style="cursor:pointer" onclick="closeNotif()">✕</span></div>
+<div id="notifText" style="font-size:12px;margin-top:6px"></div>
+<button class="btn btn-p" style="width:100%;margin-top:8px" onclick="closeNotif();goOrders()">View Order</button>
+</div>
+
+<div class="top">
+<div style="display:flex;align-items:center;gap:8px">
+<b style="color:var(--orange)">DK Pro</b><span id="roleBadge" class="badge">ADMIN</span><span id="userName" style="font-size:11px;font-weight:700"></span>
+<div style="display:flex;align-items:center;gap:6px;background:var(--orange-light);border:2px solid var(--border);border-radius:10px;padding:3px 8px"><span style="font-size:10px;font-weight:800">Shop</span><div class="switch on" id="shopSwitch" onclick="toggleShop()"><div></div></div><span id="shopStatus" style="font-size:10px;font-weight:800;color:var(--green)">OPEN</span></div>
+</div>
+<div style="display:flex;gap:6px;align-items:center"><span id="liveTime" style="font-size:10px;color:var(--text2)"></span><button class="btn btn-g" onclick="toggleDark()" id="themeBtn">🌙</button><button class="btn btn-black" onclick="logout()" style="padding:6px 10px">Logout</button></div>
+</div>
+
+<div style="display:flex">
+<div class="side" id="sideMenu">
+<div class="mItem active" data-role="all" onclick="goTab('dash',this)">📊 Dashboard</div>
+<div class="mItem" data-role="all admin staff rider" onclick="goTab('orders',this)">🛒 Orders Live</div>
+<div class="mItem" data-role="admin staff" onclick="goTab('areas',this)">📍 Live Location / Areas</div>
+<div class="mItem" data-role="admin" onclick="goTab('products',this)">📦 Products + Big Ad</div>
+<div class="mItem" data-role="admin" onclick="goTab('banner',this)">🎨 Banner / Logo</div>
+<div class="mItem" data-role="admin" onclick="goTab('customers',this)">👥 Customers</div>
+<div class="mItem" data-role="admin" onclick="goTab('coupons',this)">🎟️ Coupons</div>
+<div class="mItem" data-role="admin" onclick="goTab('wa',this)">📱 WhatsApp</div>
+<div class="mItem" data-role="admin" onclick="goTab('staff',this)">👔 Staff & Riders</div>
+<div class="mItem" data-role="admin" onclick="goTab('settings',this)">⚙️ Settings</div>
+<div class="mItem" data-role="admin" onclick="goTab('vault',this)">🔒 Vault Hide</div>
+</div>
+
+<div class="content" id="content">
+<!-- DASHBOARD -->
+<div id="tab-dash">
+<div class="grid2">
+<div class="card stat"><b id="sProd">0</b><small style="font-size:11px;color:var(--text2)">Products</small></div>
+<div class="card stat"><b id="sOrd">0</b><small style="font-size:11px;color:var(--text2)">Orders<br><span id="sPend" style="font-size:10px">0 Pending</span></small></div>
+<div class="card stat"><b id="sRev">Rs 0</b><small style="font-size:11px;color:var(--text2)">Revenue</small></div>
+<div class="card stat"><b id="sRiders">0</b><small style="font-size:11px;color:var(--text2)">Riders<br><span id="sActiveRiders" style="font-size:10px">0 Active</span></small></div>
+</div>
+<div class="card"><h4>🔔 Notification Loop - Every 30 Sec - Staff/Rider + Admin</h4><p style="font-size:10px;color:var(--text2);margin-top:4px">New pending order hole popup + sound - Loop 30 sec check - Admin/Staff/Rider hokoluke pabo</p><label style="display:flex;gap:6px;align-items:center;margin-top:8px;font-size:11px"><input type="checkbox" id="notifLoop" checked> Enable 30 sec Loop Notification</label></div>
+<div class="card"><h4>Recent Orders</h4><div id="recentOrders" style="margin-top:8px"></div></div>
+</div>
+
+<!-- ORDERS - ADMIN ONLY ORDER DETAILS/CUSTOMER/STATUS -->
+<div id="tab-orders" style="display:none">
+<div class="card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px"><h4>Orders - <span id="orderRoleTitle">All</span></h4><div style="display:flex;gap:4px"><button class="btn btn-g" onclick="renderOrders('all')">All</button><button class="btn btn-p" onclick="renderOrders('pending')">Pending</button><button class="btn btn-g" onclick="renderOrders('my')">My Picks</button></div></div><div id="orderList" style="margin-top:10px"></div></div>
+</div>
+
+<!-- AREAS -->
+<div id="tab-areas" style="display:none"><div class="card"><h4>📍 Live Location / Areas - Staff Can Edit</h4><div style="display:flex;gap:6px;flex-wrap:wrap"><input id="newArea" class="input" placeholder="New Area Name" style="flex:1"><input id="newAreaTime" class="input" placeholder="Time" style="width:90px" value="30 min"><input id="newAreaCharge" class="input" type="number" placeholder="Charge" style="width:70px" value="0"><button class="btn btn-p" onclick="addArea()">Add</button></div><div id="areaList" style="margin-top:10px"></div></div></div>
+
+<!-- PRODUCTS -->
+<div id="tab-products" style="display:none">
+<div class="card"><h4>📦 Products - Admin Only</h4><div class="grid2"><input id="pName" class="input" placeholder="Product Name *"><input id="pCategory" class="input" placeholder="Category"><input id="pPrice" class="input" type="number" placeholder="Price *"><input id="pMrp" class="input" type="number" placeholder="MRP"><input id="pStock" class="input" type="number" placeholder="Stock"><input id="pUnit" class="input" placeholder="Unit"><input id="pDisc" class="input" type="number" placeholder="Disc %"><input id="pRating" class="input" type="number" step="0.1" placeholder="Rating"><select id="pHighlight" class="input"><option value="">Highlight</option><option value="fav">fav - Big Ad</option><option value="fast">fast - Big Ad</option><option value="new">new - Big Ad</option></select><div style="display:flex;gap:6px"><label style="flex:1;font-size:11px"><input type="checkbox" id="pIsAd"> Big Ad</label><label style="flex:1;font-size:11px"><input type="checkbox" id="pActive" checked> Active</label></div></div><textarea id="pDesc" class="input" placeholder="Description"></textarea><div style="border:2px dashed var(--orange);border-radius:12px;padding:10px;text-align:center;background:var(--orange-light);cursor:pointer;margin-top:8px" onclick="document.getElementById('pImageFile').click()">📷 Upload Image</div><input type="file" id="pImageFile" accept="image/*" style="display:none" onchange="handleImg(this,'pImage','pPreview')"><input id="pImage" class="input" placeholder="Image URL"><img id="pPreview" style="width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin-top:6px;display:none"><div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-p" style="flex:1" onclick="saveProduct()">Save Product</button><button class="btn btn-g" onclick="clearPForm()">Clear</button></div><input type="hidden" id="pId"></div>
+<div class="card"><input id="prodSearch" class="input" placeholder="Search..." oninput="renderProducts()"><div id="prodList" style="margin-top:8px"></div></div>
+</div>
+
+<!-- BANNER -->
+<div id="tab-banner" style="display:none"><div class="card"><h4>🎨 Banner / Logo - Admin</h4><div class="grid2"><input id="sLogo" class="input" placeholder="Logo DK"><input id="sAppName" class="input" placeholder="App Name"><input id="sBTitle" class="input" placeholder="Banner Title"><input id="sBSub" class="input" placeholder="Banner Sub"></div><div style="border:2px dashed var(--orange);border-radius:12px;padding:10px;text-align:center;background:var(--orange-light);cursor:pointer;margin-top:8px" onclick="document.getElementById('bImageFile').click()">Upload Banner</div><input type="file" id="bImageFile" accept="image/*" style="display:none" onchange="handleImg(this,'sBImage','bPreview')"><input id="sBImage" class="input" placeholder="Banner Image URL"><img id="bPreview" style="width:100%;max-height:160px;object-fit:cover;border-radius:12px;margin-top:6px;display:none"><input id="sBBg" class="input" placeholder="Banner BG CSS"><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="saveBanner()">Save Banner</button><div id="bannerPreview" style="margin-top:10px;padding:12px;border-radius:12px;color:#fff;background:linear-gradient(135deg,#FF6B00,#101010)"></div></div></div>
+
+<!-- CUSTOMERS -->
+<div id="tab-customers" style="display:none"><div class="card"><h4>👥 Customers</h4><div id="customerList"></div></div></div>
+<!-- COUPONS -->
+<div id="tab-coupons" style="display:none"><div class="card"><h4>🎟️ Coupons</h4><div style="display:flex;gap:6px"><input id="cCode" class="input" placeholder="CODE" style="flex:1"><input id="cDisc" class="input" type="number" placeholder="%" style="width:80px"><button class="btn btn-p" onclick="addCoupon()">Add</button></div><div id="couponList" style="margin-top:8px"></div></div></div>
+<!-- WA -->
+<div id="tab-wa" style="display:none"><div class="card"><h4>📱 WhatsApp</h4><div style="display:flex;gap:6px"><input id="waNumber" class="input" placeholder="Number 6000000000" style="flex:1"><button class="btn btn-p" onclick="addWa()">Add</button></div><div id="waList" style="margin-top:8px"></div><textarea id="waTpl" class="input" style="height:80px;margin-top:8px"></textarea><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="saveWaTpl()">Save Template</button></div></div>
+<!-- STAFF & RIDERS -->
+<div id="tab-staff" style="display:none">
+<div class="card"><h4>👔 Staff Manage - Orders + Location + Notif</h4><div class="grid2"><input id="staffName" class="input" placeholder="Staff Name"><input id="staffPhone" class="input" placeholder="Phone"><input id="staffPinInput" class="input" placeholder="PIN"><input id="staffRole" class="input" placeholder="Role"></div><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="addStaff()">Add Staff</button><div id="staffList" style="margin-top:8px"></div></div>
+<div class="card"><h4>🏍️ Riders Manage - Pick to Deliver + OTP Lock</h4><div class="grid2"><input id="riderName" class="input" placeholder="Rider Name"><input id="riderPhone" class="input" placeholder="Phone"><input id="riderPinInput" class="input" placeholder="PIN"><input id="riderVehicle" class="input" placeholder="Vehicle"></div><button class="btn btn-green" style="width:100%;margin-top:8px" onclick="addRider()">Add Rider</button><div id="riderList" style="margin-top:8px"></div></div>
+</div>
+<!-- SETTINGS -->
+<div id="tab-settings" style="display:none"><div class="card"><h4>⚙️ Settings</h4><div class="grid2"><input id="setMin" class="input" type="number" placeholder="Min Order"><input id="setUpi" class="input" placeholder="UPI"><input id="setPhone" class="input" placeholder="Support Phone"><input id="setEstimate" class="input" type="number" placeholder="Estimate Min"></div><label style="display:flex;gap:6px;margin-top:8px;font-size:11px"><input type="checkbox" id="setMaint"> Maintenance ON</label><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="saveSettings2()">Save</button><button class="btn btn-g" style="width:100%;margin-top:6px" onclick="exportAll()">Export JSON</button><input type="file" id="importFile" accept=".json" style="display:none" onchange="importAll(this)"><button class="btn btn-black" style="width:100%;margin-top:6px" onclick="document.getElementById('importFile').click()">Import JSON</button></div></div>
+<!-- VAULT -->
+<div id="tab-vault" style="display:none"><div class="card vault"><h4 style="color:#FF6B00">🔒 Vault - GitHub/SDKConfig/Token Hide Tolot</h4><div style="margin-top:10px"><input id="vGithubRepo" class="input" placeholder="GitHub Repo URL"><div style="display:flex;gap:6px"><input id="vGithubToken" class="input" type="password" placeholder="GitHub Token hide" style="flex:1"><button class="btn btn-g" onclick="toggleEye('vGithubToken')">👁️</button></div><textarea id="vFirebase" class="input" style="height:70px" placeholder="Firebase SDKConfig JSON"></textarea><div style="display:flex;gap:6px"><input id="vPayKey" class="input" type="password" placeholder="Payment Key hide" style="flex:1"><button class="btn btn-g" onclick="toggleEye('vPayKey')">👁️</button></div><textarea id="vSdk" class="input" style="height:70px" placeholder="Any SDKConfig"></textarea><button class="btn" style="width:100%;margin-top:8px;background:#0f0;color:#000" onclick="saveVault()">Save Vault Hide</button></div></div></div>
+
+</div>
+</div>
+
+<!-- BOTTOM VERTICAL NAV - TOLOT VERTICALLY -->
+<div class="bottomNav" id="bottomNav">
+<div class="bNavItem active" data-role="all" onclick="goTab('dash',null,this)"><span>📊</span>Dashboard</div>
+<div class="bNavItem" data-role="all admin staff rider" onclick="goTab('orders',null,this)"><span>🛒</span>Order Live</div>
+<div class="bNavItem" data-role="admin staff" onclick="goTab('areas',null,this)"><span>📍</span>Location</div>
+<div class="bNavItem" data-role="admin" onclick="goTab('products',null,this)"><span>📦</span>Products</div>
+<div class="bNavItem" data-role="admin" onclick="goTab('banner',null,this)"><span>🎨</span>Banner</div>
+<div class="bNavItem" data-role="admin" onclick="goTab('customers',null,this)"><span>👥</span>Customers</div>
+<div class="bNavItem" data-role="admin" onclick="goTab('staff',null,this)"><span>👔</span>Staff/Riders</div>
+<div class="bNavItem" data-role="admin" onclick="goTab('settings',null,this)"><span>⚙️</span>Settings</div>
+<div class="bNavItem" data-role="admin" onclick="goTab('vault',null,this)"><span>🔒</span>Vault</div>
+</div>
+
+<script>
+let AREAS_DEFAULT=["Dirak Charali","Aamguri","Bordirak","Khatua","Hunjan","Navajyoti","Simoluguri","Uttar Bisrampur","Dakhin Bisrampur","Kailashpur","Dimbujora","Tongona","Gutibari","Tongona-Nagaon","Dirakgate","Modarkhat","Digholi-pothar","Huwonipothar","Namhullung","Tiniali Nagaon","Betoni","Wathoi","Litong","Talpothar","Hatigarh","Dumsi","Sitpani"];
+let PRODUCTS=[],SETTINGS={},ORDERS=[],COUPONS=[],AREAS=[],STAFF=[],RIDERS=[];
+let CURRENT_ROLE=null,CURRENT_USER=null,NOTIF_INTERVAL=null,LAST_ORDER_COUNT=0;
+
+function setRole(role){
+CURRENT_ROLE=role;
+document.querySelectorAll('.roleTab div').forEach(d=>d.classList.remove('active'));
+document.getElementById('role'+role.charAt(0).toUpperCase()+role.slice(1)).classList.add('active');
+document.getElementById('loginAdmin').style.display=role=='admin'?'block':'none';
+document.getElementById('loginStaff').style.display=role=='staff'?'block':'none';
+document.getElementById('loginRider').style.display=role=='rider'?'block':'none';
+if(role=='staff') renderStaffSelect();
+if(role=='rider') renderRiderSelect();
 }
-function doLogin(){let u=lUser.value.trim().toLowerCase(), p=lPass.value.trim(); staffs=get('dk_staff'); let f=staffs.find(s=>s.user.toLowerCase()==u && s.pass==p); if(!f){alert('Login Failed! admin/admin123'); return;} role=f.role; user=f.user; localStorage.setItem('dk_role',role); localStorage.setItem('dk_user',user); document.getElementById('login').style.display='none'; init();}
-function logout(){localStorage.removeItem('dk_role'); location.reload();}
-function init(){let navs=[['dash','Dashboard'],['products','Products'],['cats','Categories'],['banners','Banners'],['galleryTab','Gallery'],['orders','Orders'],['riders','Riders'],['staff','Staff'],['settings','Settings']]; sideNav.innerHTML=navs.map(([id,l],i)=>`<div class="navI ${i==0?'on':''}" onclick="openTab('${id}')">${l}</div>`).join(''); roleL.innerText=role; userL.innerText=user; openTab(navs[0][0]); upd(); if(role) login.style.display='none'; syncFromServer();}
-function openTab(id){document.querySelectorAll('.main > div').forEach(d=>d.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('.navI').forEach(n=>n.classList.remove('on')); render(id);}
-function render(id){
-if(id=='dash'){let tot=orders.reduce((a,b)=>a+b.total,0); dash.innerHTML=`<h2>Dashboard - ${role}</h2><div class="grid2" style="margin-top:12px"><div class="card"><div style="font-size:10px;color:var(--muted)">ORDERS</div><b>${orders.length}</b></div><div class="card"><div style="font-size:10px;color:var(--muted)">REVENUE</div><b>Rs ${tot}</b></div></div><div class="card"><b>Server: </b><span id="srvStatus">Checking...</span><br><button class="btn" onclick="syncFromServer()">🔄 Sync</button></div>`; fetch('/api/health').then(r=>r.json()).then(d=>{document.getElementById('srvStatus').innerText=`Live - ${d.products} products`;}).catch(()=>{document.getElementById('srvStatus').innerText='Offline';});}
-if(id=='products'){products=get('dk_products_final'); document.getElementById('products').innerHTML=`<div style="display:flex;justify-content:space-between"><h2>Products - Server Sync ON</h2><button class="btn" onclick="addProd()">+ Add</button></div><div id="prodForm" class="card hidden"></div><div class="card" style="margin-top:12px"><table><tr><th>Img</th><th>Name</th><th>Price</th><th>Action</th></tr>${products.map((p,i)=>`<tr><td><img src="${p.img}" style="width:44px;height:44px;border-radius:10px"></td><td><b>${p.name}</b><br><span style="font-size:11px;color:var(--muted)">${p.category}</span></td><td>Rs ${p.price}</td><td><button class="btnLine" onclick="editProd(${i})">Edit</button> <button class="btnLine" style="color:#FF3B30" onclick="delProd(${i})">Del</button></td></tr>`).join('')}</table></div>`;}
-if(id=='galleryTab'){gallery=get('dk_gallery'); document.getElementById('galleryTab').innerHTML=`<div style="display:flex;justify-content:space-between"><h2>Gallery</h2><button class="btn" onclick="gModal.classList.remove('hidden');renderGal()">+ Add</button></div><div class="card" style="margin-top:12px"><div class="gallery">${gallery.map((g,i)=>`<div class="gItem"><img src="${g.url}"><span>${g.name}</span><button onclick="delGal(${i})" style="position:absolute;top:4px;right:4px;background:#FF3B30;color:#fff;border:0;border-radius:50%;width:20px;height:20px">✕</button></div>`).join('')}</div></div>`;}
-if(id=='settings'){document.getElementById('settings').innerHTML=`<h2>Settings</h2><div class="card"><button class="btn" onclick="syncFromServer()">Force Sync From Server</button></div>`;}
+function renderStaffSelect(){let sel=document.getElementById('staffSelect'); sel.innerHTML=STAFF.map(s=>`<option value="${s.id}">${s.name} - ${s.phone}</option>`).join('')||'<option>No staff</option>';}
+function renderRiderSelect(){let sel=document.getElementById('riderSelect'); sel.innerHTML=RIDERS.map(r=>`<option value="${r.id}">${r.name} - ${r.phone}</option>`).join('')||'<option>No rider</option>';}
+function loadAll(){
+try{
+PRODUCTS=JSON.parse(localStorage.getItem('dk_v3_products')||'[]');
+SETTINGS=JSON.parse(localStorage.getItem('dk_v3_settings')||'{}');
+if(!SETTINGS.appName){SETTINGS={logo:'DK',appName:'DailyKart',bannerTitle:'🍊 Orange Fast Delivery 30 Min',bannerSub:'27 Areas Covered',bannerImage:'',bannerBg:'',waNumbers:['6000000000'],waEnabled:true,waTemplate:'NEW ORDER #{orderId} {name} {phone} Area:{area} Rs {total} OTP {otp} Items:{items}',shopOpen:true,maintenance:false,minOrder:249,upi:'9365822867@ybl',supportPhone:'9365822867',estimateMin:30};}
+ORDERS=JSON.parse(localStorage.getItem('dk_v3_orders')||'[]');
+COUPONS=JSON.parse(localStorage.getItem('dk_v3_coupons')||'[]'); if(COUPONS.length==0) COUPONS=[{code:'MODARKHAT10',disc:10}];
+AREAS=JSON.parse(localStorage.getItem('dk_v3_areas')||'null'); if(!AREAS) AREAS=AREAS_DEFAULT.map(n=>({name:n,time:n.includes('Talpothar')?'60 min':'30 min',charge:n.includes('Talpothar')?20:0,active:true}));
+STAFF=JSON.parse(localStorage.getItem('dk_staff')||'[]');
+RIDERS=JSON.parse(localStorage.getItem('dk_riders')||'[]');
+let vault=JSON.parse(localStorage.getItem('dk_admin_vault')||'{}'); if(vault.githubRepo) document.getElementById('vGithubRepo').value=vault.githubRepo; if(vault.githubToken) document.getElementById('vGithubToken').value=vault.githubToken; if(vault.firebase) document.getElementById('vFirebase').value=vault.firebase; if(vault.payKey) document.getElementById('vPayKey').value=vault.payKey; if(vault.sdk) document.getElementById('vSdk').value=vault.sdk;
+}catch(e){}
 }
-function renderGal(){gallery=get('dk_gallery'); galGrid.innerHTML=gallery.map(g=>`<div class="gItem" onclick="selectGal('${g.url}')"><img src="${g.url}"><span>${g.name}</span></div>`).join('');}
-function pickImg(id){curTarget=id; gModal.classList.remove('hidden'); renderGal();}
-function selectGal(url){if(curTarget){document.getElementById(curTarget).value=url; let pv=document.getElementById('pPreview'); if(pv)pv.innerHTML=`<img src="${url}" style="width:100px;height:100px;border-radius:14px">`; gModal.classList.add('hidden');}}
-function uploadImg(inp){let f=inp.files[0]; if(!f)return; let r=new FileReader(); r.onload=e=>{let url=e.target.result; gallery=get('dk_gallery'); gallery.push({id:Date.now().toString(),url:url,name:f.name.slice(0,12)}); set('dk_gallery',gallery); if(curTarget)document.getElementById(curTarget).value=url; renderGal();}; r.readAsDataURL(f);}
-function addUrl(){let u=urlInp.value.trim(); if(!u)return; gallery=get('dk_gallery'); gallery.push({id:Date.now().toString(),url:u,name:'URL'}); set('dk_gallery',gallery); urlInp.value=''; if(curTarget)document.getElementById(curTarget).value=u; renderGal();}
-function delGal(i){if(confirm('Delete?')){gallery=get('dk_gallery'); gallery.splice(i,1); set('dk_gallery',gallery); render('galleryTab'); renderGal();}}
-function addProd(edit=null){
- let list=get('dk_products_final')||[];
- let p=edit!==null?list[edit]:{name:'',price:'',mrp:'',category:'Fast Food',weight:'1 Pc',tag:'discount',delivery_time:'10 mins',stock:10,img:''};
- let form=document.getElementById('prodForm');
- form.classList.remove('hidden');
- form.innerHTML=`<h3>${edit!==null?'Edit':'Add'} Product</h3><div class="grid2"><input id="pName" class="inp" placeholder="Name" value="${p.name}"><input id="pPrice" class="inp" type="number" placeholder="Price" value="${p.price}"><input id="pMrp" class="inp" type="number" placeholder="MRP" value="${p.mrp}"><input id="pCat" class="inp" placeholder="Category" value="${p.category}"><input id="pWeight" class="inp" placeholder="Weight" value="${p.weight}"><input id="pTag" class="inp" placeholder="Tag" value="${p.tag}"><input id="pTime" class="inp" placeholder="Delivery" value="${p.delivery_time}"><input id="pStock" class="inp" type="number" placeholder="Stock" value="${p.stock}"></div><div style="margin-top:10px"><div style="display:flex;gap:6px"><input id="pImg" class="inp" style="margin:0;flex:1" placeholder="Image URL" value="${p.img}"><button class="btn" style="margin:0" type="button" onclick="pickImg('pImg')">Gallery</button></div><div id="pPreview" style="margin-top:8px">${p.img?`<img src="${p.img}" style="width:100px;height:100px;border-radius:14px">`:''}</div></div><div style="margin-top:10px"><button class="btn" onclick="saveProd(${edit!==null?edit:'null'})">${edit!==null?'Update':'Add'}</button> <button class="btnLine" onclick="document.getElementById('prodForm').classList.add('hidden')">Cancel</button></div>`;
+function saveAll(){
+localStorage.setItem('dk_v3_products',JSON.stringify(PRODUCTS));
+localStorage.setItem('dk_v3_settings',JSON.stringify(SETTINGS));
+localStorage.setItem('dk_v3_orders',JSON.stringify(ORDERS));
+localStorage.setItem('dk_v3_coupons',JSON.stringify(COUPONS));
+localStorage.setItem('dk_v3_areas',JSON.stringify(AREAS));
+localStorage.setItem('dk_staff',JSON.stringify(STAFF));
+localStorage.setItem('dk_riders',JSON.stringify(RIDERS));
+renderDash();
 }
-function editProd(i){addProd(i);}
-async function saveProd(idx){
- let name=document.getElementById('pName').value.trim();
- let img=document.getElementById('pImg').value.trim();
- if(!name||!img){ alert('Name + Image lage!'); return; }
- let list=get('dk_products_final')||[];
- let idToUse = (idx!=='null' && idx!==null && list[idx])? list[idx].id : Date.now().toString();
- let obj={id:idToUse,name,price:parseInt(document.getElementById('pPrice').value)||99,mrp:parseInt(document.getElementById('pMrp').value)||149,category:document.getElementById('pCat').value||'Fast Food',weight:document.getElementById('pWeight').value||'1 Pc',tag:document.getElementById('pTag').value||'new',delivery_time:document.getElementById('pTime').value||'10 mins',stock:parseInt(document.getElementById('pStock').value)||10,img,size:'med',veg:true,rating:4.5};
- if(idx!=='null' && idx!==null && idx>=0){ list[idx]=obj; } else { list.unshift(obj); }
- set('dk_products_final',list);
- try{
-   let res = await fetch('/api/products', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(obj) });
-   if(res.ok){ let d=await res.json(); set('dk_products_final', d.data||list); toast('✅ Server t live - Customer page t show hobo!'); } else toast('Local saved');
- }catch(e){ toast('Local saved - Server offline'); }
- document.getElementById('prodForm').classList.add('hidden');
- render('products');
+function loginAdmin(){let pin=document.getElementById('adminPin').value.trim(); if(pin=='1234'||pin=='admin123'||pin=='9365'){CURRENT_ROLE='admin'; CURRENT_USER={id:'admin',name:'Admin',role:'admin'}; enterApp();} else alert('Wrong PIN - 1234');}
+function loginStaff(){let id=document.getElementById('staffSelect').value; let pin=document.getElementById('staffPin').value.trim(); let s=STAFF.find(x=>x.id==id); if(!s){alert('No staff'); return;} if(s.pin==pin){CURRENT_ROLE='staff'; CURRENT_USER=s; enterApp();} else alert('Wrong PIN');}
+function loginRider(){let id=document.getElementById('riderSelect').value; let pin=document.getElementById('riderPin').value.trim(); let r=RIDERS.find(x=>x.id==id); if(!r){alert('No rider'); return;} if(r.pin==pin){CURRENT_ROLE='rider'; CURRENT_USER=r; enterApp();} else alert('Wrong PIN');}
+function enterApp(){
+document.getElementById('loginScreen').style.display='none';
+loadAll(); initRole(); renderDash(); renderOrders('all'); updateShopUI(); startNotifLoop();
+document.getElementById('roleBadge').innerText=CURRENT_ROLE.toUpperCase();
+document.getElementById('userName').innerText=CURRENT_USER.name;
+setInterval(()=>{let el=document.getElementById('liveTime'); if(el) el.innerText=new Date().toLocaleTimeString();},1000);
+window.scrollTo({top:0,behavior:'smooth'});
 }
-async function delProd(i){ if(!confirm('Delete?')) return; let l=get('dk_products_final'); let id=l[i]?.id; l.splice(i,1); set('dk_products_final',l); try{ if(id) await fetch('/api/products/'+id,{method:'DELETE'}); }catch(e){} render('products'); }
-function toast(m){let t=document.createElement('div'); t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#FF6B00;color:#000;padding:10px 18px;border-radius:100px;font-weight:800;z-index:999;font-size:12px'; t.innerText=m; document.body.appendChild(t); setTimeout(()=>t.remove(),2500);}
-function upd(){let p=get('dk_products_final'); let g=get('dk_gallery'); if(p)document.getElementById('pCount').innerText=p.length; if(g)document.getElementById('galCount').innerText=g.length;}
-if(role)init(); else document.getElementById('login').style.display='flex';
+function initRole(){
+document.querySelectorAll('.mItem,.bNavItem').forEach(item=>{
+let roles=item.getAttribute('data-role')||'all';
+if(roles.includes('all')||roles.includes(CURRENT_ROLE)) item.style.display='flex'; else item.style.display='none';
+});
+}
+function goTab(tab,sideEl,bottomEl){
+// UPORT ULUA - SCROLL TO TOP ON ANY CLICK
+window.scrollTo({top:0,behavior:'smooth'});
+document.querySelectorAll('[id^="tab-"]').forEach(x=>x.style.display='none');
+let target=document.getElementById('tab-'+tab); if(target) target.style.display='block';
+document.querySelectorAll('.mItem').forEach(x=>x.classList.remove('active'));
+document.querySelectorAll('.bNavItem').forEach(x=>x.classList.remove('active'));
+if(sideEl) sideEl.classList.add('active');
+if(bottomEl) bottomEl.classList.add('active');
+else {
+let match=document.querySelector(`.bNavItem[onclick*="'${tab}'"]`);
+if(match) match.classList.add('active');
+let sideMatch=document.querySelector(`.mItem[onclick*="'${tab}'"]`);
+if(sideMatch) sideMatch.classList.add('active');
+}
+if(tab=='dash') renderDash();
+if(tab=='orders') renderOrders('all');
+if(tab=='areas') renderAreas();
+if(tab=='products') renderProducts();
+if(tab=='banner') renderBanner();
+if(tab=='customers') renderCustomers();
+if(tab=='coupons') renderCoupons();
+if(tab=='wa') renderWa();
+if(tab=='staff') {renderStaff(); renderRiders();}
+}
+function goOrders(){goTab('orders',null,document.querySelector(`.bNavItem[onclick*="'orders'"]`));}
+function toggleShop(){if(CURRENT_ROLE!='admin'){alert('Only Admin'); return;} SETTINGS.shopOpen=!SETTINGS.shopOpen; saveAll(); updateShopUI();}
+function updateShopUI(){let sw=document.getElementById('shopSwitch'); let st=document.getElementById('shopStatus'); if(SETTINGS.shopOpen!==false){sw.classList.add('on'); st.innerText='OPEN'; st.style.color='var(--green)';} else {sw.classList.remove('on'); st.innerText='CLOSED'; st.style.color='var(--red)';}}
+function handleImg(input,tId,pId){let file=input.files[0]; if(!file) return; let r=new FileReader(); r.onload=function(e){document.getElementById(tId).value=e.target.result; let prev=document.getElementById(pId); if(prev){prev.src=e.target.result; prev.style.display='block';}}; r.readAsDataURL(file);}
+function renderDash(){
+document.getElementById('sProd').innerText=PRODUCTS.length;
+document.getElementById('sOrd').innerText=ORDERS.length;
+document.getElementById('sPend').innerText=ORDERS.filter(o=>o.status=='pending').length;
+document.getElementById('sRev').innerText='Rs '+ORDERS.reduce((a,b)=>a+(b.grandTotal||0),0);
+document.getElementById('sRiders').innerText=RIDERS.length;
+document.getElementById('sActiveRiders').innerText=RIDERS.length;
+document.getElementById('recentOrders').innerHTML=ORDERS.slice(0,5).map(o=>`<div style="display:flex;justify-content:space-between;padding:7px;border-bottom:1px solid var(--border);font-size:11px"><span>#${String(o.id).slice(-6)} ${o.area} Rs ${o.grandTotal} ${o.status}</span><span>${o.date?.slice(0,16)||''}</span></div>`).join('')||'<p style="font-size:11px;color:var(--text2)">No orders</p>';
+}
+// NOTIFICATION LOOP FOR ALL + STAFF/RIDER LOOP
+function startNotifLoop(){
+if(NOTIF_INTERVAL) clearInterval(NOTIF_INTERVAL);
+LAST_ORDER_COUNT=ORDERS.length;
+NOTIF_INTERVAL=setInterval(()=>{
+let current=JSON.parse(localStorage.getItem('dk_v3_orders')||'[]');
+if(current.length>LAST_ORDER_COUNT){
+let newOrders=current.slice(0,current.length-LAST_ORDER_COUNT);
+newOrders.forEach(o=>{
+showNotif(`🔔 New Order Placed!\n#${String(o.id).slice(-6)} - ${o.area} - Rs ${o.grandTotal}\nCustomer: ${o.customer?.name||''} ${o.customer?.phone||''}\nOTP: ${o.otp}`);
+try{let a=new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg'); a.play();}catch(e){}
+});
+LAST_ORDER_COUNT=current.length;
+ORDERS=current; renderOrders('all'); renderDash();
+}
+},30000);
+}
+function showNotif(text){document.getElementById('notifText').innerText=text; document.getElementById('notifBox').style.display='block'; setTimeout(()=>{document.getElementById('notifBox').style.display='none';},9000);}
+function closeNotif(){document.getElementById('notifBox').style.display='none';}
+
+// AREAS - STAFF CAN EDIT LOCATION
+function renderAreas(){document.getElementById('areaList').innerHTML=AREAS.map((a,i)=>`<div class="card" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><div style="flex:1"><b>${a.name}</b> ${a.active===false?'<span style="background:#ccc;color:#000;padding:2px 6px;border-radius:10px;font-size:9px">OFF</span>':'<span style="background:var(--green);color:#fff;padding:2px 6px;border-radius:10px;font-size:9px">ON</span>'}<br><span style="font-size:10px;color:var(--text2)">${a.time} | Rs ${a.charge}</span></div><input class="input" style="width:80px" value="${a.time}" onchange="updArea(${i},'time',this.value)" ${CURRENT_ROLE=='rider'?'disabled':''}><input class="input" style="width:60px" type="number" value="${a.charge}" onchange="updArea(${i},'charge',this.value)" ${CURRENT_ROLE=='rider'?'disabled':''}><div class="switch ${a.active!==false?'on':''}" style="width:40px;height:22px" onclick="toggleArea(${i})"><div style="width:18px;height:18px"></div></div><button class="btn btn-d" style="padding:4px 8px" onclick="delArea(${i})" ${CURRENT_ROLE!='admin'?'style="display:none"':''}>X</button></div>`).join('');}
+function updArea(i,k,v){if(CURRENT_ROLE=='rider'){alert('Rider cannot edit'); return;} if(k=='charge') AREAS[i][k]=parseInt(v)||0; else AREAS[i][k]=v; saveAll(); renderAreas();}
+function toggleArea(i){if(CURRENT_ROLE=='rider') return; AREAS[i].active=AREAS[i].active===false?true:false; saveAll(); renderAreas();}
+function addArea(){let name=document.getElementById('newArea').value.trim(); let time=document.getElementById('newAreaTime').value.trim()||'30 min'; let charge=parseInt(document.getElementById('newAreaCharge').value)||0; if(!name){alert('Enter name'); return;} AREAS.push({name,time,charge,active:true}); document.getElementById('newArea').value=''; saveAll(); renderAreas();}
+function delArea(i){if(CURRENT_ROLE!='admin') return; if(!confirm('Delete?')) return; AREAS.splice(i,1); saveAll(); renderAreas();}
+
+// ORDERS - ADMIN ONLY ORDER DETAILS/CUSTOMER/STATUS - HANDLE STAFF
+function renderOrders(filter){
+let list=document.getElementById('orderList'); let filtered=ORDERS;
+if(filter=='pending') filtered=ORDERS.filter(o=>o.status=='pending');
+if(filter=='my'&&CURRENT_ROLE=='rider') filtered=ORDERS.filter(o=>o.riderId==CURRENT_USER.id);
+if(CURRENT_ROLE=='rider'){filtered=filtered.filter(o=>!o.riderId||o.riderId==CURRENT_USER.id); if(filter=='all') filtered=ORDERS.filter(o=>!o.riderId||o.riderId==CURRENT_USER.id);}
+list.innerHTML=filtered.map(o=>{
+let riderName=o.riderId?(RIDERS.find(r=>r.id==o.riderId)?.name||'Rider'):'Unassigned';
+let canPick=CURRENT_ROLE=='rider'&&!o.riderId&&o.status!='delivered'&&o.status!='cancelled';
+let isMyOrder=CURRENT_ROLE=='rider'&&o.riderId==CURRENT_USER.id;
+let otherPicked=CURRENT_ROLE=='rider'&&o.riderId&&o.riderId!=CURRENT_USER.id;
+if(otherPicked) return ''; // baki rider r option off
+return `<div class="card orderBox">
+<b>Order #${String(o.id).slice(-6)} - <span class="badge">${o.status.toUpperCase()}</span></b>
+<div style="margin-top:8px;padding:8px;background:var(--bg);border-radius:10px;border:1.5px solid var(--border)">
+<b style="font-size:11px;color:var(--orange)">📦 Order Details</b><br>
+<span style="font-size:11px">Items: ${(o.items||[]).map(i=>`${i.name} x${i.qty} = Rs ${i.price*i.qty}`).join(', ')}<br>Subtotal: Rs ${o.subtotal||o.grandTotal} | Delivery: Rs ${o.deliveryCharge||0} | Discount: Rs ${o.discount||0}<br><b>Total: Rs ${o.grandTotal}</b> | Payment: ${o.payment} | Date: ${o.date}<br>OTP: <b style="color:var(--orange)">${o.otp}</b> | Estimate: ${o.estimateMin||30} min</span>
+</div>
+<div style="margin-top:8px;padding:8px;background:var(--orange-light);border-radius:10px;border:1.5px solid var(--border)">
+<b style="font-size:11px;color:var(--orange)">👤 Customer Details</b><br>
+<span style="font-size:11px">Name: ${o.customer?.name||''}<br>Phone: ${o.customer?.phone||''}<br>Area: ${o.area}<br>Address: ${o.customer?.addr||''}</span>
+</div>
+<div style="margin-top:8px;padding:8px;background:var(--bg);border-radius:10px;border:1.5px solid var(--border)">
+<b style="font-size:11px;color:var(--orange)">🚚 Delivery Status - Handle Staff</b><br>
+<span style="font-size:11px">Rider: ${riderName} ${o.pickTime?'| Pick: '+o.pickTime:''} ${o.deliveredTime?'| Delivered: '+o.deliveredTime:''}<br>Status: ${o.status}</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+${CURRENT_ROLE=='admin'||CURRENT_ROLE=='staff'?`
+<select class="input" style="width:130px" onchange="updOrd('${o.id}',this.value)">
+<option value="pending" ${o.status=='pending'?'selected':''}>pending</option>
+<option value="accepted" ${o.status=='accepted'?'selected':''}>accepted</option>
+<option value="packed" ${o.status=='packed'?'selected':''}>packed</option>
+<option value="out" ${o.status=='out'?'selected':''}>out for delivery</option>
+<option value="delivered" ${o.status=='delivered'?'selected':''}>delivered</option>
+<option value="cancelled" ${o.status=='cancelled'?'selected':''}>cancelled</option>
+</select>
+<select class="input" style="width:130px" onchange="assignRider('${o.id}',this.value)">
+<option value="">Assign Rider</option>
+${RIDERS.map(r=>`<option value="${r.id}" ${o.riderId==r.id?'selected':''}>${r.name}</option>`).join('')}
+</select>
+`:''}
+${canPick?`<button class="btn btn-green" onclick="riderPick('${o.id}')">🏍️ Pick Order</button>`:''}
+${isMyOrder?`
+<select class="input" style="width:120px" onchange="riderStatus('${o.id}',this.value)">
+<option value="accepted" ${o.status=='accepted'?'selected':''}>Accepted</option>
+<option value="packed" ${o.status=='packed'?'selected':''}>Packed</option>
+<option value="out" ${o.status=='out'?'selected':''}>Out</option>
+<option value="delivered" ${o.status=='delivered'?'selected':''}>Delivered</option>
+</select>
+<button class="btn btn-p" onclick="riderDeliver('${o.id}')">✅ Delivered + OTP Paste</button>
+`:''}
+</div>
+</div>
+</div>`;
+}).join('')||'<p style="font-size:11px;color:var(--text2)">No orders</p>';
+}
+function updOrd(id,st){let o=ORDERS.find(x=>x.id==id); if(o){o.status=st; saveAll(); renderOrders('all');}}
+function assignRider(id,riderId){let o=ORDERS.find(x=>x.id==id); if(o){o.riderId=riderId||null; if(riderId&&o.status=='pending') o.status='accepted'; saveAll(); renderOrders('all');}}
+function riderPick(id){let o=ORDERS.find(x=>x.id==id); if(!o) return; if(o.riderId&&o.riderId!=CURRENT_USER.id){alert('Already picked by other rider - Option off'); return;} o.riderId=CURRENT_USER.id; o.status='accepted'; o.pickTime=new Date().toLocaleString(); saveAll(); renderOrders('all'); showNotif('You picked #'+String(o.id).slice(-6));}
+function riderStatus(id,status){let o=ORDERS.find(x=>x.id==id); if(!o||o.riderId!=CURRENT_USER.id){alert('Not your order'); return;} if(status=='delivered'){riderDeliver(id); return;} o.status=status; saveAll(); renderOrders('my');}
+function riderDeliver(id){let o=ORDERS.find(x=>x.id==id); if(!o||o.riderId!=CURRENT_USER.id){alert('Not your order'); return;} let code=prompt('Customer order t jua code paste korok - OTP Enter - Actual OTP: '+o.otp); if(!code) return; if(code==o.otp){o.status='delivered'; o.deliveredTime=new Date().toLocaleString(); saveAll(); renderOrders('my'); alert('✅ Delivered Successful! OTP Verified');} else alert('❌ Wrong OTP - Actual '+o.otp);}
+
+// PRODUCTS
+function renderProducts(){let q=(document.getElementById('prodSearch')?.value||'').toLowerCase(); let filtered=PRODUCTS.filter(p=>!q||p.name.toLowerCase().includes(q)); document.getElementById('prodList').innerHTML=filtered.map(p=>`<div class="card" style="display:flex;gap:8px;align-items:center"><img src="${p.image}" class="thumb"><div style="flex:1"><b style="font-size:12px">${p.name}</b> ${p.isAd?'<span class="badge">BIG AD</span>':''}<br><span style="font-size:10px;color:var(--text2)">${p.category} | Rs ${p.price} | Stock ${p.stock}</span></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn btn-g" style="padding:4px 8px" onclick="editProduct('${p.id}')">Edit</button><button class="btn btn-d" style="padding:4px 8px" onclick="deleteProduct('${p.id}')">Del</button></div></div>`).join('')||'<p style="font-size:11px;color:var(--text2)">No products</p>';}
+function clearPForm(){document.getElementById('pId').value=''; ['pName','pCategory','pPrice','pMrp','pStock','pUnit','pDisc','pRating','pHighlight','pDesc','pImage'].forEach(id=>{let el=document.getElementById(id); if(el) el.value='';}); document.getElementById('pIsAd').checked=false; document.getElementById('pActive').checked=true; document.getElementById('pPreview').style.display='none';}
+function saveProduct(){let id=document.getElementById('pId').value||Date.now().toString(); let prod={id, name:document.getElementById('pName').value.trim(), category:document.getElementById('pCategory').value.trim()||'Grocery', price:parseFloat(document.getElementById('pPrice').value)||0, mrp:parseFloat(document.getElementById('pMrp').value)||0, stock:parseInt(document.getElementById('pStock').value)||0, unit:document.getElementById('pUnit').value.trim()||'1pc', disc:parseInt(document.getElementById('pDisc').value)||0, rating:parseFloat(document.getElementById('pRating').value)||4.5, highlight:document.getElementById('pHighlight').value||'', isAd:document.getElementById('pIsAd').checked, desc:document.getElementById('pDesc').value.trim(), image:document.getElementById('pImage').value.trim()||'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600', active:document.getElementById('pActive').checked?1:0}; if(!prod.name||!prod.price){alert('Name & Price'); return;} let idx=PRODUCTS.findIndex(p=>p.id==id); if(idx>=0) PRODUCTS[idx]=prod; else PRODUCTS.unshift(prod); saveAll(); renderProducts(); clearPForm();}
+function editProduct(id){let p=PRODUCTS.find(x=>x.id==id); if(!p) return; document.getElementById('pId').value=p.id; document.getElementById('pName').value=p.name; document.getElementById('pCategory').value=p.category; document.getElementById('pPrice').value=p.price; document.getElementById('pMrp').value=p.mrp; document.getElementById('pStock').value=p.stock; document.getElementById('pUnit').value=p.unit; document.getElementById('pDisc').value=p.disc; document.getElementById('pRating').value=p.rating; document.getElementById('pHighlight').value=p.highlight||''; document.getElementById('pIsAd').checked=!!p.isAd; document.getElementById('pDesc').value=p.desc||''; document.getElementById('pImage').value=p.image; document.getElementById('pActive').checked=!!p.active; let prev=document.getElementById('pPreview'); prev.src=p.image; prev.style.display='block'; goTab('products',null,document.querySelector(`.bNavItem[onclick*="'products'"]`));}
+function deleteProduct(id){if(!confirm('Delete?')) return; PRODUCTS=PRODUCTS.filter(p=>p.id!=id); saveAll(); renderProducts();}
+function renderBanner(){document.getElementById('sLogo').value=SETTINGS.logo||'DK'; document.getElementById('sAppName').value=SETTINGS.appName||''; document.getElementById('sBTitle').value=SETTINGS.bannerTitle||''; document.getElementById('sBSub').value=SETTINGS.bannerSub||''; document.getElementById('sBImage').value=SETTINGS.bannerImage||''; document.getElementById('sBBg').value=SETTINGS.bannerBg||''; let prev=document.getElementById('bPreview'); if(SETTINGS.bannerImage){prev.src=SETTINGS.bannerImage; prev.style.display='block';} renderBannerPreview();}
+function renderBannerPreview(){let t=document.getElementById('sBTitle')?.value||'🍊 Orange Fast Delivery 30 Min'; let s=document.getElementById('sBSub')?.value||'27 Areas'; let bg=document.getElementById('sBBg')?.value||'linear-gradient(135deg,#FF6B00,#101010)'; let el=document.getElementById('bannerPreview'); if(el){el.innerHTML=t+'<br><span style="font-size:11px;opacity:.9">'+s+'</span>'; el.style.background=bg;}}
+function saveBanner(){SETTINGS.logo=document.getElementById('sLogo').value.trim()||'DK'; SETTINGS.appName=document.getElementById('sAppName').value.trim()||'DailyKart'; SETTINGS.bannerTitle=document.getElementById('sBTitle').value.trim(); SETTINGS.bannerSub=document.getElementById('sBSub').value.trim(); SETTINGS.bannerImage=document.getElementById('sBImage').value.trim(); SETTINGS.bannerBg=document.getElementById('sBBg').value.trim(); saveAll(); alert('Saved');}
+function renderCustomers(){let map={}; ORDERS.forEach(o=>{let key=o.customer?.phone||o.customer?.name; if(!key) return; if(!map[key]) map[key]={name:o.customer?.name,phone:o.customer?.phone,orders:0,total:0}; map[key].orders++; map[key].total+=o.grandTotal||0;}); let arr=Object.values(map); document.getElementById('customerList').innerHTML=arr.map(c=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--border);font-size:11px"><span><b>${c.name}</b> ${c.phone}<br>${c.orders} orders | Rs ${c.total}</span></div>`).join('')||'<p style="font-size:11px;color:var(--text2)">No customers</p>';}
+function renderCoupons(){document.getElementById('couponList').innerHTML=COUPONS.map((c,i)=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--border);font-size:11px"><span><b>${c.code}</b> ${c.disc}%</span><button class="btn btn-d" style="padding:4px 8px" onclick="delCoupon(${i})">X</button></div>`).join('');}
+function addCoupon(){let code=document.getElementById('cCode').value.trim().toUpperCase(); let disc=parseInt(document.getElementById('cDisc').value)||0; if(!code||!disc){alert('Enter'); return;} COUPONS.push({code,disc,min:249}); saveAll(); renderCoupons();}
+function delCoupon(i){COUPONS.splice(i,1); saveAll(); renderCoupons();}
+function renderWa(){document.getElementById('waList').innerHTML=(SETTINGS.waNumbers||[]).map((n,i)=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--border);font-size:11px"><span>📱 ${n}</span><button class="btn btn-d" style="padding:4px 8px" onclick="delWa(${i})">X</button></div>`).join(''); document.getElementById('waTpl').value=SETTINGS.waTemplate||'';}
+function addWa(){let num=document.getElementById('waNumber').value.trim().replace(/[^0-9]/g,''); if(num.length<10){alert('10 digit'); return;} SETTINGS.waNumbers=SETTINGS.waNumbers||[]; SETTINGS.waNumbers.push(num); saveAll(); renderWa();}
+function delWa(i){SETTINGS.waNumbers.splice(i,1); saveAll(); renderWa();}
+function saveWaTpl(){SETTINGS.waTemplate=document.getElementById('waTpl').value.trim(); saveAll(); alert('Saved');}
+function renderStaff(){document.getElementById('staffList').innerHTML=STAFF.map((s,i)=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--border);font-size:11px"><span><b>${s.name}</b> ${s.phone} PIN ${s.pin}<br>${s.role||''}</span><button class="btn btn-d" style="padding:4px 8px" onclick="delStaff(${i})">X</button></div>`).join('')||'<p style="font-size:11px;color:var(--text2)">No staff</p>';}
+function addStaff(){let name=document.getElementById('staffName').value.trim(); let phone=document.getElementById('staffPhone').value.trim(); let pin=document.getElementById('staffPinInput').value.trim(); let role=document.getElementById('staffRole').value.trim()||'Manager'; if(!name||!pin){alert('Name & PIN'); return;} STAFF.push({id:Date.now().toString(),name,phone,pin,role,active:true}); saveAll(); renderStaff(); renderStaffSelect(); document.getElementById('staffName').value=''; document.getElementById('staffPhone').value=''; document.getElementById('staffPinInput').value='';}
+function delStaff(i){if(!confirm('Delete?')) return; STAFF.splice(i,1); saveAll(); renderStaff(); renderStaffSelect();}
+function renderRiders(){document.getElementById('riderList').innerHTML=RIDERS.map((r,i)=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--border);font-size:11px"><span><b>${r.name}</b> ${r.phone} PIN ${r.pin}<br>${r.vehicle||'Bike'} | Orders ${ORDERS.filter(o=>o.riderId==r.id).length}</span><button class="btn btn-d" style="padding:4px 8px" onclick="delRider(${i})">X</button></div>`).join('')||'<p style="font-size:11px;color:var(--text2)">No riders</p>';}
+function addRider(){let name=document.getElementById('riderName').value.trim(); let phone=document.getElementById('riderPhone').value.trim(); let pin=document.getElementById('riderPinInput').value.trim(); let vehicle=document.getElementById('riderVehicle').value.trim()||'Bike'; if(!name||!pin){alert('Name & PIN'); return;} RIDERS.push({id:Date.now().toString(),name,phone,pin,vehicle,active:true}); saveAll(); renderRiders(); renderRiderSelect(); document.getElementById('riderName').value=''; document.getElementById('riderPhone').value=''; document.getElementById('riderPinInput').value='';}
+function delRider(i){if(!confirm('Delete?')) return; RIDERS.splice(i,1); saveAll(); renderRiders(); renderRiderSelect();}
+function saveSettings2(){SETTINGS.minOrder=parseInt(document.getElementById('setMin').value)||249; SETTINGS.upi=document.getElementById('setUpi').value.trim(); SETTINGS.supportPhone=document.getElementById('setPhone').value.trim(); SETTINGS.estimateMin=parseInt(document.getElementById('setEstimate').value)||30; SETTINGS.maintenance=document.getElementById('setMaint').checked; saveAll(); alert('Saved');}
+function saveVault(){let vault={githubRepo:document.getElementById('vGithubRepo').value.trim(),githubToken:document.getElementById('vGithubToken').value.trim(),firebase:document.getElementById('vFirebase').value.trim(),payKey:document.getElementById('vPayKey').value.trim(),sdk:document.getElementById('vSdk').value.trim()}; localStorage.setItem('dk_admin_vault',JSON.stringify(vault)); alert('Vault Saved - Hide');}
+function toggleEye(id){let el=document.getElementById(id); el.type=el.type=='password'?'text':'password';}
+function exportAll(){let data={products:PRODUCTS,settings:SETTINGS,orders:ORDERS,coupons:COUPONS,areas:AREAS,staff:STAFF,riders:RIDERS,exported:new Date().toISOString()}; let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); let url=URL.createObjectURL(blob); let a=document.createElement('a'); a.href=url; a.download='dailykart-'+Date.now()+'.json'; a.click();}
+function importAll(input){let file=input.files[0]; if(!file) return; let r=new FileReader(); r.onload=function(e){try{let d=JSON.parse(e.target.result); if(d.products) PRODUCTS=d.products; if(d.settings) SETTINGS=d.settings; if(d.orders) ORDERS=d.orders; if(d.coupons) COUPONS=d.coupons; if(d.areas) AREAS=d.areas; if(d.staff) STAFF=d.staff; if(d.riders) RIDERS=d.riders; saveAll(); alert('Imported'); location.reload();}catch(err){alert('Invalid');}}; r.readAsText(file);}
+function logout(){if(NOTIF_INTERVAL) clearInterval(NOTIF_INTERVAL); CURRENT_ROLE=null; CURRENT_USER=null; document.getElementById('loginScreen').style.display='flex';}
+function toggleDark(){document.body.classList.toggle('dark');}
+
+loadAll();
+let dark=localStorage.getItem('dk_admin_dark'); if(dark=='1') document.body.classList.add('dark');
 </script>
 </body>
 </html>
