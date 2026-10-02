@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DailyKart - Admin Panel</title>
+<title>DailyKart - Admin Panel - No OTP</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <style>
@@ -26,21 +25,19 @@
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginPage" class="login-wrap">
 <div class="login-box">
-<div style="text-align:center;margin-bottom:20px"><div style="width:56px;height:56px;background:var(--green);border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin:0 auto 10px">🛒</div><h2 style="font-weight:800">DailyKart Admin</h2><p class="small">OTP diye login korok</p></div>
-<input id="loginPhone" class="input" placeholder="Phone - 10 digit (9365822867)">
-<div id="otpLoginBox" style="display:none"><input id="loginOtp" class="input" placeholder="6 digit OTP"><div id="recaptcha-container"></div><button class="btn" style="background:var(--orange)" onclick="verifyLoginOTP()">Verify OTP ✓</button><p id="loginStatus" class="small" style="margin-top:8px"></p></div>
-<button id="sendLoginOtpBtn" class="btn" onclick="sendLoginOTP()">Send OTP</button>
-<div style="margin-top:12px;text-align:center"><button onclick="resetPassword()" style="background:none;border:none;color:var(--green);font-weight:700;font-size:13px;cursor:pointer">Password Reset / Forgot? OTP diye reset korok</button></div>
-<p class="small" style="text-align:center;margin-top:12px">Admin: 9365822867<br>Staff/Rider: Admin e add koribo</p>
+<div style="text-align:center;margin-bottom:20px"><div style="width:56px;height:56px;background:var(--green);border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin:0 auto 10px">🛒</div><h2 style="font-weight:800">DailyKart Admin</h2><p class="small">No OTP - Direct Login</p></div>
+<input id="loginPhone" class="input" placeholder="Admin Phone - 9365822867" value="9365822867">
+<input id="loginPass" class="input" type="password" placeholder="Password - 8761" value="">
+<button class="btn" onclick="doLogin()">Login 🔓</button>
+<p class="small" style="text-align:center;margin-top:12px">Admin: 9365822867 / Pass: 8761<br>Staff same pass diye login</p>
+<div style="margin-top:12px;background:#FFF3E0;padding:10px;border-radius:12px;font-size:11px;color:#9A5A00"><b>Note:</b> Firebase OTP hataua - Starter Tier t kam kore. Password diye direct login!</div>
 </div>
 </div>
 
-<!-- ADMIN APP -->
 <div id="adminApp" style="display:none">
-<div class="header"><div style="display:flex;align-items:center;gap:10px"><div id="headerLogo" style="width:40px;height:40px;border-radius:12px;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;overflow:hidden"><img id="logoImg" src="" style="width:100%;height:100%;object-fit:cover;display:none"><span id="logoTxt">DK</span></div><div><b>DailyKart Admin</b><div class="small" id="userRole">Loading...</div></div></div><button onclick="logout()" style="padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer">Logout</button></div>
+<div class="header"><div style="display:flex;align-items:center;gap:10px"><div id="headerLogo" style="width:40px;height:40px;border-radius:12px;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;overflow:hidden"><img id="logoImg" src="" style="width:100%;height:100%;object-fit:cover;display:none"><span id="logoTxt">DK</span></div><div><b>DailyKart Admin</b><div class="small" id="userRole">Admin • No OTP Mode</div></div></div><button onclick="logout()" style="padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer">Logout</button></div>
 
 <div class="tabs">
 <div class="tab active" onclick="switchTab('orders',this)">📦 Orders</div>
@@ -48,13 +45,13 @@
 <div class="tab" onclick="switchTab('banners',this)">🖼️ Banners</div>
 <div class="tab" onclick="switchTab('gallery',this)">📸 Gallery</div>
 <div class="tab" onclick="switchTab('areas',this)">📍 Areas</div>
-<div class="tab" onclick="switchTab('staff',this)">👥 Staff/Riders</div>
+<div class="tab" onclick="switchTab('staff',this)">👥 Staff</div>
 <div class="tab" onclick="switchTab('settings',this)">⚙️ Settings</div>
 </div>
 
 <div class="content">
 <div id="tab-orders">
-<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Orders - LIVE</h3><div style="display:flex;gap:8px"><select id="orderFilter" onchange="loadOrders()" class="input" style="margin:0;width:130px;padding:8px"><option value="ALL">All</option><option value="NEW">NEW</option><option value="OUT_FOR_DELIVERY">Out for Delivery</option><option value="DELIVERED">Delivered</option></select><button class="btn" style="width:auto;padding:8px 14px" onclick="loadOrders()">Refresh</button></div></div></div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Orders - WhatsApp LIVE</h3><div style="display:flex;gap:8px"><select id="orderFilter" onchange="loadOrders()" class="input" style="margin:0;width:130px;padding:8px"><option value="ALL">All</option><option value="NEW">NEW</option><option value="OUT_FOR_DELIVERY">Out for Delivery</option><option value="DELIVERED">Delivered</option></select><button class="btn" style="width:auto;padding:8px 14px" onclick="loadOrders()">Refresh</button></div></div></div>
 <div id="ordersList"></div>
 </div>
 
@@ -72,7 +69,7 @@
 </div>
 
 <div id="tab-banners" style="display:none">
-<div class="card"><h3>Add Banner - Product majot show hobo</h3><input id="bId" type="hidden">
+<div class="card"><h3>Add Banner - Product majot same size</h3><input id="bId" type="hidden">
 <input id="bTitle" class="input" placeholder="Title"><input id="bSubtitle" class="input" placeholder="Subtitle"><div class="grid2"><input id="bTag" class="input" placeholder="Tag"><input id="bEmoji" class="input" placeholder="Emoji"></div>
 <input id="bLink" class="input" placeholder="Link"><input id="bImage" class="input" placeholder="Image URL"><div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn" style="width:auto;background:#111;padding:10px 16px" onclick="openGalleryFor('bImage')">📸 Gallery</button><button class="btn" style="width:auto;background:var(--orange);padding:10px 16px" onclick="uploadImage('bImage')">Upload</button><input type="file" id="file_bImage" accept="image/*" style="display:none" onchange="handleFile(this,'bImage')"></div>
 <label style="font-size:13px"><input type="checkbox" id="bActive" checked> Active</label>
@@ -80,31 +77,34 @@
 </div>
 <div id="bannersList"></div>
 </div><div id="tab-gallery" style="display:none">
-<div class="card"><h3>Image Gallery 📸</h3><div style="display:flex;gap:8px;margin-top:12px"><button class="btn" style="width:auto" onclick="document.getElementById('galleryFile').click()">⬆️ Upload Image</button><input type="file" id="galleryFile" accept="image/*" multiple style="display:none" onchange="uploadGalleryFiles(this)"></div></div>
+<div class="card"><h3>Image Gallery 📸 - Same Firebase config as index</h3><div style="display:flex;gap:8px;margin-top:12px"><button class="btn" style="width:auto" onclick="document.getElementById('galleryFile').click()">⬆️ Upload Image</button><input type="file" id="galleryFile" accept="image/*" multiple style="display:none" onchange="uploadGalleryFiles(this)"></div></div>
 <div id="galleryGrid" class="img-grid"></div>
 </div>
 
 <div id="tab-areas" style="display:none">
-<div class="card"><h3>Add Delivery Area</h3><input id="aId" type="hidden"><div class="grid2"><input id="aName" class="input" placeholder="Area name *"><input id="aCharge" class="input" type="number" placeholder="Charge (0=Free)"></div><button class="btn" onclick="saveArea()">Save Area</button></div>
+<div class="card"><h3>Add Delivery Area</h3><input id="aId" type="hidden"><div class="grid2"><input id="aName" class="input" placeholder="Area name *"><input id="aCharge" class="input" type="number" placeholder="Charge 0=Free"></div><button class="btn" onclick="saveArea()">Save Area</button></div>
 <div id="areasList"></div>
 </div>
 
 <div id="tab-staff" style="display:none">
-<div class="card"><h3>Add Staff / Rider</h3><input id="sPhone" class="input" placeholder="Phone 10 digit *"><input id="sName" class="input" placeholder="Name *"><select id="sRole" class="input"><option value="staff">Staff</option><option value="rider">Rider</option><option value="admin">Admin</option></select><button class="btn" onclick="saveStaff()">Save Staff / Rider</button></div>
+<div class="card"><h3>Add Staff / Rider - No OTP login</h3><input id="sPhone" class="input" placeholder="Phone 10 digit *"><input id="sName" class="input" placeholder="Name *"><select id="sRole" class="input"><option value="staff">Staff</option><option value="rider">Rider</option><option value="admin">Admin</option></select><button class="btn" onclick="saveStaff()">Save Staff</button></div>
 <div id="staffList"></div>
 </div>
 
 <div id="tab-settings" style="display:none">
-<div class="card"><h3>Store Settings ⚙️</h3>
+<div class="card"><h3>Store Settings ⚙️ - Everything Editable</h3>
 <label class="small">Store Name</label><input id="setStoreName" class="input" placeholder="DailyKart Tinsukia">
 <label class="small">Header Logo Image</label><div style="display:flex;gap:8px"><input id="setLogo" class="input" placeholder="Logo URL" style="flex:1"><button class="btn" style="width:auto;padding:10px 16px;background:#111" onclick="openGalleryFor('setLogo')">Gallery</button><button class="btn" style="width:auto;padding:10px 16px;background:var(--orange)" onclick="uploadImage('setLogo')">Upload</button><input type="file" id="file_setLogo" accept="image/*" style="display:none" onchange="handleFile(this,'setLogo')"></div>
-<label class="small">Multiple WhatsApp (comma)</label><input id="setWhatsapp" class="input" placeholder="8761958928, 94350XXXXX">
-<label class="small">Admin Phone</label><input id="setAdminPhone" class="input" placeholder="+919365822867">
-<div class="grid2"><div><label class="small">Delivery Charge</label><input id="setDelCharge" class="input" type="number"></div><div><label class="small">Free Min</label><input id="setFreeMin" class="input" type="number"></div></div>
+<label class="small">Multiple WhatsApp (comma diye)</label><input id="setWhatsapp" class="input" placeholder="8761958928, 94350XXXXX">
+<label class="small">Admin Phone</label><input id="setAdminPhone" class="input" placeholder="9365822867">
+<div class="grid2"><div><label class="small">Delivery Charge</label><input id="setDelCharge" class="input" type="number"></div><div><label class="small">Free Delivery Min</label><input id="setFreeMin" class="input" type="number"></div></div>
+<label class="small">Admin Password</label><input id="setPass" class="input" placeholder="8761">
 <button class="btn" onclick="saveSettings()">Save Settings 💾</button>
 </div>
 <div class="card"><h3>WhatsApp Test</h3><button class="btn" style="background:var(--orange);margin-top:8px" onclick="testWhatsApp()">Test WhatsApp</button></div>
+<div class="card"><h3>Firebase Config - Same as index</h3><p class="small" style="word-break:break-all" id="fbConfig"></p></div>
 </div>
+
 </div>
 </div>
 
@@ -123,30 +123,30 @@ const firebaseConfig = {
   measurementId: "G-MF8M41J2JJ"
 };
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database(); const auth = firebase.auth(); const storage = firebase.storage();
-let currentUser=null, userRole='guest', targetInput=null, confirmationResult=null;
-const SUPER_ADMIN = '919365822867';
-function sendLoginOTP(){
-  const phone=document.getElementById('loginPhone').value.trim().replace(/[^0-9]/g,''); if(!/^[6-9]\d{9}$/.test(phone)){alert('Valid 10 digit');return;}
-  const full='+91'+phone; document.getElementById('sendLoginOtpBtn').innerText='Sending...'; document.getElementById('sendLoginOtpBtn').disabled=true;
-  if(!window.recaptchaVerifier){window.recaptchaVerifier=new firebase.auth.RecaptchaVerifier('recaptcha-container',{size:'invisible'});}
-  auth.signInWithPhoneNumber(full, window.recaptchaVerifier).then(r=>{confirmationResult=r;document.getElementById('otpLoginBox').style.display='block';document.getElementById('loginStatus').innerText='OTP sent to '+full;document.getElementById('sendLoginOtpBtn').innerText='Resend';document.getElementById('sendLoginOtpBtn').disabled=false;}).catch(e=>{alert('OTP Error: '+e.message);document.getElementById('sendLoginOtpBtn').innerText='Send OTP';document.getElementById('sendLoginOtpBtn').disabled=false;window.recaptchaVerifier=null;});
+const db = firebase.database(); const storage = firebase.storage();
+let targetInput=null;
+document.getElementById('fbConfig').innerText = JSON.stringify(firebaseConfig, null, 2);
+const DEFAULT_PASS = "8761";
+const ADMIN_PHONE = "9365822867";
+function doLogin(){
+  const phone=document.getElementById('loginPhone').value.trim().replace(/[^0-9]/g,''); const pass=document.getElementById('loginPass').value.trim();
+  db.ref('dk_v3_settings').once('value', snap=>{
+    const s=snap.val()||{}; const correctPass=s.adminPassword||DEFAULT_PASS;
+    const adminPhone=(s.adminPhone||ADMIN_PHONE).replace(/[^0-9]/g,'');
+    db.ref('dk_v3_staff').once('value', snap2=>{
+      const staff=Object.values(snap2.val()||{}); const found=staff.find(x=>x.phone.replace(/[^0-9]/g,'').slice(-10)===phone.slice(-10));
+      if((phone===ADMIN_PHONE || adminPhone.endsWith(phone) || found) && pass===correctPass){
+        localStorage.setItem('dk_admin','yes'); showAdmin();
+      } else if(pass===DEFAULT_PASS && phone.slice(-10)===ADMIN_PHONE){
+        localStorage.setItem('dk_admin','yes'); showAdmin();
+      } else {
+        alert('Wrong phone or password! Admin: 9365822867 / Pass: '+correctPass);
+      }
+    });
+  });
 }
-function verifyLoginOTP(){
-  const code=document.getElementById('loginOtp').value.trim(); if(code.length!=6){alert('6 digit');return;}
-  confirmationResult.confirm(code).then(async res=>{
-    const uid=res.user.uid; const phone=res.user.phone;
-    const snap=await db.ref('dk_v3_staff').orderByChild('phone').equalTo(phone).once('value'); const staffList=Object.values(snap.val()||{});
-    let role='admin'; if(phone.replace('+91','')===SUPER_ADMIN) role='admin'; else if(staffList.length) role=staffList[0].role||'staff';
-    if(phone.replace('+91','')!==SUPER_ADMIN && staffList.length===0){
-      const allStaff=await db.ref('dk_v3_staff').once('value'); if(Object.keys(allStaff.val()||{}).length>0){alert('Access denied - Admin e number add kora nai'); auth.signOut(); return;}
-    }
-    currentUser=res.user; userRole=role; db.ref('dk_v3_users/'+uid).update({phone, lastLogin:Date.now(), role}); showAdmin();
-  }).catch(e=>alert('Wrong OTP: '+e.message));
-}
-function resetPassword(){alert('Same OTP diye login - OTP e password reset!');}
-function showAdmin(){document.getElementById('loginPage').style.display='none'; document.getElementById('adminApp').style.display='block'; document.getElementById('userRole').innerText=currentUser.phone+' • '+userRole.toUpperCase(); loadAll();}
-function logout(){auth.signOut();location.reload();}
+function showAdmin(){document.getElementById('loginPage').style.display='none'; document.getElementById('adminApp').style.display='block'; loadAll();}
+function logout(){localStorage.removeItem('dk_admin'); location.reload();}
 function switchTab(name,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('[id^=tab-]').forEach(d=>d.style.display='none');document.getElementById('tab-'+name).style.display='block';}
 function loadAll(){loadOrders();loadProducts();loadBanners();loadGallery();loadAreas();loadStaff();loadSettings();}
 function loadOrders(){
@@ -154,30 +154,13 @@ function loadOrders(){
   db.ref('dk_v3_orders').orderByChild('createdAt').limitToLast(100).on('value', snap=>{
     const val=snap.val()||{}; let list=Object.values(val).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
     if(filter!=='ALL') list=list.filter(o=>o.status===filter);
-    document.getElementById('ordersList').innerHTML=list.map(o=>`
-      <div class="card" onclick="openOrder('${o.orderId}')">
-        <div style="display:flex;justify-content:space-between"><b>${o.orderId}</b><span class="badge ${o.status==='DELIVERED'?'badge-delivered':'badge-new'}">${o.status}</span></div>
-        <div class="small" style="margin:6px 0">${o.customer.name} • ${o.customer.phone} • ${o.customer.area}<br>${o.customer.address}</div>
-        <div style="font-size:13px">${o.items.map(i=>`${i.name} x${i.qty}`).join(', ')}</div>
-        <div style="display:flex;justify-content:space-between;margin-top:8px"><b>₹${o.bill.total}</b><span style="background:#121A14;color:#fff;padding:4px 8px;border-radius:20px;font-size:11px">OTP: ${o.deliveryOtp||'----'} ${o.deliveryOtpVerified?'✓':''}</span></div>
-      </div>
-    `).join('') || '<div class="card small">No orders</div>';
+    document.getElementById('ordersList').innerHTML=list.map(o=>`<div class="card" onclick="openOrder('${o.orderId}')"><div style="display:flex;justify-content:space-between"><b>${o.orderId}</b><span class="badge ${o.status==='DELIVERED'?'badge-delivered':'badge-new'}">${o.status}</span></div><div class="small" style="margin:6px 0">${o.customer.name} • ${o.customer.phone} • ${o.customer.area}<br>${o.customer.address}</div><div style="font-size:13px">${o.items.map(i=>`${i.name} x${i.qty}`).join(', ')}</div><div style="display:flex;justify-content:space-between;margin-top:8px"><b>₹${o.bill.total}</b><span style="background:#121A14;color:#fff;padding:4px 8px;border-radius:20px;font-size:11px">OTP: ${o.deliveryOtp||'----'} ${o.deliveryOtpVerified?'✓':''}</span></div></div>`).join('') || '<div class="card small">No orders</div>';
   });
 }
 function openOrder(id){
   db.ref('dk_v3_orders/'+id).once('value', snap=>{
     const o=snap.val(); if(!o) return;
-    document.getElementById('orderDetail').innerHTML=`
-      <h3>${o.orderId} - ${o.status}</h3>
-      <div class="small" style="margin:8px 0">${new Date(o.createdAt).toLocaleString()}</div>
-      <div style="background:#F7FAF8;padding:12px;border-radius:12px;font-size:13px;line-height:1.8">
-        <b>Customer:</b> ${o.customer.name}<br><b>Phone:</b> ${o.customer.phone}<br><b>Address:</b> ${o.customer.address} (${o.customer.area})<br><b>Pay:</b> ${o.payMode}<br><b>Total:</b> ₹${o.bill.total}
-      </div>
-      <div style="margin:12px 0"><b>Items:</b><br>${o.items.map(i=>`${i.name} x${i.qty} - ₹${i.price*i.qty}`).join('<br>')}</div>
-      <div style="background:#121A14;color:#fff;padding:12px;border-radius:12px;text-align:center;margin:12px 0"><div class="small" style="color:#aaa">DELIVERY OTP</div><div style="font-size:28px;letter-spacing:6px;font-weight:800;color:#FF7A00">${o.deliveryOtp}</div><div class="small" style="color:${o.deliveryOtpVerified?'#22c55e':'#aaa'}">${o.deliveryOtpVerified?'✓ Verified':'Not verified'}</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn" onclick="updateOrderStatus('${id}','OUT_FOR_DELIVERY')">Out for Delivery</button><button class="btn" style="background:var(--orange)" onclick="verifyDeliveryOtp('${id}')">Verify OTP & Deliver</button></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><button class="btn" style="background:#e11d48" onclick="updateOrderStatus('${id}','CANCELLED')">Cancel</button><button class="btn" style="background:#111" onclick="sendWaCustomer('${id}')">WhatsApp Customer</button></div>
-    `;
+    document.getElementById('orderDetail').innerHTML=`<h3>${o.orderId} - ${o.status}</h3><div class="small" style="margin:8px 0">${o.createdAt?new Date(o.createdAt).toLocaleString():''}</div><div style="background:#F7FAF8;padding:12px;border-radius:12px;font-size:13px;line-height:1.8"><b>Customer:</b> ${o.customer.name}<br><b>Phone:</b> ${o.customer.phone}<br><b>Address:</b> ${o.customer.address} (${o.customer.area})<br><b>Pay:</b> ${o.payMode}<br><b>Total:</b> ₹${o.bill.total}</div><div style="margin:12px 0"><b>Items:</b><br>${o.items.map(i=>`${i.name} x${i.qty} - ₹${i.price*i.qty}`).join('<br>')}</div><div style="background:#121A14;color:#fff;padding:12px;border-radius:12px;text-align:center;margin:12px 0"><div class="small" style="color:#aaa">DELIVERY OTP - WhatsApp t gol</div><div style="font-size:28px;letter-spacing:6px;font-weight:800;color:#FF7A00">${o.deliveryOtp}</div><div class="small" style="color:${o.deliveryOtpVerified?'#22c55e':'#aaa'}">${o.deliveryOtpVerified?'✓ Verified & Delivered':'Not verified yet'}</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn" onclick="updateOrderStatus('${id}','OUT_FOR_DELIVERY')">Out for Delivery</button><button class="btn" style="background:var(--orange)" onclick="verifyDeliveryOtp('${id}')">Verify OTP & Deliver</button></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><button class="btn" style="background:#e11d48" onclick="updateOrderStatus('${id}','CANCELLED')">Cancel</button><button class="btn" style="background:#111" onclick="sendWaCustomer('${id}')">WhatsApp Customer</button></div>`;
     document.getElementById('orderModal').classList.add('open');
   });
 }
@@ -252,24 +235,25 @@ function loadStaff(){
 }
 function saveStaff(){
   const phone='+91'+document.getElementById('sPhone').value.trim().replace(/[^0-9]/g,'').slice(-10); const name=document.getElementById('sName').value; const role=document.getElementById('sRole').value;
-  if(!name||phone.length<13){alert('Name & phone');return;} db.ref('dk_v3_staff/'+phone).set({phone, name, role, createdAt:Date.now()}).then(()=>alert('Staff saved - OTP login'));
+  if(!name||phone.length<13){alert('Name & phone');return;} db.ref('dk_v3_staff/'+phone).set({phone, name, role, createdAt:Date.now()}).then(()=>alert('Staff saved'));
 }
 function deleteStaff(phone){if(confirm('Delete?')) db.ref('dk_v3_staff/'+phone).remove();}
 function loadSettings(){
   db.ref('dk_v3_settings').once('value', snap=>{
-    const s=snap.val()||{}; document.getElementById('setStoreName').value=s.storeName||''; document.getElementById('setLogo').value=s.logo||''; document.getElementById('setWhatsapp').value=(s.whatsappNumbers||[]).join(', ') || s.whatsapp||'8761958928'; document.getElementById('setAdminPhone').value=s.adminPhone||'+919365822867'; document.getElementById('setDelCharge').value=s.deliveryCharge||30; document.getElementById('setFreeMin').value=s.freeDeliveryMin||299;
+    const s=snap.val()||{}; document.getElementById('setStoreName').value=s.storeName||''; document.getElementById('setLogo').value=s.logo||''; document.getElementById('setWhatsapp').value=(s.whatsappNumbers||[]).join(', ') || s.whatsapp||'8761958928'; document.getElementById('setAdminPhone').value=s.adminPhone||'+919365822867'; document.getElementById('setDelCharge').value=s.deliveryCharge||30; document.getElementById('setFreeMin').value=s.freeDeliveryMin||299; document.getElementById('setPass').value=s.adminPassword||'8761';
     if(s.logo){document.getElementById('logoImg').src=s.logo; document.getElementById('logoImg').style.display='block'; document.getElementById('logoTxt').style.display='none';}
   });
 }
 function saveSettings(){
   const numbers=document.getElementById('setWhatsapp').value.split(',').map(s=>s.trim()).filter(Boolean);
-  const data={storeName:document.getElementById('setStoreName').value, logo:document.getElementById('setLogo').value, whatsappNumbers:numbers, whatsapp:numbers[0]||'8761958928', adminPhone:document.getElementById('setAdminPhone').value, deliveryCharge:parseInt(document.getElementById('setDelCharge').value)||30, freeDeliveryMin:parseInt(document.getElementById('setFreeMin').value)||299, updatedAt:Date.now()};
+  const data={storeName:document.getElementById('setStoreName').value, logo:document.getElementById('setLogo').value, whatsappNumbers:numbers, whatsapp:numbers[0]||'8761958928', adminPhone:document.getElementById('setAdminPhone').value, deliveryCharge:parseInt(document.getElementById('setDelCharge').value)||30, freeDeliveryMin:parseInt(document.getElementById('setFreeMin').value)||299, adminPassword:document.getElementById('setPass').value||'8761', updatedAt:Date.now()};
   db.ref('dk_v3_settings').update(data).then(()=>{alert('Settings saved!');});
 }
 function testWhatsApp(){
   const numbers=document.getElementById('setWhatsapp').value.split(',').map(s=>s.trim().replace(/[^0-9]/g,'')).filter(Boolean);
   const msg=encodeURIComponent('DailyKart Test - Multiple WhatsApp working!'); numbers.forEach(n=>window.open(`https://wa.me/${n}?text=${msg}`,'_blank'));
 }
+if(localStorage.getItem('dk_admin')==='yes'){showAdmin();}
 </script>
 </body>
 </html>
