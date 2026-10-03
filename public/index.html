@@ -180,6 +180,6 @@ function closeModal(id){document.getElementById(id).style.display='none';}
 function toggleDark(){IS_DARK=!IS_DARK; document.body.classList.toggle('dark',IS_DARK); localStorage.setItem('dk_dark',IS_DARK?'1':'0'); document.getElementById('themeBtn').innerText=IS_DARK?'☀️':'🌙';}
 function startVoice(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){alert('Voice not supported'); return;} let rec=new SR(); rec.lang='en-IN'; rec.onresult=function(e){let txt=e.results[0][0].transcript; document.getElementById('search').value=txt; renderProducts();}; rec.start();}
 window.onload=function(){loadAll(); syncAdmin(); renderCats(); renderProducts(); updateCartCount();let dark=localStorage.getItem('dk_dark'); if(dark=='1'){IS_DARK=true; document.body.classList.add('dark'); document.getElementById('themeBtn').innerText='☀️';}};
-</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}</script></script>
 </body>
 </html>
