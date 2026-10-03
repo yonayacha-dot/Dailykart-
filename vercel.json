@@ -1,14 +1,7 @@
 {
   "version": 2,
-  "builds": [{ "src": "server.js", "use": "@vercel/node" }],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "server.js" },
-    { "src": "/(.*)", "dest": "server.js" }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, s-maxage=120, stale-while-revalidate=300" }]
-    }
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/$1" }
   ]
 }
