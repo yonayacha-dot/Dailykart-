@@ -220,13 +220,10 @@ function selectSavedAddr(i){
   selectedArea = a.area;
   document.getElementById('custAddress').value = a.fullAddr;
   document.getElementById('custName').value = a.name||document.getElementById('custName').value;
-  // Highlight area
   document.querySelectorAll('#areaBox.area').forEach(el=>{
-    if(el.innerText.includes(a.area)) el.classList.add('selected');
+    if(el.textContent.includes(a.area)) el.classList.add('selected');
     else el.classList.remove('selected');
   });
-  // Also select area grid
-  document.querySelectorAll('#areaBox.area').forEach(el=>{if(el.textContent.trim().startsWith(a.area)) el.classList.add('selected');});
 }
 
 function addToCart(id){const p=products.find(x=>x.id==id);if((p.stock||0)==0)return;cart[id]={...p,qty:(cart[id]?.qty||0)+1};syncAll();saveLocal();}
@@ -266,15 +263,12 @@ async function placeOrder(){
   const items=Object.values(cart).map(p=>({id:p.id,name:p.name,qty:p.qty,price:p.price}));
   if(items.length==0){alert('Cart empty - Buy button click korok');return;}
 
-  // WhatsApp numbers: default + all admin added
   let waList = [];
   if(settings.waAdmins && settings.waAdmins.length) waList = settings.waAdmins.map(w=>w.number||w);
   if(settings.whatsappNumbers && settings.whatsappNumbers.length) waList = [...waList,...settings.whatsappNumbers];
   if(settings.whatsapp) waList.push(settings.whatsapp);
   waList.push(DEFAULT_WA);
-  // Normalize
   waList = [...new Set(waList.flatMap(s=>s.toString().split(',')).map(s=>s.trim().replace(/[^0-9]/g,'')).filter(Boolean))];
-  // Ensure default always
   if(!waList.includes(DEFAULT_WA)) waList.unshift(DEFAULT_WA);
 
   const waWindows=waList.map(()=>window.open('about:blank','_blank'));
@@ -284,23 +278,15 @@ async function placeOrder(){
   try{
     await db.ref('dk_v3_orders').child(orderId).set(orderData);
     for(const p of items){db.ref('dk_v3_products/'+p.id+'/stock').transaction(c=>(c||0)-p.qty);}
-
-    // Save address for future
     const newAddr = {label: selectedArea, area: selectedArea, fullAddr: addr, name, phone};
     if(!savedAddrs.some(a=>a.fullAddr==addr)){savedAddrs.push(newAddr); localStorage.setItem('dk_saved_addrs', JSON.stringify(savedAddrs));}
     localStorage.setItem('dk_cust_name', name); localStorage.setItem('dk_cust_phone', phone); localStorage.setItem('dk_cust_addr', addr);
-
     const adminMsg=`*DailyKart NEW ORDER* 🛒%0A%0A🆔 *${orderId}*%0A👤 ${name} - +91${phone}%0A📍 ${addr} (${selectedArea})%0A💰 Total: ₹${bill.total} (${payMode})%0A🔐 *Delivery OTP: ${deliveryOtp}*%0A%0A📦 Items:%0A${items.map(i=>`• ${i.name} x${i.qty} - ₹${i.price*i.qty}`).join('%0A')}%0A%0A_Subtotal: ₹${bill.sub} | Del: ₹${bill.del}_`;
     waWindows.forEach((w,i)=>{if(w){try{w.location.href=`https://wa.me/${waList[i]}?text=${adminMsg}`;}catch(e){}}});
-
     const custMsg=`*DailyKart Order Confirmed!* ✅%0A%0A🆔 Order ID: *${orderId}*%0A🔐 *Delivery OTP: ${deliveryOtp}*%0A👋 Boy ke OTP dibo lagibo delivery r somoy.%0A💰 Total: ₹${bill.total} (${payMode})%0A📍 ${selectedArea}%0A%0A_30 min t delivery hobo! Countdown start!_`;
     window.open(`https://wa.me/91${phone}?text=${custMsg}`,'_blank');
-
     cart={};syncAll();saveLocal();closeCheckout();
-
-    // Show success with countdown
     showOrderSuccess(orderId, deliveryOtp, 30);
-
   }catch(e){alert('Order failed: '+e.message);waWindows.forEach(w=>{try{w.close();}catch{}});}finally{document.getElementById('placeOrderBtn').innerText='Place Order - BUY NOW 🟢';document.getElementById('placeOrderBtn').disabled=false;}
 }
 
@@ -340,14 +326,43 @@ function showOrderSuccess(orderId, otp, estimateMin){
   },1000);
 }
 
+// *** FIXED MY ORDERS LOGIC - DADA ***
+
 function openOrders(){
-  const phone=prompt('Aapunar phone 10 digit diok for orders + countdown:'); if(!phone) return;
-  loadOrders('+91'+phone.trim());
+  // FIX: Use saved phone first, ask only if not found
+  let savedPhone = localStorage.getItem('dk_cust_phone') || '';
+  let phoneInput = savedPhone;
+  if(!phoneInput){
+    phoneInput = prompt('Aapunar phone 10 digit diok for orders + countdown:');
+    if(!phoneInput) return;
+  }
+  // Clean number - last 10 digits
+  let clean = phoneInput.replace(/\D/g,'').slice(-10);
+  if(clean.length!== 10 ||!/^[6-9]\d{9}$/.test(clean)){
+    alert('Valid 10 digit phone diok Dada! Example: 8761958928');
+    // Ask again if invalid
+    phoneInput = prompt('Valid 10 digit diok:');
+    if(!phoneInput) return;
+    clean = phoneInput.replace(/\D/g,'').slice(-10);
+    if(clean.length!== 10) return;
+  }
+  localStorage.setItem('dk_cust_phone', clean);
+  document.getElementById('profileName').innerText = localStorage.getItem('dk_cust_name') || 'Customer';
+  document.getElementById('profilePhone').innerText = '+91 '+clean;
+  loadOrders('+91'+clean);
 }
+
 function loadOrders(phone){
+  document.getElementById('ordersBody').innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray)">Loading orders... ⏳<br><small>for '+phone+'</small></div>';
+  document.getElementById('ordersModal').classList.add('open');
+
   db.ref('dk_v3_orders').orderByChild('customer/phone').equalTo(phone).once('value',snap=>{
     const val=snap.val()||{};const list=Object.values(val).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    document.getElementById('ordersBody').innerHTML=list.length?list.map(o=>{
+    if(list.length===0){
+      document.getElementById('ordersBody').innerHTML = `<div style="text-align:center;padding:40px;color:var(--gray)">Order nai Dada 😔<br><br><div style="font-size:13px">Aapunar number: <b>${phone}</b><br>Eitu number di order korilehe dekhabe!<br><br><button class="btn-primary" onclick="closeOrders()">Continue Shopping 🛒</button><br><br><button onclick="changePhone()" style="padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:#fff">Change Number</button></div></div>`;
+      return;
+    }
+    document.getElementById('ordersBody').innerHTML=list.map(o=>{
       const created = o.createdAt? new Date(o.createdAt) : new Date();
       const now = new Date();
       const diffSec = Math.floor((now - created)/1000);
@@ -355,12 +370,20 @@ function loadOrders(phone){
       const remainingSec = Math.max(0, estSec - diffSec);
       const m = Math.floor(remainingSec/60); const s = remainingSec%60;
       return `<div style="border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:10px"><div style="display:flex;justify-content:space-between"><b>${o.orderId}</b><span style="background:var(--orange-light);color:var(--orange);padding:4px 8px;border-radius:20px;font-size:11px;font-weight:800">${o.status}</span></div><div style="font-size:12px;color:var(--gray);margin:6px 0">${o.createdAt?new Date(o.createdAt).toLocaleString():''} • ${o.customer.area}</div><div style="font-size:13px">${o.items.map(i=>`${i.name} x${i.qty}`).join(', ')}</div>
-      <div class="countdown-box" style="margin:10px 0;padding:12px"><div style="font-size:10px;opacity:0.7">ESTIMATE COUNTDOWN</div><div class="time" style="font-size:22px">${remainingSec>0?`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:'Delivered!'}</div><div style="background:rgba(255,255,255,0.2);height:4px;border-radius:100px;margin-top:8px"><div style="height:100%;background:var(--orange);width:${Math.max(0, remainingSec/estSec*100)}%"></div></div></div>
+      <div class="countdown-box" style="margin:10px 0;padding:12px"><div style="font-size:10px;opacity:0.7">ESTIMATE COUNTDOWN</div><div class="time" style="font-size:22px">${remainingSec>0?`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:'Delivered! 🎉'}</div><div style="background:rgba(255,255,255,0.2);height:4px;border-radius:100px;margin-top:8px"><div style="height:100%;background:var(--orange);width:${Math.max(0, remainingSec/estSec*100)}%"></div></div></div>
       <div class="otp-big" style="margin:8px 0;padding:10px">OTP <b>${o.deliveryOtp||'----'}</b><div style="font-size:11px;opacity:0.8">${o.deliveryOtpVerified?'✓ Delivered':'Show to delivery boy'}</div></div><div style="font-weight:800">₹${o.bill.total}</div></div>`;
-    }).join(''):'<div style="text-align:center;padding:40px;color:var(--gray)">Order nai</div>';
-    document.getElementById('ordersModal').classList.add('open');
+    }).join('')+`<div style="text-align:center;padding:16px"><button onclick="changePhone()" style="padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;font-size:12px">Change Number - ${phone}</button></div>`;
+  }, err=>{
+    document.getElementById('ordersBody').innerHTML = `<div style="text-align:center;padding:40px;color:red">Error: ${err.message}<br><small>Firebase index lage - Admin e rule check koribo lagibo</small></div>`;
   });
 }
+
+function changePhone(){
+  localStorage.removeItem('dk_cust_phone');
+  closeOrders();
+  setTimeout(openOrders, 300);
+}
+
 function closeOrders(){document.getElementById('ordersModal').classList.remove('open');}
 function openProfile(){document.getElementById('profileModal').classList.add('open');}function closeProfile(){document.getElementById('profileModal').classList.remove('open');}
 function openPage(type){
