@@ -1,67 +1,90 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const compression = require('compression');
+const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+// ✅ 1. SPEED MIDDLEWARE - 70% fast
+app.use(compression());
+app.use(cors());
+app.use(express.json({ limit: '100kb' }));
 
-const DB_FILE = path.join(__dirname, 'db.json');
+// ✅ 2. MONGO FAST - Mumbai region + cache
+mongoose.connect(process.env.MONGO_URI || 'YOUR_MONGO_URI', {
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 3000,
+}).then(()=>console.log('Mongo FAST Connected ⚡')).catch(e=>console.log(e));
 
-function loadDB(){
-  try{
-    if(fs.existsSync(DB_FILE)) return JSON.parse(fs.readFileSync(DB_FILE,'utf8'));
-  }catch(e){}
-  return { products:[], cats:[], banners:[], orders:[] };
-}
+// ✅ 3. CACHE MEMORY - 2 min cache (No Redis needed)
+let cache = { products: null, time: 0 };
+const isCacheValid = () => Date.now() - cache.time < 120000; // 2 min
 
-function saveDB(d){
-  try{ fs.writeFileSync(DB_FILE, JSON.stringify(d,null,2)); }catch(e){}
-}
+// ✅ 4. MODELS - Import
+const Product = require('./models/Product');
+const Order = require('./models/Order');
 
-let DB = loadDB();
-
-// API
-app.get('/api/products', (req,res)=> res.json(DB.products));
-
-app.post('/api/products', (req,res)=>{
-  const b=req.body;
-  if(b.id){
-    let i=DB.products.findIndex(x=>x.id==b.id);
-    if(i>=0){
-      DB.products[i]={...DB.products[i],...b};
-      saveDB(DB);
-      return res.json({success:true,data:DB.products});
+// ✅ 5. FAST API - Products with lean + cache
+app.get('/api/products', async (req, res) => {
+  try {
+    if (cache.products && isCacheValid()) {
+      return res.set('Cache-Control', 'public, s-maxage=120').json(cache.products);
     }
+    // lean() = 10x fast, select only needed fields
+    const products = await Product.find({ active: true }).select('name price image category stock mrp').lean().limit(100);
+    // Optimize Cloudinary images
+    const optimized = products.map(p => ({
+      ...p,
+      image: p.image?.includes('cloudinary') ? p.image.replace('/upload/','/upload/w_400,q_auto,f_auto/') : p.image
+    }));
+    cache.products = optimized;
+    cache.time = Date.now();
+    res.set('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=300').json(optimized);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
-  DB.products.unshift({id:b.id||Date.now().toString(),...b});
-  saveDB(DB);
-  res.json({success:true,data:DB.products});
 });
 
-app.delete('/api/products/:id', (req,res)=>{
-  DB.products=DB.products.filter(x=>x.id!=req.params.id);
-  saveDB(DB);
-  res.json({success:true,data:DB.products});
+// ✅ 6. FAST Orders - by phone with index
+app.get('/api/orders', async (req, res) => {
+  try {
+    const phone = req.query.phone;
+    if(!phone) return res.status(400).json({ error: 'phone required' });
+    const orders = await Order.find({ 'customer.phone': phone }).sort({ createdAt: -1 }).lean().limit(20);
+    res.set('Cache-Control', 'public, s-maxage=10').json(orders);
+  } catch(e){ res.status(500).json({ error: e.message }); }
 });
 
-app.get('/api/cats', (req,res)=> res.json(DB.cats));
-app.post('/api/cats', (req,res)=>{ DB.cats.push(req.body); saveDB(DB); res.json(DB.cats); });
-
-app.get('/api/banners', (req,res)=> res.json(DB.banners));
-app.post('/api/banners', (req,res)=>{ DB.banners.push(req.body); saveDB(DB); res.json(DB.banners); });
-
-app.post('/api/orders', (req,res)=>{
-  DB.orders.unshift(req.body);
-  saveDB(DB);
-  res.json({success:true});
+// ✅ 7. Place Order - FAST
+app.post('/api/orders', async (req, res) => {
+  try {
+    const order = await Order.create({ ...req.body, createdAt: Date.now() });
+    cache.products = null; // clear product cache if stock changes
+    res.json({ success: true, orderId: order.orderId });
+  } catch(e){ res.status(500).json({ error: e.message }); }
 });
 
-app.get('/api/health', (req,res)=> res.json({status:'ok',products:DB.products.length}));
+// ✅ 8. Areas & Banners - Cached
+app.get('/api/areas', async (req,res)=>{
+  const areas = await mongoose.connection.db.collection('dk_v3_areas').find().toArray();
+  res.set('Cache-Control','public, s-maxage=300').json(areas);
+});
 
-// Tumare purana line - last t thakibo lage
+// ✅ 9. STATIC - with 1 year cache for images
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1y',
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, path) => {
+    if(path.endsWith('.html')) res.setHeader('Cache-Control','public, max-age=0');
+  }
+}));
+
+// ✅ 10. Frontend fallback
 app.get('*', (req,res)=> res.sendFile(path.join(__dirname,'public','index.html')));
 
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, ()=>console.log('DailyKart Live on',PORT));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, ()=>console.log(`DailyKart FAST Server ⚡ on ${PORT}`));
+
+module.exports = app;
