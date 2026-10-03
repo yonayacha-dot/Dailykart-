@@ -3,35 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DailyKart Tinsukia - Fresh in 30 Mins</title>
+<title>DailyKart Tinsukia - Groceries in 30 Mins | Fast Delivery</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://dailykart-tinsukia-default-rtdb.asia-southeast1.firebasedatabase.app">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <style>
-:root{--green:#0E8A3E;--orange:#FF7A00;--dark:#121A14;--gray:#6B7D72;--bg:#F7FAF8;--border:#E6EFE8;--shadow:0 6px 18px rgba(0,0,0,.06)}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;-webkit-tap-highlight-color:transparent}
+:root{--green:#0E8A3E;--orange:#FF7A00;--dark:#121A14;--gray:#6B7D72;--bg:#F7FAF8;--border:#E6EFE8}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
 body{background:var(--bg);color:var(--dark);padding-bottom:90px}
 .header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
-.logo{width:42px;height:42px;border-radius:12px;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;overflow:hidden}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
 .search-wrap{flex:1;margin:0 10px;background:var(--bg);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;padding:10px 14px}
 .search-wrap input{flex:1;border:none;background:transparent;outline:none;font-size:14px;font-weight:600}
 .hdr-icon{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;background:#fff}
 .badge{position:absolute;top:-6px;right:-6px;background:var(--orange);color:#fff;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:100px;display:flex;align-items:center;justify-content:center}
-.hero{margin:12px;border-radius:20px;background:linear-gradient(135deg,#0E8A3E 0%,#1DB954 100%);padding:18px 16px;color:#fff}
+.hero{margin:12px;border-radius:20px;background:linear-gradient(135deg,#0E8A3E,#1DB954);padding:18px 16px;color:#fff}
 .cat-scroll{display:flex;gap:8px;overflow-x:auto;padding:12px 14px;scrollbar-width:none}.cat-scroll::-webkit-scrollbar{display:none}
 .cat{white-space:nowrap;padding:9px 16px;border-radius:100px;border:1px solid var(--border);background:#fff;font-weight:700;font-size:13px;cursor:pointer}.cat.active{background:var(--dark);color:#fff}
 .product-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 12px}
-.card{background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;position:relative;box-shadow:var(--shadow);display:flex;flex-direction:column;contain:content}
+.card{background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;position:relative;display:flex;flex-direction:column}
 .card-img{width:100%;aspect-ratio:1;background:var(--bg);object-fit:cover}
 .card-body{padding:10px;display:flex;flex-direction:column;flex:1}
 .card-name{font-size:13px;font-weight:700;line-height:1.3;height:34px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.price{font-weight:800;font-size:15px}
 .buy-btn{width:100%;padding:10px;background:var(--dark);color:#fff;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;margin-top:8px}
-.qty-selector{display:flex;align-items:center;justify-content:space-between;background:var(--dark);color:#fff;border-radius:12px;padding:6px 10px;margin-top:8px}
-.qty-selector button{width:28px;height:28px;border:none;background:rgba(255,255,255,0.2);color:#fff;border-radius:8px;font-weight:800;cursor:pointer}
+.qty-sel{display:flex;align-items:center;justify-content:space-between;background:var(--dark);color:#fff;border-radius:12px;padding:6px 10px;margin-top:8px}
+.qty-sel button{width:28px;height:28px;border:none;background:rgba(255,255,255,0.2);color:#fff;border-radius:8px;font-weight:800}
 .bottom-cart{position:fixed;bottom:16px;left:12px;right:12px;background:var(--dark);color:#fff;border-radius:20px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;z-index:25;transform:translateY(120px);transition:.3s}.bottom-cart.show{transform:translateY(0)}
 .btn-primary{width:100%;padding:14px;background:var(--green);color:#fff;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer}
 .modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,0.6);display:none;align-items:flex-end}.modal.open{display:flex}
@@ -47,56 +44,97 @@ body{background:var(--bg);color:var(--dark);padding-bottom:90px}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:700;color:var(--gray);cursor:pointer}.nav-item.active{color:var(--green)}
 .menu-item{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);cursor:pointer;background:#fff}
 .profile-head{background:linear-gradient(135deg,#0E8A3E,#1DB954);padding:24px 20px;color:#fff;display:flex;gap:14px;align-items:center}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--dark);color:#fff;padding:12px 18px;border-radius:100px;font-size:13px;font-weight:700;z-index:100;transition:.4s}.toast.show{transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
-<div class="header"><div style="display:flex;align-items:center;gap:10px"><div class="logo" id="siteLogo">DK</div><div><div style="font-weight:800;font-size:16px" id="storeName">DailyKart</div><div style="font-size:11px;color:var(--gray)"><span id="liveStatus">● LIVE</span></div></div></div><div style="display:flex;gap:8px"><div class="hdr-icon" onclick="openWishlist()">❤️<span class="badge" id="navWish" style="display:none">0</span></div><div class="hdr-icon" onclick="openCart()">🛒<span class="badge" id="navCart" style="display:none">0</span></div><div class="hdr-icon" onclick="openProfile()">👤</div></div></div>
+<div class="toast" id="toast"></div>
+<div class="header"><div style="display:flex;align-items:center;gap:10px"><div class="logo">DK</div><div><div style="font-weight:800;font-size:16px" id="storeName">DailyKart</div><div style="font-size:11px;color:var(--gray)" id="liveStatus">● LIVE • FAST ⚡</div></div></div><div style="display:flex;gap:8px"><div class="hdr-icon" onclick="openWishlist()">❤️<span class="badge" id="navWish" style="display:none">0</span></div><div class="hdr-icon" onclick="openCart()">🛒<span class="badge" id="navCart" style="display:none">0</span></div><div class="hdr-icon" onclick="openProfile()">👤</div></div></div>
 <div class="search-wrap" style="margin:10px 12px">🔍<input id="searchInput" placeholder="Search..." oninput="debounceSearch()"></div>
-<div class="hero"><div style="font-size:12px;font-weight:800;opacity:.9">FREE DELIVERY • 30 MINS</div><div style="font-size:26px;font-weight:800;line-height:1.1;margin:6px 0">Fresh<br>Groceries Daily</div><div style="font-size:13px;opacity:.9">Tinsukia's fastest delivery 🛵</div></div>
+<div class="hero"><div style="font-size:11px;font-weight:800">FREE DELIVERY • 30 MINS • NO OTP FOR ORDER</div><div style="font-size:26px;font-weight:800;line-height:1.1;margin:6px 0">Fresh<br>Groceries Daily</div><div style="font-size:13px;opacity:0.9">Tinsukia's fastest • WA: 8761958928 • Multi-admin</div></div>
 <div class="cat-scroll" id="catScroll"></div>
 <div style="padding:8px 14px;display:flex;justify-content:space-between"><div style="font-weight:800">Products</div><div style="font-size:12px;color:var(--gray)" id="productCount">0 items</div></div>
-<div class="product-grid" id="productGrid"><div style="grid-column:1/3;text-align:center;padding:40px">Loading... ⏳</div></div>
+<div class="product-grid" id="productGrid"><div style="grid-column:1/3;text-align:center;padding:40px">Loading FAST... ⚡</div></div>
 <div class="bottom-cart" id="bottomCart" onclick="openCart()"><div><div style="font-weight:800" id="cartTotalText">₹0</div><div style="font-size:11px;opacity:.8" id="cartItemText">0 items</div></div><div style="background:#fff;color:var(--dark);padding:10px 18px;border-radius:14px;font-weight:800">View Cart →</div></div>
 <div class="nav"><div class="nav-item active" onclick="switchTab('home')">🏠Home</div><div class="nav-item" onclick="openCart()">🛒Cart</div><div class="nav-item" onclick="openWishlist()">❤️Wishlist</div><div class="nav-item" onclick="openOrders()">📦Orders</div><div class="nav-item" onclick="openProfile()">👤Profile</div></div>
-<!-- Modals same -->
+
 <div id="cartModal" class="modal" onclick="if(event.target==this)closeCart()"><div class="modal-box"><div class="modal-head"><h3>Your Cart 🛒</h3><div onclick="closeCart()" style="width:36px;height:36px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center">✕</div></div><div class="modal-body" id="cartBody"></div><div style="padding:16px;border-top:1px solid var(--border)"><div id="billBox" style="background:var(--bg);border-radius:14px;padding:12px;font-size:13px"></div><button class="btn-primary" style="margin-top:12px" onclick="startCheckout()">Proceed to Buy</button></div></div></div>
 <div id="wishModal" class="modal" onclick="if(event.target==this)closeWishlist()"><div class="modal-box"><div class="modal-head"><h3>Wishlist ❤️</h3><div onclick="closeWishlist()" style="width:36px;height:36px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center">✕</div></div><div class="modal-body" id="wishBody"></div></div></div>
-<div id="checkoutModal" class="modal" onclick="if(event.target==this)closeCheckout()"><div class="modal-box"><div class="modal-head"><h3>Buy Now 📍</h3><div onclick="closeCheckout()" style="width:36px;height:36px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center">✕</div></div><div class="modal-body"><div id="checkoutQtyBox"></div><input id="custName" class="input" placeholder="Full Name *"><input id="custPhone" class="input" placeholder="Phone 10 digit *"><div id="savedAddrBox" style="margin-bottom:12px"></div><div id="areaBox" class="area-grid"></div><textarea id="custAddress" class="input" placeholder="Full Address *" style="height:90px;resize:none;margin-top:12px"></textarea><div style="display:flex;gap:8px;margin-top:8px"><div class="area selected" id="payCod" onclick="selectPay('COD')">💵 COD</div><div class="area" id="payOnline" onclick="selectPay('ONLINE')">📱 Online</div></div><div id="finalBill" style="margin-top:16px;background:var(--dark);color:#fff;border-radius:16px;padding:14px;font-size:13px"></div></div><div style="padding:16px;border-top:1px solid var(--border)"><button id="placeOrderBtn" class="btn-primary" onclick="placeOrder()">Place Order 🟢</button></div></div></div>
-<div id="ordersModal" class="modal" onclick="if(event.target==this)closeOrders()"><div class="modal-box"><div class="modal-head"><h3>My Orders ⏳</h3><div onclick="closeOrders()" style="width:36px;height:36px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center">✕</div></div><div class="modal-body" id="ordersBody"></div></div></div>
-<div id="profileModal" class="modal" onclick="if(event.target==this)closeProfile()"><div class="modal-box"><div class="profile-head"><div style="width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:26px">👤</div><div><div id="profileName" style="font-weight:800;font-size:18px">Guest</div><div id="profilePhone" style="font-size:13px;opacity:.9">Welcome</div></div></div><div class="modal-body" style="padding:0"><div class="menu-item" onclick="openOrders()"><span>📦 My Orders</span><span>›</span></div><div class="menu-item" onclick="openWishlist();closeProfile()"><span>❤️ Wishlist</span><span>›</span></div><div class="menu-item" onclick="openCart();closeProfile()"><span>🛒 My Cart</span><span>›</span></div></div></div></div>
+<div id="checkoutModal" class="modal" onclick="if(event.target==this)closeCheckout()"><div class="modal-box"><div class="modal-head"><h3>Buy Now 📍</h3><div onclick="closeCheckout()" style="width:36px;height:36px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center">✕</div></div><div class="modal-body">
+<div style="background:#E8F5E9;color:#0E8A3E;padding:10px;border-radius:12px;font-weight:800;font-size:12px;margin-bottom:12px">✅ No OTP for Order - WhatsApp to 8761958928 & All Admins + Customer</div>
+<div style="background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px"><div style="font-weight:800;margin-bottom:8px">🛒 Select Quantity</div><div id="checkoutQtyBox"></div></div>
+<input id="custName" class="input" placeholder="Full Name *"><input id="custPhone" class="input" placeholder="Phone 10 digit *" maxlength="10">
+<div style="font-weight:700;font-size:13px;margin:6px 0">📍 Saved Address (Click)</div><div id="savedAddrBox" style="margin-bottom:12px"></div>
+<div style="font-weight:700;font-size:13px;margin:6px 0">Delivery Area *</div><div id="areaBox" class="area-grid"></div>
+<textarea id="custAddress" class="input" placeholder="Full Address - House, Street, Landmark *" style="height:90px;resize:none;margin-top:12px"></textarea>
+<div style="display:flex;gap:8px;margin-top:8px"><div class="area selected" id="payCod" onclick="selectPay('COD')">💵 COD</div><div class="area" id="payOnline" onclick="selectPay('ONLINE')">📱 Online</div></div>
+<div id="finalBill" style="margin-top:16px;background:var(--dark);color:#fff;border-radius:16px;padding:14px;font-size:13px"></div>
+</div><div style="padding:16px;border-top:1px solid var(--border)"><button id="placeOrderBtn" class="btn-primary" onclick="placeOrder()">Place Order 🟢 BUY NOW</button></div></div></div>
+<div id="ordersModal" class="modal" onclick="if(event.target==this)closeOrders()"><div class="modal-box"><div class="modal-head"><h3>My Orders + Countdown ⏳</h3><div onclick="closeOrders()" style="width:36px;height:36px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center">✕</div></div><div class="modal-body" id="ordersBody"></div></div></div>
+<div id="profileModal" class="modal" onclick="if(event.target==this)closeProfile()"><div class="modal-box"><div class="profile-head"><div style="width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:26px">👤</div><div><div id="profileName" style="font-weight:800;font-size:18px">Guest</div><div id="profilePhone" style="font-size:13px;opacity:.9">Welcome</div></div></div><div class="modal-body" style="padding:0"><div class="menu-item" onclick="openOrders()"><span>📦 My Orders + Countdown</span><span>›</span></div><div class="menu-item" onclick="openWishlist();closeProfile()"><span>❤️ Wishlist</span><span>›</span></div><div class="menu-item" onclick="openCart();closeProfile()"><span>🛒 My Cart</span><span>›</span></div><div class="menu-item" onclick="openPage('support')"><span>💬 Help & Support - 8761958928</span><span>›</span></div><div class="menu-item" onclick="openPage('about')"><span>ℹ️ About Us</span><span>›</span></div><div class="menu-item" onclick="openPage('policy')"><span>📄 Privacy Policy</span><span>›</span></div><div class="menu-item" onclick="openPage('terms')"><span>📜 Terms</span><span>›</span></div><div class="menu-item" onclick="openPage('return')"><span>↩️ Return & Refund</span><span>›</span></div></div></div></div>
+<div id="pageModal" class="modal" onclick="if(event.target==this)closePage()"><div class="modal-box"><div class="modal-head"><h3 id="pageTitle">Info</h3><div onclick="closePage()" style="width:36px;height:36px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center">✕</div></div><div class="modal-body" id="pageBody"></div></div></div>
+
 <script>
 const firebaseConfig={apiKey:"AIzaSyDRRYLhHv2ecotfSRBfE2L9dElO1UeyFd4",authDomain:"dailykart-tinsukia.firebaseapp.com",databaseURL:"https://dailykart-tinsukia-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"dailykart-tinsukia",storageBucket:"dailykart-tinsukia.firebasestorage.app",messagingSenderId:"279043121985",appId:"1:279043121985:web:57a5c97b9a8827ad2e77c0"};
 firebase.initializeApp(firebaseConfig);const db=firebase.database();
 let products=[],banners=[],areas=[],settings={},cart={},wishlist={},selectedArea=null,payMode='COD',buyNowProduct=null;
 let savedAddrs=JSON.parse(localStorage.getItem('dk_saved_addrs')||'[]');const DEFAULT_WA="918761958928";
-let searchTimer=null;function debounceSearch(){clearTimeout(searchTimer);searchTimer=setTimeout(renderProducts,300);}
-function getOptimizedImg(url){if(!url)return 'https://via.placeholder.com/300';if(url.includes('cloudinary'))return url.replace('/upload/','/upload/w_300,q_auto,f_auto/');return url;}
-// FAST LOAD - Cache first
+function toast(m){const t=document.getElementById('toast');t.innerText=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function getImg(u){if(!u)return 'https://via.placeholder.com/300';if(u.includes('cloudinary'))return u.replace('/upload/','/upload/w_400,q_auto,f_auto/');return u;}
+let searchTimer=null;function debounceSearch(){clearTimeout(searchTimer);searchTimer=setTimeout(renderProducts,250);}
+
+// ✅ NEW FAST BACKEND
+async function loadProductsFast(){
+  try{
+    const cached=JSON.parse(localStorage.getItem('dk_cache_prod')||'[]');
+    if(cached.length){products=cached;buildCats();renderProducts();}
+    const res=await fetch('/api/products');
+    if(!res.ok) throw new Error('API no');
+    const data=await res.json();
+    if(data && data.length){products=data;localStorage.setItem('dk_cache_prod',JSON.stringify(data));buildCats();renderProducts();document.getElementById('liveStatus').innerHTML='● LIVE • '+data.length+' • FAST ⚡';}
+  }catch(e){
+    console.log('Fast API fail, Firebase fallback');
+    db.ref('dk_v3_products').once('value').then(s=>{const v=s.val()||{};products=Object.entries(v).map(([id,o])=>({id,...o})).filter(p=>p.name);localStorage.setItem('dk_cache_prod',JSON.stringify(products));buildCats();renderProducts();});
+  }
+}
+async function loadAreasFast(){
+  try{
+    const res=await fetch('/api/areas');
+    const data=await res.json();
+    if(data && data.length){areas=data;renderAreas();return;}
+  }catch(e){}
+  db.ref('dk_v3_areas').once('value').then(s=>{areas=Object.values(s.val()||{});renderAreas();});
+}
+async function loadBannersFast(){
+  try{
+    const res=await fetch('/api/banners');
+    const data=await res.json();
+    if(data){banners=data;renderProducts();return;}
+  }catch(e){}
+  db.ref('dk_v3_banners').once('value').then(s=>{const v=s.val()||{};banners=Object.values(v).filter(b=>b.active!==false);renderProducts();});
+}
 db.ref('dk_v3_settings').once('value').then(s=>{settings=s.val()||{};if(settings.storeName)document.getElementById('storeName').innerText=settings.storeName;});
-db.ref('dk_v3_products').once('value').then(s=>{const v=s.val()||{};products=Object.entries(v).map(([id,o])=>({id,...o})).filter(p=>p.name);localStorage.setItem('dk_cache_prod',JSON.stringify(products));buildCats();renderProducts();document.getElementById('liveStatus').innerHTML='● LIVE • '+products.length+' items';});
-db.ref('dk_v3_areas').once('value').then(s=>{areas=Object.values(s.val()||{});renderAreas();});
-// Try cache immediately
-try{const cached=JSON.parse(localStorage.getItem('dk_cache_prod')||'[]');if(cached.length){products=cached;buildCats();renderProducts();}}catch(e){}
+db.ref('dk_wa_admins').once('value').then(s=>{if(s.val())settings.waAdmins=Object.values(s.val());});
+loadProductsFast();loadAreasFast();loadBannersFast();
+
 function buildCats(){const cats=[...new Set(products.map(p=>p.category).filter(Boolean))];document.getElementById('catScroll').innerHTML=['All',...cats].map((c,i)=>`<div class="cat ${i==0?'active':''}" onclick="filterCat(this,'${c}')">${c}</div>`).join('');}
 let activeCat='All';function filterCat(el,c){activeCat=c;document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active'));el.classList.add('active');renderProducts();}
 function renderProducts(){
   const q=document.getElementById('searchInput').value.toLowerCase();let list=products;if(activeCat!='All')list=list.filter(p=>p.category==activeCat);if(q)list=list.filter(p=>(p.name+' '+(p.category||'')).toLowerCase().includes(q));
   document.getElementById('productCount').innerText=list.length+' items';
-  // Show only first 20 for speed, lazy rest
-  const show=list.slice(0,30);
-  document.getElementById('productGrid').innerHTML=show.map(p=>{const isWish=wishlist[p.id];return `<div class="card"><div style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:100px;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="toggleWish('${p.id}')">${isWish?'❤️':'🤍'}</div><img class="card-img" src="${getOptimizedImg(p.image)}" loading="lazy" decoding="async"><div class="card-body"><div style="font-size:10px;font-weight:800;color:var(--green)">${p.category||''}</div><div class="card-name">${p.name}</div><div class="price">₹${p.price}</div><button class="buy-btn" onclick="buyNow('${p.id}')">Buy Now</button></div></div>`}).join('')||'<div style="grid-column:1/3;text-align:center;padding:40px">No products</div>';
+  document.getElementById('productGrid').innerHTML=list.slice(0,40).map(p=>{const isWish=wishlist[p.id];return `<div class="card"><div style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:100px;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="toggleWish('${p.id}')">${isWish?'❤️':'🤍'}</div><img class="card-img" src="${getImg(p.image)}" loading="lazy"><div class="card-body"><div style="font-size:10px;font-weight:800;color:var(--green)">${p.category||''}</div><div class="card-name">${p.name}</div><div style="font-weight:800;font-size:15px">₹${p.price}</div><button class="buy-btn" onclick="buyNow('${p.id}')">Buy Now</button></div></div>`}).join('')||'<div style="grid-column:1/3;text-align:center;padding:40px">No products</div>';
 }
-function buyNow(id){const p=products.find(x=>x.id==id);buyNowProduct={...p,qty:cart[id]?.qty||1};if(!cart[id])cart[id]={...p,qty:1};document.getElementById('checkoutQtyBox').innerHTML=`<div style="display:flex;gap:12px;align-items:center;background:var(--bg);padding:12px;border-radius:14px"><img src="${getOptimizedImg(p.image)}" style="width:56px;height:56px;border-radius:12px;object-fit:cover"><div style="flex:1"><b style="font-size:14px">${p.name}</b><div>₹${p.price}</div></div><div class="qty-selector" style="margin:0"><button onclick="updateBuyQty(-1)">-</button><b id="buyQtyDisplay">${cart[id].qty}</b><button onclick="updateBuyQty(1)">+</button></div></div>`;document.getElementById('custName').value=localStorage.getItem('dk_cust_name')||'';document.getElementById('custPhone').value=localStorage.getItem('dk_cust_phone')||'';document.getElementById('custAddress').value=localStorage.getItem('dk_cust_addr')||'';renderSavedAddrs();startCheckout();}
-function updateBuyQty(d){if(!buyNowProduct)return;const id=buyNowProduct.id;if(!cart[id])cart[id]={...buyNowProduct,qty:1};cart[id].qty+=d;if(cart[id].qty<=0){delete cart[id];closeCheckout();syncAll();saveLocal();return;}document.getElementById('buyQtyDisplay').innerText=cart[id].qty;buyNowProduct.qty=cart[id].qty;syncAll();saveLocal();calcBill();}
+function buyNow(id){const p=products.find(x=>x.id==id);buyNowProduct={...p,qty:cart[id]?.qty||1};if(!cart[id])cart[id]={...p,qty:1};document.getElementById('checkoutQtyBox').innerHTML=`<div style="display:flex;gap:12px;align-items:center"><img src="${getImg(p.image)}" style="width:56px;height:56px;border-radius:12px;object-fit:cover"><div style="flex:1"><b>${p.name}</b><div>₹${p.price}</div></div><div class="qty-sel" style="margin:0"><button onclick="updateBuyQty(-1)">-</button><b id="buyQtyDisplay">${cart[id].qty}</b><button onclick="updateBuyQty(1)">+</button></div></div>`;document.getElementById('custName').value=localStorage.getItem('dk_cust_name')||'';document.getElementById('custPhone').value=localStorage.getItem('dk_cust_phone')||'';document.getElementById('custAddress').value=localStorage.getItem('dk_cust_addr')||'';renderSavedAddrs();startCheckout();}
+function updateBuyQty(d){const id=buyNowProduct.id;cart[id].qty+=d;if(cart[id].qty<=0){delete cart[id];closeCheckout();syncAll();saveLocal();return;}document.getElementById('buyQtyDisplay').innerText=cart[id].qty;syncAll();saveLocal();calcBill();}
 function renderSavedAddrs(){const box=document.getElementById('savedAddrBox');if(savedAddrs.length==0){box.innerHTML='<div style="font-size:12px;color:var(--gray);padding:8px;background:var(--bg);border-radius:10px">No saved address</div>';return;}box.innerHTML=savedAddrs.map((a,i)=>`<div onclick="selectSavedAddr(${i})" style="padding:10px;border:1px solid var(--border);border-radius:12px;margin-bottom:6px;cursor:pointer;background:#fff">📍 ${a.area} - ${a.fullAddr.slice(0,30)}...</div>`).join('');}
-function selectSavedAddr(i){const a=savedAddrs[i];selectedArea=a.area;document.getElementById('custAddress').value=a.fullAddr;document.getElementById('custName').value=a.name||'';}
+function selectSavedAddr(i){const a=savedAddrs[i];selectedArea=a.area;document.getElementById('custAddress').value=a.fullAddr;toast('Address selected');}
 function updateQty(id,d){if(!cart[id])return;cart[id].qty+=d;if(cart[id].qty<=0)delete cart[id];syncAll();saveLocal();}
 function toggleWish(id){if(wishlist[id])delete wishlist[id];else wishlist[id]=products.find(p=>p.id==id);syncAll();saveLocal();renderProducts();}
 function syncAll(){const total=Object.values(cart).reduce((s,p)=>s+p.qty*p.price,0);const count=Object.values(cart).reduce((s,p)=>s+p.qty,0);const w=Object.keys(wishlist).length;document.getElementById('navCart').style.display=count?'flex':'none';document.getElementById('navCart').innerText=count;document.getElementById('navWish').style.display=w?'flex':'none';document.getElementById('navWish').innerText=w;document.getElementById('cartTotalText').innerText='₹'+total;document.getElementById('cartItemText').innerText=count+' items';document.getElementById('bottomCart').classList.toggle('show',count>0);renderCart();renderWishlist();}
 function saveLocal(){localStorage.setItem('dk_cart',JSON.stringify(cart));localStorage.setItem('dk_wish',JSON.stringify(wishlist));}
 function loadLocal(){try{cart=JSON.parse(localStorage.getItem('dk_cart')||'{}');wishlist=JSON.parse(localStorage.getItem('dk_wish')||'{}');}catch(e){}syncAll();}
-function renderCart(){const ids=Object.keys(cart);if(!ids.length){document.getElementById('cartBody').innerHTML='<div style="text-align:center;padding:40px">Cart empty 🛒</div>';document.getElementById('billBox').innerHTML='';return;}document.getElementById('cartBody').innerHTML=ids.map(id=>`<div class="cart-item"><img src="${getOptimizedImg(cart[id].image)}" style="width:56px;height:56px;border-radius:12px;object-fit:cover"><div style="flex:1"><b style="font-size:14px">${cart[id].name}</b><div>₹${cart[id].price} x ${cart[id].qty}</div></div><div style="display:flex;gap:6px;background:var(--dark);color:#fff;border-radius:10px;padding:4px 8px"><button onclick="updateQty('${id}',-1)" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:6px;width:22px">-</button><b>${cart[id].qty}</b><button onclick="updateQty('${id}',1)" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:6px;width:22px">+</button></div></div>`).join('');calcBill();}
-function renderWishlist(){const ids=Object.keys(wishlist);document.getElementById('wishBody').innerHTML=ids.length?ids.map(id=>`<div class="cart-item"><img src="${getOptimizedImg(wishlist[id].image)}" style="width:56px;height:56px;border-radius:12px"><div style="flex:1">${wishlist[id].name}</div><button style="padding:8px 14px;border-radius:10px;border:none;background:var(--green);color:#fff" onclick="buyNow('${id}')">Buy</button></div>`).join(''):'<div style="text-align:center;padding:40px">Wishlist empty ❤️</div>';}
+function renderCart(){const ids=Object.keys(cart);if(!ids.length){document.getElementById('cartBody').innerHTML='<div style="text-align:center;padding:40px">Cart empty 🛒</div>';document.getElementById('billBox').innerHTML='';return;}document.getElementById('cartBody').innerHTML=ids.map(id=>`<div class="cart-item"><img src="${getImg(cart[id].image)}" style="width:56px;height:56px;border-radius:12px"><div style="flex:1"><b>${cart[id].name}</b><div>₹${cart[id].price} x ${cart[id].qty}</div></div><div style="display:flex;gap:6px;background:var(--dark);color:#fff;border-radius:10px;padding:4px 8px"><button onclick="updateQty('${id}',-1)" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:6px;width:22px">-</button><b>${cart[id].qty}</b><button onclick="updateQty('${id}',1)" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:6px;width:22px">+</button></div></div>`).join('');calcBill();}
+function renderWishlist(){const ids=Object.keys(wishlist);document.getElementById('wishBody').innerHTML=ids.length?ids.map(id=>`<div class="cart-item"><img src="${getImg(wishlist[id].image)}" style="width:56px;height:56px;border-radius:12px"><div style="flex:1">${wishlist[id].name}</div><button style="padding:8px 14px;border-radius:10px;border:none;background:var(--green);color:#fff" onclick="buyNow('${id}')">Buy</button></div>`).join(''):'<div style="text-align:center;padding:40px">Wishlist empty ❤️</div>';}
 function calcBill(){let sub=Object.values(cart).reduce((s,p)=>s+p.qty*p.price,0);let del=sub>=299?0:30;let total=sub+del;document.getElementById('billBox').innerHTML=`Subtotal ₹${sub}<br>Delivery ₹${del}<br><b>Total ₹${total}</b>`;document.getElementById('finalBill').innerHTML=document.getElementById('billBox').innerHTML;return{sub,del,total};}
 function openCart(){document.getElementById('cartModal').classList.add('open');}function closeCart(){document.getElementById('cartModal').classList.remove('open');}
 function openWishlist(){document.getElementById('wishModal').classList.add('open');}function closeWishlist(){document.getElementById('wishModal').classList.remove('open');}
@@ -104,22 +142,61 @@ function startCheckout(){closeCart();document.getElementById('checkoutModal').cl
 function renderAreas(){document.getElementById('areaBox').innerHTML=(areas.length?areas:[{name:'Tinsukia Town'},{name:'Chirwapatty'},{name:'Laipuli'}]).map(a=>`<div class="area" onclick="pickArea(this,'${a.name}')">${a.name}</div>`).join('');}
 function pickArea(el,name){selectedArea=name;document.querySelectorAll('#areaBox.area').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');}
 function selectPay(m){payMode=m;document.getElementById('payCod').classList.toggle('selected',m=='COD');document.getElementById('payOnline').classList.toggle('selected',m=='ONLINE');}
+
 async function placeOrder(){
   const name=document.getElementById('custName').value.trim();const phone=document.getElementById('custPhone').value.trim();const addr=document.getElementById('custAddress').value.trim();
-  if(!name||!phone||!addr||!selectedArea){alert('All fields fill korok!');return;}
+  if(!name||!phone||!addr||!selectedArea){toast('All fields bhorok!');alert('All fields fill korok!');return;}
   const bill=calcBill();const orderId='DK'+Date.now().toString().slice(-6);const otp=Math.floor(1000+Math.random()*9000).toString();
-  const items=Object.values(cart).map(p=>({id:p.id,name:p.name,qty:p.qty,price:p.price}));if(!items.length){alert('Cart empty');return;}
+  const items=Object.values(cart).map(p=>({id:p.id,name:p.name,qty:p.qty,price:p.price}));
+  if(!items.length){alert('Cart empty');return;}
+  let waList=[];if(settings.waAdmins)waList=settings.waAdmins.map(w=>w.number||w);if(settings.whatsapp)waList.push(settings.whatsapp);waList.push(DEFAULT_WA);waList=[...new Set(waList.flatMap(s=>s.toString().split(',')).map(s=>s.trim().replace(/[^0-9]/g,'')).filter(Boolean))];
   const orderData={orderId,customer:{name,phone:'+91'+phone,address:addr,area:selectedArea},items,bill,payMode,status:'NEW',createdAt:Date.now(),deliveryOtp:otp,estimateMin:30};
-  document.getElementById('placeOrderBtn').innerText='Placing...';try{await db.ref('dk_v3_orders').child(orderId).set(orderData);localStorage.setItem('dk_cust_name',name);localStorage.setItem('dk_cust_phone',phone);localStorage.setItem('dk_cust_addr',addr);savedAddrs.push({area:selectedArea,fullAddr:addr,name,phone});localStorage.setItem('dk_saved_addrs',JSON.stringify(savedAddrs));window.open(`https://wa.me/${DEFAULT_WA}?text=NEW ORDER ${orderId} ${name} ${phone}`,'_blank');cart={};syncAll();saveLocal();closeCheckout();alert('Order Placed! ID:'+orderId+' OTP:'+otp);openOrders();}catch(e){alert(e.message);}finally{document.getElementById('placeOrderBtn').innerText='Place Order 🟢';}
+  document.getElementById('placeOrderBtn').innerText='Placing...';document.getElementById('placeOrderBtn').disabled=true;
+  try{
+    // FAST API Save
+    await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(orderData)});
+    // Also Firebase backup
+    await db.ref('dk_v3_orders').child(orderId).set(orderData);
+    savedAddrs.push({area:selectedArea,fullAddr:addr,name,phone});localStorage.setItem('dk_saved_addrs',JSON.stringify(savedAddrs));
+    localStorage.setItem('dk_cust_name',name);localStorage.setItem('dk_cust_phone',phone);localStorage.setItem('dk_cust_addr',addr);
+    const adminMsg=`*DailyKart NEW ORDER* %0A%0A🆔 ${orderId}%0A👤 ${name} - +91${phone}%0A📍 ${addr} (${selectedArea})%0A💰 ₹${bill.total} (${payMode})%0A🔐 OTP: ${otp}%0A%0A${items.map(i=>`${i.name} x${i.qty}`).join('%0A')}`;
+    waList.forEach(num=>{window.open(`https://wa.me/${num}?text=${adminMsg}`,'_blank');});
+    window.open(`https://wa.me/91${phone}?text=*Order Confirmed* ✅%0A🆔 ${orderId}%0A🔐 OTP: ${otp} - Boy ke dibo%0A💰 ₹${bill.total}`,'_blank');
+    cart={};syncAll();saveLocal();closeCheckout();showSuccess(orderId,otp,30);
+  }catch(e){alert(e.message);}finally{document.getElementById('placeOrderBtn').innerText='Place Order 🟢 BUY NOW';document.getElementById('placeOrderBtn').disabled=false;}
 }
+let timer=null;
+function showSuccess(orderId,otp,est){
+  const m=document.createElement('div');m.style.cssText='position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML=`<div style="background:#fff;width:100%;max-width:380px;border-radius:24px;padding:20px;text-align:center"><div style="font-size:32px">✅</div><div style="font-weight:800;font-size:20px">Order Placed!</div><div>Order ID: <b>${orderId}</b></div><div class="otp-big">OTP <b>${otp}</b></div><div class="countdown-box"><div style="font-size:12px">COUNTDOWN</div><div id="cdTime" style="font-size:32px;font-weight:800;color:var(--orange)">${String(est).padStart(2,'0')}:00</div><div style="height:6px;background:rgba(255,255,255,0.2);border-radius:100px;margin-top:8px"><div id="cdBar" style="height:100%;background:var(--orange);width:100%"></div></div></div><button onclick="this.parentElement.parentElement.remove();clearInterval(timer);openOrders()" style="width:100%;margin-top:12px;padding:12px;background:var(--dark);color:#fff;border:none;border-radius:14px;font-weight:800">Track Order</button><button onclick="this.parentElement.parentElement.remove();clearInterval(timer)" style="width:100%;margin-top:8px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:14px">Continue</button></div>`;
+  document.body.appendChild(m);let total=est*60;let rem=total;timer=setInterval(()=>{rem--;const mm=Math.floor(rem/60);const ss=rem%60;const el=document.getElementById('cdTime');if(el)el.innerText=`${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;const bar=document.getElementById('cdBar');if(bar)bar.style.width=(rem/total*100)+'%';if(rem<=0){clearInterval(timer);if(el)el.innerText='Delivered! 🎉';}},1000);
+}
+
+// ✅ FAST MY ORDERS - NEW BACKEND
 function openOrders(){
-  let savedPhone=localStorage.getItem('dk_cust_phone')||'';let phoneInput=savedPhone;if(!phoneInput){phoneInput=prompt('Phone 10 digit:');if(!phoneInput)return;}
+  let savedPhone=localStorage.getItem('dk_cust_phone')||'';let phoneInput=savedPhone;if(!phoneInput){phoneInput=prompt('Phone 10 digit diok for orders:');if(!phoneInput)return;}
   let clean=phoneInput.replace(/\D/g,'').slice(-10);if(clean.length!=10){alert('Valid 10 digit diok');return;}localStorage.setItem('dk_cust_phone',clean);
-  document.getElementById('ordersModal').classList.add('open');document.getElementById('ordersBody').innerHTML='Loading... ⏳ for +91'+clean;
-  db.ref('dk_v3_orders').once('value').then(snap=>{const all=snap.val()||{};const filtered={};Object.keys(all).forEach(k=>{if(all[k].customer&&all[k].customer.phone==='+91'+clean)filtered[k]=all[k];});const list=Object.values(filtered).sort((a,b)=>b.createdAt-a.createdAt);if(!list.length){document.getElementById('ordersBody').innerHTML=`<div style="text-align:center;padding:40px">Order nai for +91${clean}<br><button class="btn-primary" onclick="closeOrders()">Shop Now</button></div>`;return;}document.getElementById('ordersBody').innerHTML=list.map(o=>{const diff=Math.floor((Date.now()-o.createdAt)/1000);const remain=Math.max(0,1800-diff);const m=Math.floor(remain/60);const s=remain%60;return `<div style="border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:10px"><b>${o.orderId}</b> - ${o.status}<div>${o.items.map(i=>i.name+' x'+i.qty).join(', ')}</div><div class="countdown-box"><div>${m}:${String(s).padStart(2,'0')}</div></div><div class="otp-big"><b>${o.deliveryOtp}</b></div><b>₹${o.bill.total}</b></div>`}).join('');});
+  loadOrdersFast('+91'+clean);
 }
+async function loadOrdersFast(phone){
+  document.getElementById('ordersBody').innerHTML='<div style="text-align:center;padding:40px">Loading FAST... ⚡<br><small>for '+phone+'</small></div>';document.getElementById('ordersModal').classList.add('open');
+  try{
+    const res=await fetch(`/api/orders?phone=${encodeURIComponent(phone)}`);
+    const list=await res.json();
+    if(Array.isArray(list)){renderOrdersFast(list,phone);return;}
+  }catch(e){console.log('API fail');}
+  // Fallback
+  db.ref('dk_v3_orders').once('value').then(snap=>{const all=snap.val()||{};const filtered=Object.values(all).filter(o=>o.customer&&o.customer.phone===phone).sort((a,b)=>b.createdAt-a.createdAt);renderOrdersFast(filtered,phone);});
+}
+function renderOrdersFast(list,phone){
+  if(!list.length){document.getElementById('ordersBody').innerHTML=`<div style="text-align:center;padding:40px">Order nai Dada 😔<br>Number: <b>${phone}</b><br><br><button class="btn-primary" onclick="closeOrders()">Shop Now 🛒</button><br><br><button onclick="changePhone()" style="padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:#fff">Change Number</button></div>`;return;}
+  document.getElementById('ordersBody').innerHTML=list.map(o=>{const diff=Math.floor((Date.now()-(o.createdAt||Date.now()))/1000);const remain=Math.max(0,1800-diff);const m=Math.floor(remain/60);const s=remain%60;return `<div style="border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:10px"><b>${o.orderId}</b> - ${o.status}<div style="font-size:12px;color:var(--gray)">${new Date(o.createdAt).toLocaleString()} • ${o.customer.area}</div><div style="font-size:13px">${o.items.map(i=>i.name+' x'+i.qty).join(', ')}</div><div class="countdown-box" style="margin:10px 0;padding:12px"><div style="font-size:10px">COUNTDOWN</div><div style="font-size:22px;font-weight:800;color:var(--orange)">${remain>0?`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:'Delivered! 🎉'}</div></div><div class="otp-big" style="padding:10px">OTP <b>${o.deliveryOtp}</b></div><b>₹${o.bill.total}</b></div>`}).join('')+`<div style="text-align:center;padding:16px"><button onclick="changePhone()" style="padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:#fff">Change Number - ${phone}</button></div>`;
+}
+function changePhone(){localStorage.removeItem('dk_cust_phone');closeOrders();setTimeout(openOrders,300);}
 function closeOrders(){document.getElementById('ordersModal').classList.remove('open');}
 function openProfile(){document.getElementById('profileModal').classList.add('open');}function closeProfile(){document.getElementById('profileModal').classList.remove('open');}
+function openPage(t){const pages={support:`<h3>Support 💬</h3><p>WhatsApp: 8761958928 (Default admin)<br>All admins also get order<br>10AM-9PM</p>`,about:`<h3>About DailyKart</h3><p>Tinsukia fastest grocery - 30 mins, No OTP for order, Delivery OTP only.</p>`,policy:`<h3>Privacy</h3><p>Phone/address only for delivery via WhatsApp to 8761958928 & admins. Firebase secure.</p>`,terms:`<h3>Terms</h3><p>1. COD/Online<br>2. Free above ₹299<br>3. Cancel 5 mins<br>4. OTP for delivery<br>5. Multi-admin WA<br>6. Return 2h damaged</p>`,return:`<h3>Return</h3><p>Damaged 2h photo - WA 8761958928 - Refund 24h</p>`};document.getElementById('pageTitle').innerText=t.toUpperCase();document.getElementById('pageBody').innerHTML=pages[t]||'Soon';document.getElementById('pageModal').classList.add('open');}
+function closePage(){document.getElementById('pageModal').classList.remove('open');}
 function switchTab(t){if(t=='home')window.scrollTo({top:0,behavior:'smooth'});}
 loadLocal();
 </script>
