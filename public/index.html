@@ -2,195 +2,252 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DailyKart Final Working</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>DailyKart • 30 Mins</title>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <style>
-:root{--bg:#fff;--card:#fff;--card2:#FFF7F0;--border:rgba(0,0,0,.07);--text:#111;--text2:#7A7A80;--orange:#FF7A18;--orangeSoft:#FFF0E6;--shadow:0 10px 30px rgba(0,0,0,.06)}
-[data-theme="dark"]{--bg:#0B0B0D;--card:#151518;--card2:#1E1E22;--border:rgba(255,255,255,.1);--text:#fff;--text2:#9AA0A6;--orangeSoft:#22150E;--shadow:0 10px 30px rgba(0,0,0,.5)}
+:root{--bg:#fff;--card:#fff;--card2:#FFF7F0;--border:rgba(0,0,0,.07);--text:#111;--text2:#7A7A80;--orange:#FF7A18;--shadow:0 10px 30px rgba(0,0,0,.06)}
+[data-theme="dark"]{--bg:#0B0B0D;--card:#151518;--card2:#1E1E22;--border:rgba(255,255,255,.1);--text:#fff;--text2:#9AA0A6;--shadow:0 10px 30px rgba(0,0,0,.5)}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif}
-body{background:var(--bg);color:var(--text);padding-bottom:90px;transition:.3s}
-.header{position:sticky;top:0;z-index:10;background:#FF7A18;padding:12px 14px;display:flex;gap:10px;align-items:center}
-.logo{width:42px;height:42px;border-radius:12px;background:#fff;color:#FF7A18;display:grid;place-items:center;font-weight:800}
-.header-text{flex:1;color:#fff;line-height:1}
+body{background:var(--bg);color:var(--text);padding-bottom:90px}
+.header{position:sticky;top:0;z-index:20;background:#FF7A18;padding:12px 14px;display:flex;gap:10px;align-items:center}
+.logo{width:42px;height:42px;border-radius:12px;background:#fff;color:#FF7A18;display:grid;place-items:center;font-weight:800;overflow:hidden;font-size:18px}
+.logo img{width:100%;height:100%;object-fit:cover}
+.header-text{flex:1;color:#fff;line-height:1.1}
 .icon{width:40px;height:40px;border-radius:999px;background:rgba(255,255,255,.2);display:grid;place-items:center;cursor:pointer;position:relative;color:#fff}
 .icon b{position:absolute;top:-5px;right:-5px;background:#111;color:#fff;font-size:10px;min-width:18px;height:18px;border-radius:999px;display:grid;place-items:center}
 .search{margin:12px 14px 0;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:12px 16px;display:flex;gap:10px;box-shadow:var(--shadow)}
 .search input{flex:1;border:none;outline:none;background:transparent;font-weight:700;color:var(--text)}
-.hero{margin:14px;border-radius:24px;padding:18px;background:linear-gradient(120deg,#FF7A18,#FF9A4A);color:#fff}
-[data-theme="dark"].hero{background:linear-gradient(120deg,#151518,#2A1D16);border:1px solid rgba(255,122,24,.3)}
-.chips{display:flex;gap:8px;overflow:auto;padding:6px 14px 10px}.chip{white-space:nowrap;padding:9px 16px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-weight:700;font-size:13px;cursor:pointer;color:var(--text)}.chip.active{background:#FF7A18;color:#fff}
+.hero{margin:14px;border-radius:22px;padding:18px;background:linear-gradient(115deg,#FF7A18,#FF9A4A);color:#fff}
+.banners{padding:0 12px;display:grid;gap:10px}
+.banner{border-radius:18px;height:110px;display:flex;align-items:center;padding:16px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(110deg,#0B0B0D,#FF7A18)}
+.chips{display:flex;gap:8px;overflow:auto;padding:10px 14px}
+.chip{white-space:nowrap;padding:9px 16px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-weight:700;font-size:13px;cursor:pointer}
+.chip.active{background:#FF7A18;color:#fff;border-color:#FF7A18}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
-.ad-card{grid-column:1/3;border-radius:20px;height:120px;background:linear-gradient(110deg,#0B0B0D,#FF7A18);display:flex;align-items:center;padding:16px;color:#fff;position:relative;overflow:hidden}
 .card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
-.img{aspect-ratio:1;background:var(--card2);position:relative}.img img{width:100%;height:100%;object-fit:cover}
-.heart{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:999px;background:#fff;display:grid;place-items:center;cursor:pointer}
-.body{padding:10px;display:flex;flex-direction:column;gap:5px}
-.name{font-size:13px;font-weight:700;line-height:1.2;height:32px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.buy{background:#111;color:#fff;border-radius:999px;padding:10px;font-weight:800;border:none;cursor:pointer}.buy.orange{background:#FF7A18}
-.cart-bar{position:fixed;left:12px;right:12px;bottom:80px;background:#FF7A18;color:#fff;border-radius:999px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;z-index:15;transform:translateY(140px);transition:.4s}.cart-bar.show{transform:translateY(0)}
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:2px solid #FF7A18;display:flex;padding:8px 0 12px;z-index:10}.nav div{flex:1;text-align:center;font-size:10px;font-weight:800;color:var(--text2);cursor:pointer}.nav div.active{color:#FF7A18}
-.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5);display:none;align-items:flex-end}.modal.open{display:flex}
-.sheet{background:var(--card);width:100%;max-height:90vh;border-radius:28px 28px 0 0;display:flex;flex-direction:column;overflow:hidden}
-.head{padding:16px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.img{aspect-ratio:1;background:var(--card2);position:relative}
+.img img{width:100%;height:100%;object-fit:cover;display:block}
+.heart{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:999px;background:#fff;display:grid;place-items:center;cursor:pointer;z-index:2;box-shadow:0 4px 12px rgba(0,0,0,.2);font-size:18px}
+.buy{width:100%;background:#111;color:#fff;border-radius:999px;padding:11px;font-weight:800;border:none;cursor:pointer;margin-top:6px}
+.buy.added{background:#FF7A18}
+.cart-bar{position:fixed;left:12px;right:12px;bottom:80px;background:#FF7A18;color:#fff;border-radius:999px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;z-index:15;transform:translateY(140px);transition:.4s}
+.cart-bar.show{transform:translateY(0)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:2px solid #FF7A18;display:flex;padding:8px 0 12px;z-index:10}
+.nav div{flex:1;text-align:center;font-size:10px;font-weight:800;color:var(--text2);cursor:pointer}
+.nav div.active{color:#FF7A18}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:none;align-items:flex-end}
+.modal.open{display:flex}
+.sheet{background:var(--card);width:100%;max-height:92vh;border-radius:26px 26px 0 0;display:flex;flex-direction:column;overflow:hidden}
+.head{padding:16px 18px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border)}
 .content{flex:1;overflow:auto;padding:14px}
-.input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:13px 14px;font-weight:600;color:var(--text);margin-bottom:10px;outline:none}
-.select-native{width:100%;background:var(--card2);border:2px solid #FF7A18;border-radius:14px;padding:13px 14px;font-weight:800;color:var(--text);margin-bottom:10px;outline:none}
-.pill{padding:11px 14px;border-radius:999px;border:1px solid var(--border);background:var(--card);font-weight:700;font-size:13px;text-align:center;cursor:pointer;color:var(--text)}.pill.sel{background:#FF7A18;color:#fff}
-.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:700;font-size:13px;z-index:100;transition:.4s}.toast.show{transform:translateX(-50%) translateY(0)}
+.input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;color:var(--text)}
+.select{width:100%;background:var(--card2);border:2px solid #FF7A18;border-radius:14px;padding:13px;margin-bottom:10px;color:var(--text);font-weight:800}
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:700;z-index:100;transition:.4s}
+.toast.show{transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
 <div class="header">
-<div class="logo">DK</div>
-<div class="header-text"><div style="font-weight:800">DailyKart • 30 Mins</div><div style="font-size:11px" id="live">● LIVE • Dark Fixed • 27 Areas</div></div>
+<div class="logo" id="logoBox">DK</div>
+<div class="header-text"><b id="headerName" style="font-size:14px">DailyKart</b><div style="font-size:11px;opacity:.9" id="headerSub">● LIVE • 30 Mins • 27 Areas</div></div>
 <div style="display:flex;gap:6px">
 <div class="icon" onclick="toggleTheme()" id="themeBtn">🌙</div>
 <div class="icon" onclick="openWish()">❤<b id="wC" style="display:none">0</b></div>
 <div class="icon" onclick="openCart()">🛒<b id="cC" style="display:none">0</b></div>
-<div class="icon" onclick="openProfile()">👤</div>
 </div>
 </div>
 
 <div class="search">🔍<input id="search" placeholder="Search groceries..." oninput="render()"></div>
-<div class="hero">
-<div style="font-size:11px;font-weight:800">WA 8761958928 • FREE ₹299+ • PRODUCT FIXED</div>
-<div style="font-size:24px;font-weight:800;margin:8px 0;line-height:.95">Coverage 27 Areas<br>Product Fixed</div>
-<div style="font-size:11px">Dirak Charali to Sitpani • Guaranteed products</div>
+
+<div class="hero" id="heroBox">
+<div style="font-size:11px;font-weight:800" id="heroWa">WA 8761958928 • FREE ₹299+</div>
+<div style="font-size:22px;font-weight:800;margin:8px 0;line-height:.95">27 Areas Covered<br>Fresh Everyday</div>
+<div style="font-size:11px" id="heroArea">Dirak Charali to Sitpani • 30 Mins</div>
 </div>
 
+<div class="banners" id="bannerArea"></div>
 <div class="chips" id="chips"></div>
-<div style="padding:4px 14px 8px;display:flex;justify-content:space-between"><b>Products</b><span id="pcount" style="font-size:12px;color:var(--text2)"></span></div>
+<div style="padding:6px 14px;display:flex;justify-content:space-between"><b>Products</b><span id="pcount" style="font-size:12px;color:var(--text2)"></span></div>
 <div class="grid" id="grid"></div>
 
 <div class="cart-bar" id="cartBar" onclick="openCart()"><div><div style="font-weight:800" id="cTotal">₹0</div><div style="font-size:11px" id="cItems">0 items</div></div><div style="background:#fff;color:#FF7A18;padding:8px 14px;border-radius:999px;font-weight:800">View →</div></div>
-<div class="nav"><div class="active">🏠<br>Home</div><div onclick="openCart()">🛒<br>Cart</div><div onclick="openWish()">❤<br>Wish</div><div onclick="openOrders()">📦<br>Orders</div><div onclick="openProfile()">👤<br>You</div></div>
+<div class="nav"><div class="active">🏠<br>Home</div><div onclick="openCart()">🛒<br>Cart</div><div onclick="openWish()">❤<br>Wish</div><div onclick="openOrders()">📦<br>Orders</div></div>
 
-<div id="cartM" class="modal" onclick="if(event.target===this)closeCart()"><div class="sheet"><div class="head"><h3>Cart</h3><div class="icon" style="background:var(--card2);color:var(--text)" onclick="closeCart()">✕</div></div><div class="content" id="cartBody"></div><div style="padding:14px;border-top:1px solid var(--border)"><div id="bill" style="background:var(--card2);border-radius:14px;padding:12px;font-size:13px"></div><button style="width:100%;margin-top:10px;background:#FF7A18;color:#fff;border-radius:999px;padding:14px;font-weight:800;border:none" onclick="goBuy()">Buy Now →</button></div></div></div>
-<div id="wishM" class="modal" onclick="if(event.target===this)closeWish()"><div class="sheet"><div class="head"><h3>Wishlist</h3><div class="icon" style="background:var(--card2);color:var(--text)" onclick="closeWish()">✕</div></div><div class="content" id="wishBody"></div></div></div>
-
-<div id="buyM" class="modal" onclick="if(event.target===this)closeBuy()"><div class="sheet"><div class="head"><h3>Checkout</h3><div class="icon" style="background:var(--card2);color:var(--text)" onclick="closeBuy()">✕</div></div><div class="content">
-<div id="buyBox" style="background:var(--card2);border-radius:16px;padding:12px;border:1px solid var(--border);margin-bottom:10px"></div>
-<input id="cName" class="input" placeholder="Full name *"><input id="cPhone" class="input" placeholder="Phone 10 digits *" maxlength="10">
-<div style="font-weight:700;font-size:13px;margin:10px 0 6px">📍 Coverage Area (27) * CLICK TO OPEN</div>
-<select id="areaSelectOrder" class="select-native"><option value="">-- Select Area --</option></select>
-<textarea id="cAddr" class="input" placeholder="Full address *" style="height:80px;resize:none;margin-top:10px"></textarea>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><div class="pill sel" id="cod" onclick="setPay('COD')">💵 COD</div><div class="pill" id="online" onclick="setPay('ONLINE')">📱 Online</div></div>
-<div id="finalBill" style="margin-top:12px;background:#0B0B0D;color:#fff;border-radius:16px;padding:12px;font-size:13px"></div>
-</div><div style="padding:14px;border-top:1px solid var(--border)"><button id="placeBtn" style="width:100%;background:#FF7A18;color:#fff;border-radius:999px;padding:14px;font-weight:800;border:none" onclick="placeOrder()">Place Order 🟢</button></div></div></div>
-
-<div id="orderM" class="modal" onclick="if(event.target===this)closeOrders()"><div class="sheet"><div class="head"><h3>Orders</h3><div class="icon" style="background:var(--card2);color:var(--text)" onclick="closeOrders()">✕</div></div><div class="content" id="orderBody"></div></div></div>
-<div id="profM" class="modal" onclick="if(event.target===this)closeProfile()"><div class="sheet"><div class="head"><h3>Profile • Dark Mode • 27 Areas</h3><div class="icon" style="background:var(--card2);color:var(--text)" onclick="closeProfile()">✕</div></div><div class="content">
-<button onclick="toggleTheme()" style="width:100%;background:var(--text);color:var(--bg);border-radius:999px;padding:12px;font-weight:800;border:none;margin-bottom:10px">🌙/☀️ Toggle Dark Mode (Rich Black + Orange / White + Orange)</button>
-<input id="pNameIn" class="input" placeholder="Your Name *"><input id="pPhoneIn" class="input" placeholder="Phone 10 digits *">
-<div style="font-weight:700;font-size:13px;margin:8px 0">Your Addresses</div><div id="profileAddrList"></div>
-<select id="areaSelectProfile" class="select-native"><option value="">-- Select Area (27) --</option></select>
-<textarea id="pAddrIn" class="input" placeholder="Detailed address *" style="height:80px;resize:none"></textarea>
-<div style="display:flex;gap:8px"><button style="flex:1;background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:12px;font-weight:800;color:var(--text)" onclick="addProfileAddr()">+ Add</button><button style="flex:1;background:#FF7A18;color:#fff;border-radius:999px;padding:12px;font-weight:800;border:none" onclick="saveProfile()">Save ✅</button></div>
-</div></div></div>
+<div id="cartM" class="modal" onclick="if(event.target===this)closeCart()"><div class="sheet"><div class="head"><h3>Cart</h3><div onclick="closeCart()">✕</div></div><div class="content" id="cartBody"></div><div style="padding:14px;border-top:1px solid var(--border)"><div id="bill1" style="background:var(--card2);border-radius:14px;padding:12px;font-size:13px;margin-bottom:10px"></div><button style="width:100%;background:#FF7A18;color:#fff;border-radius:999px;padding:14px;border:none;font-weight:800" onclick="goCheckout()">Checkout →</button></div></div></div>
+<div id="wishM" class="modal" onclick="if(event.target===this)closeWish()"><div class="sheet"><div class="head"><h3>Wishlist</h3><div onclick="closeWish()">✕</div></div><div class="content" id="wishBody"></div></div></div>
+<div id="buyM" class="modal" onclick="if(event.target===this)closeBuy()"><div class="sheet"><div class="head"><h3>Checkout</h3><div onclick="closeBuy()">✕</div></div><div class="content">
+<div id="buyBox" style="background:var(--card2);padding:12px;border-radius:14px;margin-bottom:10px"></div>
+<input id="cName" class="input" placeholder="Full Name *"><input id="cPhone" class="input" placeholder="Phone 10 digits *" maxlength="10">
+<div style="font-weight:800;font-size:13px;margin:8px 0">📍 Area (27) *</div>
+<select id="areaSelect" class="select"><option value="">-- Select Area --</option></select>
+<textarea id="cAddr" class="input" placeholder="Full address *" style="height:80px"></textarea>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div class="pill" id="payCOD" onclick="setPay('COD')" style="padding:11px;border-radius:999px;border:1px solid var(--border);text-align:center;font-weight:700;cursor:pointer;background:#FF7A18;color:#fff">💵 COD</div><div class="pill" id="payONLINE" onclick="setPay('ONLINE')" style="padding:11px;border-radius:999px;border:1px solid var(--border);text-align:center;font-weight:700;cursor:pointer">📱 Online</div></div>
+<div id="bill2" style="background:#111;color:#fff;border-radius:14px;padding:12px;margin-top:10px;font-size:13px"></div>
+</div><div style="padding:14px"><button style="width:100%;background:#FF7A18;color:#fff;border-radius:999px;padding:14px;border:none;font-weight:800" onclick="placeOrder()">Place Order 🟢</button></div></div></div>
+<div id="orderM" class="modal" onclick="if(event.target===this)closeOrders()"><div class="sheet"><div class="head"><h3>My Orders</h3><div onclick="closeOrders()">✕</div></div><div class="content" id="orderBody"></div></div></div>
 
 <script>
-const AREAS_27=["Dirak Charali","Aamguri","Bordirak","Khatua","Hunjan","Navajyoti","Simoluguri","Uttar Bisrampur","Dakhin Bisrampur","Kailashpur","Dimbujora","Tongona","Gutibari","Tongona-Nagaon","Dirakgate","Modarkhat","Digholi-pothar","Huwonipothar","Namhullung","Tiniali Nagaon","Betoni","Wathoi","Litong","Talpothar","Hatigarh","Dumsi","Sitpani"];
-let cart={},wish={},selectedArea="",selectedProfileArea="",pay="COD",buyP=null,profile={name:"",phone:"",addresses:[]};
+const firebaseConfig={apiKey:"AIzaSyDRRYLhHv2ecotfSRBfE2L9dElO1UeyFd4",authDomain:"dailykart-tinsukia.firebaseapp.com",databaseURL:"https://dailykart-tinsukia-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"dailykart-tinsukia",storageBucket:"dailykart-tinsukia.firebasestorage.app",messagingSenderId:"279043121985",appId:"1:279043121985:web:57a5c97b9a8827ad2e77c0"};
+firebase.initializeApp(firebaseConfig); const db=firebase.database();
+
+let cart={},wish={},products=[],banners=[],AREAS=[],SETTINGS={whatsapp:"918761958928",freeMin:299,charge:30},HEADER={logo:"DK",name:"DailyKart",logoImg:""},activeCat="All",pay="COD",selectedArea="",buyItem=null;
 const $=id=>document.getElementById(id);
-function toast(m){let t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500);}
+function toast(m){let t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600);}
+function toggleTheme(){let c=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",c);localStorage.setItem("dk_theme",c);$("themeBtn").textContent=c==="dark"?"☀️":"🌙";}
 
-// DARK MODE - FIXED
-function initTheme(){let s=localStorage.getItem("dk_theme")||"light";document.documentElement.setAttribute("data-theme",s);$("themeBtn").textContent=s==="dark"?"☀️":"🌙";$("live").textContent=s==="dark"?"● LIVE • Dark • Rich Black + Orange":"● LIVE • Light • White + Orange";}
-function toggleTheme(){let cur=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",cur);localStorage.setItem("dk_theme",cur);initTheme();toast(cur==="dark"?"Dark mode ON 🌙":"Light mode ON ☀️");}
+// --- ADMIN CONTROLLED READ ---
+function initAdminControl(){
+  // 1. Header Logo/Name
+  db.ref("dk_v3_header").on("value",s=>{
+    let h=s.val(); if(!h) return; HEADER=h;
+    $("headerName").textContent=h.name||"DailyKart";
+    if(h.logoImg && h.logoImg.startsWith("http")) $("logoBox").innerHTML=`<img src="${h.logoImg}">`;
+    else $("logoBox").textContent=h.logo||"DK";
+  });
+  // 2. Products
+  db.ref("dk_v3_products").on("value",s=>{
+    let val=s.val()||{}; products=Object.values(val);
+    if(products.length===0){ products=[{id:"1",name:"Fortune Oil 1L",price:145,mrp:175,category:"Oil",image:"https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"},{id:"2",name:"Aashirvaad Atta 5kg",price:245,mrp:285,category:"Atta",image:"https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400"}]; }
+    buildChips(); render();
+  });
+  // 3. Banners / Ads
+  db.ref("dk_v3_banners").on("value",s=>{
+    let val=s.val()||{}; banners=Object.values(val);
+    renderBanners();
+  });
+  // 4. Areas 27
+  db.ref("dk_v3_areas").on("value",s=>{
+    let val=s.val(); AREAS=Array.isArray(val)&&val.length?val:["Dirak Charali","Aamguri","Bordirak","Khatua","Hunjan","Navajyoti","Simoluguri","Uttar Bisrampur","Dakhin Bisrampur","Kailashpur","Dimbujora","Tongona","Gutibari","Tongona-Nagaon","Dirakgate","Modarkhat","Digholi-pothar","Huwonipothar","Namhullung","Tiniali Nagaon","Betoni","Wathoi","Litong","Talpothar","Hatigarh","Dumsi","Sitpani"];
+    fillAreas();
+  });
+  // 5. Settings WA, Free Delivery
+  db.ref("dk_v3_settings").on("value",s=>{
+    let v=s.val()||{}; SETTINGS.whatsapp=v.whatsapp||"918761958928"; SETTINGS.freeMin=v.freeMin||299; SETTINGS.charge=v.charge||30;
+    $("heroWa").textContent=`WA ${SETTINGS.whatsapp.slice(-10)} • FREE ₹${SETTINGS.freeMin}+`;
+  });
+}
 
-// PRODUCTS - GUARANTEED SHOW
-const products=[
-{id:"1",name:"Fried Rice Chicken Combo",price:180,mrp:220,category:"FastFood",image:"https://images.unsplash.com/photo-1603133872875-ca2a98a0a862?w=400"},
-{id:"2",name:"Chicken Noodles Box",price:150,mrp:180,category:"Fastfood",image:"https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400"},
-{id:"3",name:"Fortune Oil 1L",price:145,mrp:175,category:"Oil",image:"https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"},
-{id:"4",name:"Aashirvaad Atta 5kg",price:245,mrp:285,category:"Atta",image:"https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400"},
-{id:"5",name:"Tata Salt 1kg",price:28,mrp:32,category:"Masala",image:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400"},
-{id:"6",name:"Amul Milk 500ml",price:33,mrp:35,category:"Dairy",image:"https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400"},
-{id:"7",name:"Good Day 200g",price:35,mrp:40,category:"Biscuits",image:"https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400"},
-{id:"8",name:"Lay's 52g",price:20,mrp:20,category:"Snacks",image:"https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400"}
-];
-const banners=[{title:"Diwali Dhamaka!",subtitle:"Flat 20% OFF • 27 areas",tag:"DEMO AD",emoji:"🎉"},{title:"Free Delivery!",subtitle:"On ₹299+ • Dirak to Sitpani",tag:"FREE",emoji:"🛵"}];
+function renderBanners(){
+  if(!banners.length){$("bannerArea").innerHTML=""; return;}
+  $("bannerArea").innerHTML=banners.map(b=>`<div class="banner"><div><div style="background:#FF7A18;display:inline-block;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800">${b.tag||"DEMO AD"}</div><div style="font-weight:800;font-size:16px;margin:4px 0">${b.title}</div><div style="font-size:11px">${b.subtitle||""}</div></div>${b.image?`<img src="${b.image}" style="margin-left:auto;width:70px;height:70px;border-radius:12px;object-fit:cover">`:""}</div>`).join("");
+}
+function fillAreas(){
+  let sel=$("areaSelect"); sel.innerHTML='<option value="">-- Select Area --</option>';
+  AREAS.forEach(a=>{let o=document.createElement("option");o.value=a;o.textContent=a;sel.appendChild(o);});
+  sel.addEventListener("change",e=>{selectedArea=e.target.value; if(e.target.value) toast(e.target.value+" ✅");});
+  $("heroArea").textContent=AREAS[0]+" to "+AREAS[AREAS.length-1]+" • 30 Mins";
+}
+function buildChips(){
+  let cats=["All",...new Set(products.map(p=>p.category).filter(Boolean))];
+  $("chips").innerHTML=cats.map(c=>`<div class="chip ${c===activeCat?"active":""}" onclick="setCat('${c}')">${c}</div>`).join("");
+}
+function setCat(c){activeCat=c;document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x.textContent===c));render();}
 
-let activeCat="All";
-function buildChips(){let cats=[...new Set(products.map(p=>p.category))];$("chips").innerHTML=["All",...cats].map(c=>`<div class="chip ${c===activeCat?"active":""}" onclick="setCat(this,'${c}')">${c}</div>`).join("");}
-function setCat(el,c){activeCat=c;document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));el.classList.add("active");render();}
+// --- FIXED BUY + WISH - 100% WORKING ---
+window.buyNow=function(id){
+  let p=products.find(x=>String(x.id)===String(id));
+  if(!p){toast("Product not found");return;}
+  if(!cart[id]) cart[id]={...p,qty:1}; else cart[id].qty++;
+  buyItem=cart[id];
+  toast(p.name+" Added ✅");
+  sync(); openCheckout();
+}
+window.toggleWish=function(id){
+  if(wish[id]){delete wish[id]; toast("Removed 🤍");}
+  else{let p=products.find(x=>String(x.id)===String(id)); if(p){wish[id]=p; toast("Wishlist ❤️");}}
+  sync(); render();
+}
+
 function render(){
   let q=$("search").value.toLowerCase();
-  let list=products;
-  if(activeCat!=="All") list=list.filter(p=>p.category===activeCat);
-  if(q) list=list.filter(p=>p.name.toLowerCase().includes(q));
+  let list=products.filter(p=>{
+    let catOk=activeCat==="All"||p.category===activeCat;
+    let qOk=!q||p.name.toLowerCase().includes(q);
+    return catOk&&qOk;
+  });
   $("pcount").textContent=list.length+" products";
-  let html="";
-  list.forEach((p,i)=>{
-    if(i===4){html+=`<div class="ad-card"><div><div style="background:#FF7A18;display:inline-block;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800">DEMO AD 🎉</div><div style="font-weight:800;font-size:16px;margin:4px 0">Diwali Dhamaka!</div><div style="font-size:11px">Flat 20% OFF • 27 areas coverage</div></div><div style="margin-left:auto;background:#fff;color:#111;padding:8px 12px;border-radius:999px;font-weight:800;font-size:11px">Shop →</div></div>`;}
+  $("grid").innerHTML=list.map(p=>{
     let isW=!!wish[p.id];
-    html+=`<div class="card"><div class="img"><img src="${p.image}" onerror="this.src='https://picsum.photos/400'"><div class="heart" onclick="toggleW('${p.id}')">${isW?"❤️":"🤍"}</div></div><div class="body"><div style="font-size:10px;color:#FF7A18;font-weight:800">${p.category.toUpperCase()}</div><div class="name">${p.name}</div><div style="display:flex;gap:4px"><b>₹${p.price}</b><span style="font-size:11px;color:var(--text2);text-decoration:line-through">₹${p.mrp}</span></div><button class="buy ${cart[p.id]?"orange":""}" onclick="buy('${p.id}')">${cart[p.id]?`Added x${cart[p.id].qty}`:"Buy Now"}</button></div></div>`;
-  });
-  $("grid").innerHTML=html;
+    let inCart=cart[p.id];
+    return `<div class="card"><div class="img"><img src="${p.image}" onerror="this.src='https://picsum.photos/400'"><div class="heart" onclick="toggleWish('${p.id}')">${isW?'❤️':'🤍'}</div></div><div style="padding:10px"><div style="font-size:10px;color:#FF7A18;font-weight:800">${(p.category||"").toUpperCase()}</div><div style="font-size:13px;font-weight:700;height:32px;overflow:hidden">${p.name}</div><div><b>₹${p.price}</b> <small style="text-decoration:line-through;color:var(--text2)">₹${p.mrp||p.price}</small></div><button class="buy ${inCart?'added':''}" onclick="buyNow('${p.id}')">${inCart?'Added x'+inCart.qty:'Buy Now'}</button></div></div>`;
+  }).join("") || `<div style="grid-column:1/3;text-align:center;padding:30px;color:var(--text2)">No products - Add from Admin</div>`;
 }
 
-function fillSelects(){
-  let o=$("areaSelectOrder"), p=$("areaSelectProfile");
-  AREAS_27.forEach(a=>{
-    let op1=document.createElement("option");op1.value=a;op1.textContent=a;o.appendChild(op1);
-    let op2=document.createElement("option");op2.value=a;op2.textContent=a;p.appendChild(op2);
-  });
-  o.addEventListener("change",e=>{selectedArea=e.target.value; if(e.target.value) toast("Area: "+e.target.value+" ✅");});
-  p.addEventListener("change",e=>{selectedProfileArea=e.target.value; if(e.target.value) toast("Profile Area: "+e.target.value+" ✅");});
+function sync(){
+  let tot=Object.values(cart).reduce((s,p)=>s+p.price*p.qty,0);
+  let cnt=Object.values(cart).reduce((s,p)=>s+p.qty,0);
+  $("cC").style.display=cnt?"grid":"none"; $("cC").textContent=cnt;
+  $("wC").style.display=Object.keys(wish).length?"grid":"none"; $("wC").textContent=Object.keys(wish).length;
+  $("cTotal").textContent="₹"+tot; $("cItems").textContent=cnt+" items";
+  $("cartBar").classList.toggle("show",cnt>0);
+  localStorage.setItem("dk_cart",JSON.stringify(cart)); localStorage.setItem("dk_wish",JSON.stringify(wish));
+  renderCart(); renderWish(); calc();
 }
-
-function buy(id){let p=products.find(x=>x.id===id); if(!p)return; if(!cart[id])cart[id]={...p,qty:1}; buyP={...p,qty:cart[id].qty}; openBuy();}
-function goBuy(){closeCart(); openBuy();}
-function openBuy(){
-  let p=buyP||Object.values(cart)[0]; if(!p){toast("Cart empty");return;}
-  $("buyBox").innerHTML=`<div style="display:flex;gap:10px;align-items:center"><img src="${p.image}" style="width:50px;height:50px;border-radius:12px"><div style="flex:1"><b style="color:var(--text)">${p.name}</b><div>₹${p.price}</div></div><div style="display:flex;gap:6px;background:var(--text);color:var(--bg);border-radius:999px;padding:5px 8px"><button onclick="chgBuy(-1)" style="width:24px;height:24px;border-radius:999px;border:none">-</button><b id="bQty">${cart[p.id]?.qty||1}</b><button onclick="chgBuy(1)" style="width:24px;height:24px;border-radius:999px;border:none">+</button></div></div>`;
-  let prof=JSON.parse(localStorage.getItem("dk_profile")||"{}"); $("cName").value=prof.name||""; $("cPhone").value=prof.phone||"";
-  let sel=(prof.addresses||[]).find(a=>a.selected); if(sel){$("cAddr").value=sel.fullAddr; selectedArea=sel.area; $("areaSelectOrder").value=sel.area;}
+function renderCart(){
+  let ids=Object.keys(cart);
+  if(!ids.length){$("cartBody").innerHTML='<div style="text-align:center;padding:30px;color:var(--text2)">Cart empty</div>'; return;}
+  $("cartBody").innerHTML=ids.map(id=>`<div style="display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)"><img src="${cart[id].image}" style="width:56px;height:56px;border-radius:12px;object-fit:cover"><div style="flex:1"><b style="font-size:13px">${cart[id].name}</b><div style="font-size:12px;color:var(--text2)">₹${cart[id].price} x ${cart[id].qty}</div></div><div style="display:flex;gap:6px;align-items:center;background:var(--text);color:var(--bg);border-radius:999px;padding:6px 10px"><button onclick="cart['${id}'].qty--; if(cart['${id}'].qty<=0) delete cart['${id}']; sync();" style="width:24px;height:24px;border-radius:999px;border:none">-</button><b>${cart[id].qty}</b><button onclick="cart['${id}'].qty++; sync();" style="width:24px;height:24px;border-radius:999px;border:none">+</button></div></div>`).join("");
+}
+function renderWish(){
+  let ids=Object.keys(wish);
+  if(!ids.length){$("wishBody").innerHTML='<div style="text-align:center;padding:30px;color:var(--text2)">Wishlist empty ❤️</div>'; return;}
+  $("wishBody").innerHTML=ids.map(id=>`<div style="display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)"><img src="${wish[id].image}" style="width:56px;height:56px;border-radius:12px"><div style="flex:1"><b>${wish[id].name}</b></div><button style="padding:8px 14px;border-radius:999px;background:#FF7A18;color:#fff;border:none;font-weight:700" onclick="buyNow('${id}')">Buy</button></div>`).join("");
+}
+function calc(){
+  let sub=Object.values(cart).reduce((s,p)=>s+p.price*p.qty,0);
+  let del=sub>=SETTINGS.freeMin||sub===0?0:SETTINGS.charge;
+  let tot=sub+del;
+  let h=`<div style="display:flex;justify-content:space-between"><span>Subtotal</span><span>₹${sub}</span></div><div style="display:flex;justify-content:space-between;margin:6px 0"><span>Delivery (${sub>=SETTINGS.freeMin?'FREE':'₹'+SETTINGS.charge})</span><span>₹${del}</span></div><div style="display:flex;justify-content:space-between;font-weight:800;border-top:1px solid rgba(255,255,255,.2);padding-top:8px;margin-top:8px"><span>Total</span><span>₹${tot}</span></div>`;
+  if($("bill1")) $("bill1").innerHTML=h;
+  if($("bill2")) $("bill2").innerHTML=h;
+  return {sub,del,tot};
+}
+function openCart(){$("cartM").classList.add("open");}
+function closeCart(){$("cartM").classList.remove("open");}
+function openWish(){$("wishM").classList.add("open");}
+function closeWish(){$("wishM").classList.remove("open");}
+function goCheckout(){closeCart(); if(!Object.keys(cart).length){toast("Cart empty");return;} openCheckout();}
+function openCheckout(){
+  let p=buyItem||Object.values(cart)[0]; if(!p){toast("Cart empty");return;}
+  $("buyBox").innerHTML=`<div style="display:flex;gap:10px;align-items:center"><img src="${p.image}" style="width:50px;height:50px;border-radius:12px;object-fit:cover"><div style="flex:1"><b>${p.name}</b><div>₹${p.price} x ${p.qty||cart[p.id]?.qty||1}</div></div></div>`;
   calc(); $("buyM").classList.add("open");
 }
-function chgBuy(d){let id=buyP.id; if(!cart[id])cart[id]={...buyP,qty:1}; cart[id].qty+=d; if(cart[id].qty<=0){delete cart[id]; closeBuy(); sync(); return;} $("bQty").textContent=cart[id].qty; sync();}
-function setPay(m){pay=m; $("cod").classList.toggle("sel",m==="COD"); $("online").classList.toggle("sel",m==="ONLINE");}
-function calc(){let sub=Object.values(cart).reduce((s,p)=>s+p.price*p.qty,0); let del=sub>=299||sub===0?0:30; let tot=sub+del; let h=`<div style="display:flex;justify-content:space-between"><span>Subtotal</span><span>₹${sub}</span></div><div style="display:flex;justify-content:space-between;margin:6px 0"><span>Delivery</span><span>₹${del}</span></div><div style="display:flex;justify-content:space-between;font-weight:800;border-top:1px solid rgba(255,255,255,.2);padding-top:6px;margin-top:6px"><span>Total</span><span>₹${tot}</span></div>`; $("bill").innerHTML=h; $("finalBill").innerHTML=h; return {sub,del,tot};}
-function toggleW(id){if(wish[id])delete wish[id]; else wish[id]=products.find(p=>p.id===id); sync(); render();}
-function sync(){let tot=Object.values(cart).reduce((s,p)=>s+p.price*p.qty,0); let cnt=Object.values(cart).reduce((s,p)=>s+p.qty,0); let w=Object.keys(wish).length; $("cC").style.display=cnt?"grid":"none"; $("cC").textContent=cnt; $("wC").style.display=w?"grid":"none"; $("wC").textContent=w; $("cTotal").textContent="₹"+tot; $("cItems").textContent=cnt+" items"; $("cartBar").classList.toggle("show",cnt>0); localStorage.setItem("dk_cart",JSON.stringify(cart)); localStorage.setItem("dk_wish",JSON.stringify(wish)); renderCart(); renderWish();}
-function renderCart(){let ids=Object.keys(cart); if(!ids.length){$("cartBody").innerHTML='<div style="text-align:center;padding:30px;color:var(--text2)">Cart empty</div>'; calc(); return;} $("cartBody").innerHTML=ids.map(id=>`<div style="display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)"><img src="${cart[id].image}" style="width:50px;height:50px;border-radius:12px"><div style="flex:1"><b style="font-size:13px;color:var(--text)">${cart[id].name}</b><div style="color:var(--text2);font-size:12px">₹${cart[id].price} x ${cart[id].qty}</div></div><div style="display:flex;gap:4px;background:var(--text);color:var(--bg);border-radius:999px;padding:5px 8px"><button onclick="upd('${id}',-1)" style="width:22px;height:22px;border-radius:999px;border:none">-</button><b>${cart[id].qty}</b><button onclick="upd('${id}',1)" style="width:22px;height:22px;border-radius:999px;border:none">+</button></div></div>`).join(""); calc();}
-function renderWish(){let ids=Object.keys(wish); $("wishBody").innerHTML=ids.length?ids.map(id=>`<div style="display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)"><img src="${wish[id].image}" style="width:50px;height:50px;border-radius:12px"><div style="flex:1"><b style="color:var(--text)">${wish[id].name}</b></div><button style="padding:8px 14px;border-radius:999px;background:#FF7A18;color:#fff;border:none;font-weight:700" onclick="buy('${id}')">Buy</button></div>`).join(""):'<div style="text-align:center;padding:30px;color:var(--text2)">Wishlist empty</div>';}
-function upd(id,d){cart[id].qty+=d; if(cart[id].qty<=0)delete cart[id]; sync();}
-function openCart(){$("cartM").classList.add("open");}function closeCart(){$("cartM").classList.remove("open");}
-function openWish(){$("wishM").classList.add("open");}function closeWish(){$("wishM").classList.remove("open");}
 function closeBuy(){$("buyM").classList.remove("open");}
-function placeOrder(){
-  let name=$("cName").value.trim(), phone=$("cPhone").value.trim(), addr=$("cAddr").value.trim();
-  if(!name||phone.length!==10||!addr||!selectedArea){toast("Name, Phone, Address, Area required!");return;}
-  let bill=calc(); if(bill.tot===0){toast("Cart empty");return;}
-  let orderId="DK"+Date.now().toString().slice(-6); let otp=Math.floor(1000+Math.random()*9000);
-  toast("Order "+orderId+" Placed! OTP:"+otp+" • Area:"+selectedArea);
-  cart={}; sync(); closeBuy();
-  window.open(`https://wa.me/918761958928?text=NEW ${orderId} ${name} ${selectedArea} ₹${bill.tot} OTP ${otp}`,"_blank");
-}
-function openOrders(){toast("Orders coming soon - Firebase connect korok");}
-function closeOrders(){}
-function loadProfile(){try{let p=JSON.parse(localStorage.getItem("dk_profile")||"{}");profile=p; if(!profile.addresses)profile.addresses=[]; $("pNameIn").value=profile.name||""; $("pPhoneIn").value=profile.phone||""; renderProfileAddrs();}catch{}}
-function saveProfile(){let n=$("pNameIn").value.trim(), ph=$("pPhoneIn").value.trim(); if(!n||ph.length!==10){toast("Name & 10 digit");return;} profile.name=n; profile.phone=ph; localStorage.setItem("dk_profile",JSON.stringify(profile)); toast("Profile saved ✅");}
-function addProfileAddr(){let full=$("pAddrIn").value.trim(); if(!full||!selectedProfileArea){toast("Address + Area select");return;} profile.addresses.push({area:selectedProfileArea,fullAddr:full,selected:profile.addresses.length===0}); $("pAddrIn").value=""; selectedProfileArea=""; $("areaSelectProfile").value=""; localStorage.setItem("dk_profile",JSON.stringify(profile)); renderProfileAddrs(); toast("Added ✅");}
-function renderProfileAddrs(){let box=$("profileAddrList"); if(!profile.addresses||!profile.addresses.length){box.innerHTML='<div style="padding:10px;border:1px dashed var(--border);border-radius:12px;color:var(--text2);font-size:12px">No address</div>';return;} box.innerHTML=profile.addresses.map((a,i)=>`<div style="display:flex;gap:8px;align-items:center;padding:10px;border:1px solid ${a.selected?"#FF7A18":"var(--border)"};border-radius:12px;margin-bottom:6px"><input type="radio" name="addr" ${a.selected?"checked":""} onchange="selectAddr(${i})"><div style="flex:1"><b style="font-size:13px;color:var(--text)">${a.area}</b><div style="font-size:12px;color:var(--text2)">${a.fullAddr}</div></div><div style="color:#ff3b30;font-weight:800;cursor:pointer" onclick="delAddr(${i})">✕</div></div>`).join("");}
-function selectAddr(i){profile.addresses.forEach((a,idx)=>a.selected=idx===i); localStorage.setItem("dk_profile",JSON.stringify(profile)); renderProfileAddrs();}
-function delAddr(i){profile.addresses.splice(i,1); localStorage.setItem("dk_profile",JSON.stringify(profile)); renderProfileAddrs();}
-function openProfile(){loadProfile(); $("profM").classList.add("open");}function closeProfile(){$("profM").classList.remove("open");}
+function setPay(m){pay=m; $("payCOD").style.background=m==="COD"?"#FF7A18":"var(--card)"; $("payCOD").style.color=m==="COD"?"#fff":"var(--text)"; $("payONLINE").style.background=m==="ONLINE"?"#FF7A18":"var(--card)"; $("payONLINE").style.color=m==="ONLINE"?"#fff":"var(--text)";}
 
-// INIT - GUARANTEED
+function placeOrder(){
+  let name=$("cName").value.trim(), phone=$("cPhone").value.trim().replace(/\D/g,"").slice(-10), addr=$("cAddr").value.trim();
+  if(!name||phone.length!==10||!addr||!selectedArea){toast("Name, Phone, Area, Address required!");return;}
+  let bill=calc(); if(bill.tot===0){toast("Cart empty");return;}
+  let orderId="DK"+Date.now().toString().slice(-6); let otp=Math.floor(1000+Math.random()*9000).toString();
+  let order={orderId,customer:{name,phone:"+91"+phone,address:addr,area:selectedArea},items:Object.values(cart).map(p=>({id:p.id,name:p.name,qty:p.qty,price:p.price})),bill,payMode:pay,status:"NEW",createdAt:Date.now(),deliveryOtp:otp};
+  db.ref("dk_v3_orders/"+orderId).set(order).then(()=>{
+    toast("Order "+orderId+" Placed! OTP: "+otp);
+    cart={}; sync(); closeBuy();
+    window.open(`https://wa.me/${SETTINGS.whatsapp}?text=NEW ${orderId} ${name} ${selectedArea} ₹${bill.tot} OTP ${otp}`,"_blank");
+  });
+}
+function openOrders(){
+  let ph=JSON.parse(localStorage.getItem("dk_profile")||"{}").phone||prompt("Enter 10 digit phone to view orders:");
+  if(!ph) return; let clean=ph.replace(/\D/g,"").slice(-10);
+  $("orderBody").innerHTML="<div style='text-align:center;padding:20px'>Loading...</div>"; $("orderM").classList.add("open");
+  db.ref("dk_v3_orders").orderByChild("customer/phone").equalTo("+91"+clean).once("value").then(s=>{
+    let val=s.val()||{}; let list=Object.values(val).sort((a,b)=>b.createdAt-a.createdAt);
+    if(!list.length){$("orderBody").innerHTML="<div style='text-align:center;padding:20px;color:var(--text2)'>No orders for +91"+clean+"</div>";return;}
+    $("orderBody").innerHTML=list.map(o=>`<div style="border:1px solid var(--border);border-radius:16px;padding:12px;margin-bottom:10px"><div style="display:flex;justify-content:space-between"><b>${o.orderId}</b><span style="background:#FFF0E6;color:#FF7A18;padding:4px 8px;border-radius:999px;font-size:11px">${o.status} ${o.riderName?"• "+o.riderName:""}</span></div><div style="font-size:12px;color:var(--text2);margin:4px 0">${new Date(o.createdAt).toLocaleString()} • ${o.customer.area}</div><div style="font-size:12px">${(o.items||[]).map(i=>i.name+" x"+i.qty).join(", ")} • ₹${o.bill.tot}</div><div style="background:var(--text);color:var(--bg);border-radius:10px;padding:8px;text-align:center;margin-top:6px">OTP <b style="color:#FF7A18;letter-spacing:2px">${o.deliveryOtp}</b></div></div>`).join("");
+  });
+}
+function closeOrders(){$("orderM").classList.remove("open");}
+
 document.addEventListener("DOMContentLoaded",()=>{
-  initTheme();
-  fillSelects();
-  buildChips();
-  render();
+  let t=localStorage.getItem("dk_theme")||"light"; document.documentElement.setAttribute("data-theme",t); $("themeBtn").textContent=t==="dark"?"☀️":"🌙";
   try{cart=JSON.parse(localStorage.getItem("dk_cart")||"{}"); wish=JSON.parse(localStorage.getItem("dk_wish")||"{}");}catch{}
-  sync();
-  console.log("DailyKart loaded - products:",products.length);
+  initAdminControl();
+  setTimeout(()=>{render(); sync();},500);
 });
 </script>
 </body>
