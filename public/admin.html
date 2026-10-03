@@ -1,228 +1,469 @@
 <!DOCTYPE html>
-<html lang="as">
+<html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>DK Pro - Full Mobile Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DailyKart Admin Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <style>
-:root{--orange:#FF6B00;--orange2:#FF8C32;--light:#FFF0E5;--bg:#FFF9F0;--card:#FFFFFF;--border:#FFE4CC;--text:#1A1A1A;--text2:#8B7355;--black:#111111;--green:#00C950;--red:#FF2D2D;--shadow:0 8px 24px rgba(255,107,0,0.12)}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:95px}
-.loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--orange),#111111);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
-.loginBox{background:var(--card);border:2px solid var(--border);border-radius:24px;padding:20px;width:100%;max-width:380px;box-shadow:var(--shadow)}
-.roleTab{display:flex;gap:6px;margin-top:12px}
-.roleTab div{flex:1;padding:10px;border-radius:12px;border:2px solid var(--border);text-align:center;font-weight:800;font-size:11px;cursor:pointer;background:var(--bg)}
-.roleTab div.active{background:var(--orange);color:#fff;border-color:var(--orange)}
-.top{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:2px solid var(--border);padding:10px 12px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow)}
-.switch{width:46px;height:26px;background:#ccc;border-radius:30px;position:relative;cursor:pointer;transition:.3s}
-.switch.on{background:var(--green)}.switch div{width:22px;height:22px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.3s}
-.switch.on div{left:22px}
-.content{padding:12px;padding-bottom:100px}
-.card{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
-.input{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:14px;background:var(--card);color:var(--text);font-weight:600;font-size:13px;outline:none;margin-top:6px}
-.input:focus{border-color:var(--orange)}
-.btn{border:none;padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;font-size:12px}
-.btn-p{background:linear-gradient(135deg,var(--orange),var(--orange2));color:#fff}.btn-g{background:var(--light);color:var(--orange);border:1.5px solid var(--border)}.btn-d{background:#FFE1E1;color:#c00}.btn-black{background:var(--black);color:#fff}.btn-green{background:var(--green);color:#fff}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat{text-align:center;padding:16px}.stat b{font-size:22px;color:var(--orange);display:block}
-.badge{background:var(--orange);color:#fff;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800}
-.thumb{width:56px;height:56px;object-fit:cover;border-radius:12px;border:2px solid var(--border)}
-.notif{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:999;background:var(--card);border:3px solid var(--orange);border-radius:20px;padding:14px;width:92%;max-width:380px;box-shadow:0 12px 40px rgba(0,0,0,.3);display:none}
-.bottomNav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--card);border-top:2px solid var(--border);display:flex;overflow-x:auto;gap:2px;padding:8px 6px;z-index:60;box-shadow:0 -4px 20px rgba(0,0,0,.1);scrollbar-width:none}
-.bottomNav::-webkit-scrollbar{display:none}
-.bNavItem{min-width:62px;flex:0 0 62px;text-align:center;padding:8px 4px;border-radius:14px;font-size:9px;font-weight:800;cursor:pointer;color:var(--text2);border:2px solid transparent;display:flex;flex-direction:column;align-items:center;gap:2px}
-.bNavItem.active{background:var(--black);color:#fff}
-.bNavItem span{font-size:18px}
-.orderBox{border-left:4px solid var(--orange)}
-.resetLink{font-size:11px;color:var(--orange);text-align:center;margin-top:10px;cursor:pointer;text-decoration:underline;font-weight:700}
-.wa-chip{display:inline-flex;align-items:center;gap:4px;background:#E6FFE9;border:1.5px solid #00C950;color:#00C950;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;margin:3px}
-.vault{border:2px dashed #666;background:linear-gradient(135deg,#111,#222);color:#aaa;border-radius:16px;padding:12px}
+:root{--bg:#fff;--card:#fff;--card2:#FFF7F0;--border:rgba(0,0,0,.07);--text:#111;--text2:#7A7A80;--orange:#FF7A18;--orangeSoft:#FFF0E6;--shadow:0 12px 40px rgba(0,0,0,.06)}
+[data-theme="dark"]{--bg:#0B0B0D;--card:#151518;--card2:#1E1E22;--border:rgba(255,255,255,.1);--text:#fff;--text2:#9AA0A6;--orangeSoft:#22150E}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif}
+body{background:var(--bg);color:var(--text);transition:.3s}
+.header{position:sticky;top:0;z-index:20;background:#FF7A18;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.tabs{display:flex;gap:8px;padding:10px 14px;overflow:auto;position:sticky;top:56px;background:var(--bg);z-index:10;border-bottom:1px solid var(--border)}
+.tab{white-space:nowrap;padding:10px 16px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-weight:700;cursor:pointer;box-shadow:var(--shadow);font-size:13px}.tab.active{background:#FF7A18;color:#fff}
+.container{padding:14px;max-width:1000px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-weight:600;color:var(--text);outline:none;margin-bottom:8px}
+.btn{padding:10px 16px;border-radius:999px;font-weight:800;border:none;cursor:pointer;font-size:13px}.btn-orange{background:#FF7A18;color:#fff}.btn-dark{background:var(--text);color:var(--bg)}.btn-ghost{background:var(--card2);border:1px solid var(--border);color:var(--text)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px} @media(max-width:600px){.grid{grid-template-columns:1fr}}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}
+.gallery img{width:100%;height:90px;object-fit:cover;border-radius:12px;border:2px solid var(--border);cursor:pointer}
+.gallery img.sel{border-color:#FF7A18;box-shadow:0 0 0 3px rgba(255,122,24,.3)}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}.modal.open{display:flex}
+.sheet{background:var(--card);width:100%;max-width:420px;border-radius:24px;padding:20px;max-height:90vh;overflow:auto}
+.badge{background:var(--orangeSoft);color:#FF7A18;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800}
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:700;z-index:200;transition:.4s}.toast.show{transform:translateX(-50%) translateY(0)}
+.role-admin{border-left:4px solid #FF7A18}.role-staff{border-left:4px solid #3b82f6}.role-rider{border-left:4px solid #10b981}
 </style>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-<script>
-const firebaseConfig={apiKey:"AIzaSyDRRYLhHv2ecotfSRBfE2L9dElO1UeyFd4",authDomain:"dailykart-tinsukia.firebaseapp.com",databaseURL:"https://dailykart-tinsukia-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"dailykart-tinsukia",storageBucket:"dailykart-tinsukia.firebasestorage.app",messagingSenderId:"279043121985",appId:"1:279043121985:web:57a5c97b9a8827ad2e77c0"};
-firebase.initializeApp(firebaseConfig);const db=firebase.database();
-</script>
 </head>
 <body>
+<div class="toast" id="toast"></div>
 
-<div class="loginScreen" id="loginScreen">
-<div class="loginBox">
-<div style="text-align:center"><div style="font-size:32px">🔐</div><h3 style="font-weight:800">DailyKart Control - Mobile Only</h3><p style="font-size:10px;color:var(--text2)">Admin / Staff / Rider - Full Features</p><p style="font-size:9px;color:#00C950">● LIVE • Mobile App • +918761958928</p></div>
-<div class="roleTab"><div class="active" id="roleAdmin" onclick="setRole('admin')">👑 Admin</div><div id="roleStaff" onclick="setRole('staff')">👔 Staff</div><div id="roleRider" onclick="setRole('rider')">🏍️ Rider</div></div>
-<div id="loginAdmin"><input id="adminPin" class="input" type="password" placeholder="Admin PIN 1234" style="text-align:center;letter-spacing:4px;margin-top:12px"><button class="btn btn-p" style="width:100%;margin-top:12px;padding:14px" onclick="loginAdmin()">Login Admin - Full Access</button><p class="resetLink" onclick="openReset()">🔑 Forgot PIN? Reset via WhatsApp OTP to +918761958928</p></div>
-<div id="loginStaff" style="display:none"><select id="staffSelect" class="input"></select><input id="staffPin" class="input" type="password" placeholder="Staff PIN"><button class="btn btn-p" style="width:100%;margin-top:12px;padding:14px" onclick="loginStaff()">Login Staff</button><p class="resetLink" onclick="openReset()">🔑 Forgot PIN?</p></div>
-<div id="loginRider" style="display:none"><select id="riderSelect" class="input"></select><input id="riderPin" class="input" type="password" placeholder="Rider PIN"><button class="btn btn-green" style="width:100%;margin-top:12px;padding:14px" onclick="loginRider()">Login Rider</button><p class="resetLink" onclick="openReset()">🔑 Forgot PIN?</p></div>
+<!-- LOGIN -->
+<div id="loginM" class="modal open" style="z-index:200">
+<div class="sheet">
+<div style="text-align:center;margin-bottom:14px"><div style="width:60px;height:60px;border-radius:16px;background:#FF7A18;color:#fff;display:grid;place-items:center;font-weight:800;font-size:22px;margin:0 auto">DK</div><h3 style="margin-top:8px">DailyKart Login</h3><div style="font-size:12px;color:var(--text2)">Admin / Staff / Rider</div></div>
+<select id="loginRole" class="input"><option value="ADMIN">ADMIN</option><option value="STAFF">STAFF</option><option value="RIDER">RIDER</option></select>
+<input id="loginPhone" class="input" placeholder="Phone 10 digits">
+<input id="loginPass" class="input" type="password" placeholder="Password">
+<button class="btn btn-orange" style="width:100%" onclick="doLogin()">Login →</button>
+<div style="display:flex;justify-content:space-between;margin-top:10px"><span style="font-size:12px;color:var(--text2);cursor:pointer" onclick="openReset()">Forgot? Reset via WA OTP</span><span style="font-size:12px;color:var(--text2);cursor:pointer" onclick="fillDemo()">Demo Fill</span></div>
+<div style="background:var(--card2);border-radius:12px;padding:10px;margin-top:12px;font-size:11px;color:var(--text2)">Default Admin: 8761958928 / admin123<br>Staff: 6000000001 / staff123<br>Rider: 7000000001 / rider123<br>First time? Login with default then change password</div>
 </div>
 </div>
 
-<div id="resetModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center;padding:16px">
-  <div class="card" style="width:100%;max-width:380px;border:3px solid var(--orange)">
-    <div style="display:flex;justify-content:space-between"><h4 style="font-weight:800">🔑 Reset PIN - WhatsApp OTP</h4><span style="cursor:pointer" onclick="closeReset()">✕</span></div>
-    <p style="font-size:11px;background:#FFF0E5;padding:8px;border-radius:10px;margin-top:8px">OTP <b>+918761958928 Default Admin</b> t jabo!</p>
-    <div id="resetStep1"><input id="resetPhone" class="input" value="8761958928"><button class="btn btn-p" style="width:100%;margin-top:12px;padding:14px" onclick="sendResetOtp()">Send OTP to WhatsApp</button></div>
-    <div id="resetStep2" style="display:none"><p style="font-size:11px;margin-top:8px">OTP sent to +91<span id="resetPhoneShow"></span></p><input id="resetOtpInput" class="input" placeholder="Enter 6 digit OTP"><input id="newPinInput" class="input" type="password" placeholder="New PIN"><button class="btn btn-green" style="width:100%;margin-top:12px;padding:14px" onclick="verifyResetOtp()">Verify & Reset</button><button class="btn btn-g" style="width:100%;margin-top:8px" onclick="backReset()">Change</button></div>
-    <p id="resetMsg" style="font-size:11px;color:red;text-align:center;margin-top:8px;font-weight:700"></p>
-  </div>
+<!-- RESET MODAL -->
+<div id="resetM" class="modal">
+<div class="sheet">
+<h3>Reset via Default Admin WhatsApp</h3>
+<div style="font-size:12px;color:var(--text2);margin:6px 0">Default Admin WA: 8761958928 t OTP jabo</div>
+<input id="resetPhone" class="input" placeholder="Your registered phone">
+<button class="btn btn-orange" style="width:100%" onclick="sendResetOtp()">Send OTP to Admin WA 📱</button>
+<input id="resetOtp" class="input" placeholder="Enter OTP received" style="margin-top:10px">
+<input id="resetNewPass" class="input" type="password" placeholder="New Password">
+<button class="btn btn-dark" style="width:100%" onclick="confirmReset()">Reset Password ✅</button>
+<button class="btn btn-ghost" style="width:100%;margin-top:6px" onclick="$('resetM').classList.remove('open')">Close</button>
+</div>
 </div>
 
-<div class="notif" id="notifBox"><div style="display:flex;justify-content:space-between"><b style="color:var(--orange)">🔔 New Order!</b><span style="cursor:pointer" onclick="closeNotif()">✕</span></div><div id="notifText" style="font-size:12px;margin-top:8px;font-weight:600"></div><div id="notifWaBtns" style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"></div><button class="btn btn-p" style="width:100%;margin-top:10px" onclick="closeNotif();goTab('orders')">View Order</button></div>
-
-<div class="top"><div style="display:flex;align-items:center;gap:8px"><b style="color:var(--orange)">DK Pro</b><span id="roleBadge" class="badge">ADMIN</span><span id="userName" style="font-size:11px;font-weight:700"></span></div><div style="display:flex;gap:6px;align-items:center"><div style="display:flex;align-items:center;gap:6px;background:var(--light);border:2px solid var(--border);border-radius:10px;padding:3px 8px"><div class="switch on" id="shopSwitch" onclick="toggleShop()"><div></div></div><span id="shopStatus" style="font-size:10px;font-weight:800;color:var(--green)">OPEN</span></div><span id="fbStatus" style="font-size:9px;background:#00C950;color:#fff;padding:3px 8px;border-radius:10px;font-weight:800">● LIVE</span></div></div>
-
-<div class="content">
-<div id="tab-dash"><div class="grid2"><div class="card stat"><b id="sProd">0</b><small>Products</small></div><div class="card stat"><b id="sOrd">0</b><small>Orders<br><span id="sPend" style="font-size:10px">0 Pending</span></small></div><div class="card stat"><b id="sRev">Rs 0</b><small>Revenue</small></div><div class="card stat"><b id="sRiders">0</b><small>Riders</small></div></div><div class="card"><h4 style="font-weight:800">🔔 WhatsApp Multi - +918761958928 Default</h4><div id="dashWaList" style="margin-top:8px"></div><label style="display:flex;gap:6px;align-items:center;margin-top:8px;font-size:11px;font-weight:700"><input type="checkbox" id="notifLoop" checked> Enable Loop + WhatsApp</label></div><div class="card"><h4 style="font-weight:800">Recent Orders</h4><div id="recentOrders" style="margin-top:8px"></div></div></div>
-
-<div id="tab-orders" style="display:none"><div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px"><h4 style="font-weight:800">Orders Live</h4><div style="display:flex;gap:4px"><button class="btn btn-g" style="padding:6px 10px" onclick="renderOrders('all')">All</button><button class="btn btn-p" style="padding:6px 10px" onclick="renderOrders('pending')">Pending</button><button class="btn btn-g" style="padding:6px 10px" onclick="renderOrders('my')">My</button></div></div><div id="orderList" style="margin-top:10px"></div></div></div>
-
-<div id="tab-areas" style="display:none"><div class="card"><h4 style="font-weight:800">📍 Live Location / 27 Areas</h4><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><input id="newArea" class="input" placeholder="New Area Name" style="flex:1"><input id="newAreaTime" class="input" placeholder="Time" style="width:80px" value="30 min"><input id="newAreaCharge" class="input" type="number" placeholder="Charge" style="width:70px" value="0"><button class="btn btn-p" onclick="addArea()">Add</button></div><div id="areaList" style="margin-top:10px"></div></div></div>
-
-<div id="tab-products" style="display:none"><div class="card"><h4 style="font-weight:800">📦 Products + Big Ad - Mobile</h4><div class="grid2"><input id="pName" class="input" placeholder="Name *"><input id="pCategory" class="input" placeholder="Category"><input id="pPrice" class="input" type="number" placeholder="Price *"><input id="pMrp" class="input" type="number" placeholder="MRP"><input id="pStock" class="input" type="number" placeholder="Stock"><input id="pUnit" class="input" placeholder="Unit"><input id="pDisc" class="input" type="number" placeholder="Disc %"><select id="pHighlight" class="input"><option value="">Highlight</option><option value="fav">fav - Big Ad</option><option value="fast">fast</option><option value="new">new</option><option value="local">local</option></select></div><textarea id="pDesc" class="input" placeholder="Description"></textarea><div style="border:2px dashed var(--orange);border-radius:14px;padding:12px;text-align:center;background:var(--light);cursor:pointer;margin-top:8px" onclick="document.getElementById('pImageFile').click()">📷 Upload Product Photo - Mobile</div><input type="file" id="pImageFile" accept="image/*" style="display:none" onchange="handleImg(this,'pImage','pPreview')"><input id="pImage" class="input" placeholder="Image URL"><img id="pPreview" style="width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin-top:8px;display:none"><div style="display:flex;gap:6px;margin-top:8px"><label style="flex:1;font-size:11px;font-weight:700"><input type="checkbox" id="pIsAd"> Big Ad</label><label style="flex:1;font-size:11px;font-weight:700"><input type="checkbox" id="pActive" checked> Active</label></div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-p" style="flex:1" onclick="saveProduct()">Save Product - Firebase</button><button class="btn btn-g" onclick="clearPForm()">Clear</button></div><input type="hidden" id="pId"></div><div class="card"><input id="prodSearch" class="input" placeholder="Search products..." oninput="renderProducts()"><div id="prodList" style="margin-top:8px"></div></div></div>
-
-<div id="tab-banner" style="display:none">
-<div class="card"><h4 style="font-weight:800">🖼️ Header Logo - Add/Edit/Delete - Mobile</h4><input id="sLogo" class="input" placeholder="Logo Text or Image URL"><div style="border:2px dashed var(--orange);border-radius:14px;padding:12px;text-align:center;background:var(--light);cursor:pointer;margin-top:8px" onclick="document.getElementById('logoFile').click()">📷 Upload Logo - Mobile</div><input type="file" id="logoFile" accept="image/*" style="display:none" onchange="handleImg(this,'sLogo','logoPreview')"><img id="logoPreview" style="width:80px;height:80px;object-fit:cover;border-radius:12px;margin-top:8px;display:none"><div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-p" style="flex:1" onclick="saveBanner()">Save Logo</button><button class="btn btn-d" onclick="deleteLogo()">Delete</button></div></div>
-<div class="card"><h4 style="font-weight:800">🎨 Main Banner / App Name - Mobile</h4><div class="grid2"><input id="sAppName" class="input" placeholder="App Name"><input id="sBTitle" class="input" placeholder="Banner Title"><input id="sBSub" class="input" placeholder="Banner Sub"></div><div style="border:2px dashed var(--orange);border-radius:14px;padding:12px;text-align:center;background:var(--light);cursor:pointer;margin-top:8px" onclick="document.getElementById('bImageFile').click()">Upload Banner - Mobile</div><input type="file" id="bImageFile" accept="image/*" style="display:none" onchange="handleImg(this,'sBImage','bPreview')"><input id="sBImage" class="input" placeholder="Banner Image URL"><img id="bPreview" style="width:100%;max-height:160px;object-fit:cover;border-radius:12px;margin-top:8px;display:none"><input id="sBBg" class="input" placeholder="Banner BG CSS"><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="saveBanner()">Save Banner - Firebase Live</button><div id="bannerPreview" style="margin-top:10px;padding:12px;border-radius:12px;color:#fff;background:linear-gradient(135deg,#FF6B00,#101010)"></div><button class="btn btn-d" style="margin-top:8px" onclick="deleteBanner()">Delete Banner</button></div>
-<div class="card"><h4 style="font-weight:800">📢 Advertisement Photos - Multiple Add/Edit/Delete - Mobile</h4><div class="grid2"><input id="adTitle" class="input" placeholder="Ad Title"><input id="adSub" class="input" placeholder="Sub"><input id="adImage" class="input" placeholder="Image URL" style="grid-column:span 2"><input id="adLink" class="input" placeholder="Link" style="grid-column:span 2"></div><div style="border:2px dashed var(--orange);border-radius:14px;padding:12px;text-align:center;background:var(--light);cursor:pointer;margin-top:8px" onclick="document.getElementById('adImageFile').click()">📷 Upload Ad Photo - Mobile</div><input type="file" id="adImageFile" accept="image/*" style="display:none" onchange="handleImg(this,'adImage','adPreview')"><img id="adPreview" style="width:100%;max-height:120px;object-fit:cover;border-radius:12px;margin-top:8px;display:none"><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="addAdvertisement()">+ Add Advertisement Banner - Firebase</button><div id="adList" style="margin-top:10px"></div></div>
+<div class="header">
+<div style="display:flex;gap:10px;align-items:center"><div id="headerLogo" style="width:38px;height:38px;border-radius:10px;background:#fff;color:#FF7A18;display:grid;place-items:center;font-weight:800">DK</div><div><b id="headerName">DailyKart</b><div style="font-size:11px;opacity:.9" id="roleInfo">Loading...</div></div></div>
+<div style="display:flex;gap:6px"><div onclick="toggleTheme()" id="themeBtn" style="width:38px;height:38px;border-radius:999px;background:rgba(255,255,255,.2);display:grid;place-items:center;cursor:pointer">🌙</div><div onclick="logout()" style="width:38px;height:38px;border-radius:999px;background:rgba(0,0,0,.2);display:grid;place-items:center;cursor:pointer">⎋</div></div>
 </div>
 
-<div id="tab-customers" style="display:none"><div class="card"><h4 style="font-weight:800">👥 Customers - Firebase Live</h4><div id="customerList"></div></div></div>
-
-<div id="tab-coupons" style="display:none"><div class="card"><h4 style="font-weight:800">🎟️ Coupons - Firebase Live</h4><div style="display:flex;gap:6px;margin-top:8px"><input id="cCode" class="input" placeholder="CODE" style="flex:1"><input id="cDisc" class="input" type="number" placeholder="%" style="width:80px"><button class="btn btn-p" onclick="addCoupon()">Add</button></div><div id="couponList" style="margin-top:8px"></div></div></div>
-
-<div id="tab-wa" style="display:none"><div class="card"><h4 style="font-weight:800">📱 WhatsApp Multi - Mobile Only</h4><p style="font-size:11px;color:var(--text2)">Customer order dile sob admin t jabo - Default +918761958928</p><div style="background:#E6FFE9;border:2px solid #00C950;border-radius:14px;padding:12px;margin-top:10px"><p style="font-size:12px;font-weight:800;color:#00C950">✅ Default Admin: +918761958928 - Always!</p></div><div style="display:flex;gap:6px;margin-top:12px"><input id="waNumber" class="input" placeholder="6001234567" style="flex:1"><input id="waName" class="input" placeholder="Name" style="width:100px"><button class="btn btn-p" onclick="addWa()">+ Add</button></div><div id="waList" style="margin-top:10px"></div><textarea id="waTpl" class="input" style="height:80px;margin-top:10px" placeholder="Template"></textarea><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="saveWaTpl()">Save Template</button><button class="btn btn-green" style="width:100%;margin-top:8px;padding:14px" onclick="testWhatsApp()">Test WhatsApp to All - Mobile</button></div></div>
-
-<div id="tab-staff" style="display:none"><div class="card"><h4 style="font-weight:800">👔 Staff Manage - Mobile</h4><div class="grid2"><input id="staffName" class="input" placeholder="Staff Name"><input id="staffPhone" class="input" placeholder="Phone"><input id="staffPinInput" class="input" placeholder="PIN"><input id="staffRole" class="input" placeholder="Role"></div><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="addStaff()">Add Staff - Firebase</button><div id="staffList" style="margin-top:8px"></div></div><div class="card"><h4 style="font-weight:800">🏍️ Riders Manage - Mobile</h4><div class="grid2"><input id="riderName" class="input" placeholder="Rider Name"><input id="riderPhone" class="input" placeholder="Phone"><input id="riderPinInput" class="input" placeholder="PIN"><input id="riderVehicle" class="input" placeholder="Vehicle"></div><button class="btn btn-green" style="width:100%;margin-top:8px" onclick="addRider()">Add Rider - Firebase</button><div id="riderList" style="margin-top:8px"></div></div></div>
-
-<div id="tab-settings" style="display:none"><div class="card"><h4 style="font-weight:800">⚙️ Settings - Mobile Only App</h4><p style="font-size:11px;color:var(--text2)">Only for Mobile - No Desktop!</p><div class="grid2" style="margin-top:8px"><input id="setMin" class="input" type="number" placeholder="Min Order"><input id="setUpi" class="input" placeholder="UPI"><input id="setPhone" class="input" placeholder="Support Phone"><input id="setEstimate" class="input" type="number" placeholder="Estimate Min"></div><label style="display:flex;gap:6px;margin-top:8px;font-size:11px;font-weight:700"><input type="checkbox" id="setMaint"> Maintenance ON</label><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="saveSettings2()">Save - Firebase Live</button><button class="btn btn-g" style="width:100%;margin-top:8px" onclick="exportAll()">Export JSON - Mobile</button></div></div>
-
-<div id="tab-vault" style="display:none"><div class="card vault"><h4 style="color:#FF6B00;font-weight:800">🔒 Vault - Mobile</h4><p style="font-size:10px;color:#0f0;margin-top:4px">● dailykart-tinsukia Live - Mobile Only</p><input id="vGithubRepo" class="input" placeholder="GitHub Repo URL"><div style="display:flex;gap:6px"><input id="vGithubToken" class="input" type="password" placeholder="GitHub Token hide" style="flex:1"><button class="btn btn-g" onclick="toggleEye('vGithubToken')">👁️</button></div><textarea id="vFirebase" class="input" style="height:70px"></textarea><div style="display:flex;gap:6px"><input id="vPayKey" class="input" type="password" placeholder="Payment Key hide" style="flex:1"><button class="btn btn-g" onclick="toggleEye('vPayKey')">👁️</button></div><button class="btn" style="width:100%;margin-top:8px;background:#0f0;color:#000;font-weight:800" onclick="saveVault()">Save Vault Hide - Mobile</button></div></div>
+<div class="tabs" id="tabs">
+<div class="tab active" data-tab="products" onclick="setTab('products',this)">🛒 Products</div>
+<div class="tab" data-tab="gallery" onclick="setTab('gallery',this)">🖼️ Gallery</div>
+<div class="tab" data-tab="banners" onclick="setTab('banners',this)">📢 Ads</div>
+<div class="tab" data-tab="orders" onclick="setTab('orders',this)">📦 Orders</div>
+<div class="tab" data-tab="areas" onclick="setTab('areas',this)">📍 Areas 27</div>
+<div class="tab" data-tab="users" onclick="setTab('users',this)">👥 Users/Riders</div>
+<div class="tab" data-tab="settings" onclick="setTab('settings',this)">⚙️ Settings</div>
 </div>
 
-<div class="bottomNav">
-<div class="bNavItem active" onclick="goTab('dash',this)"><span>📊</span>Dash</div>
-<div class="bNavItem" onclick="goTab('orders',this)"><span>🛒</span>Orders</div>
-<div class="bNavItem" onclick="goTab('products',this)"><span>📦</span>Products</div>
-<div class="bNavItem" onclick="goTab('banner',this)"><span>🎨</span>Banner/Ads</div>
-<div class="bNavItem" onclick="goTab('customers',this)"><span>👥</span>Customers</div>
-<div class="bNavItem" onclick="goTab('coupons',this)"><span>🎟️</span>Coupons</div>
-<div class="bNavItem" onclick="goTab('wa',this)"><span>📱</span>WhatsApp</div>
-<div class="bNavItem" onclick="goTab('areas',this)"><span>📍</span>Areas</div>
-<div class="bNavItem" onclick="goTab('staff',this)"><span>👔</span>Staff</div>
-<div class="bNavItem" onclick="goTab('settings',this)"><span>⚙️</span>Settings</div>
-<div class="bNavItem" onclick="goTab('vault',this)"><span>🔒</span>Vault</div>
+<div class="container">
+<!-- PRODUCTS -->
+<div id="sec-products">
+<div class="card">
+<h3>➕ Add / Edit Product</h3>
+<div class="grid" style="margin-top:10px">
+<input id="pName" class="input" placeholder="Name *"><input id="pPrice" class="input" type="number" placeholder="Price *">
+<input id="pMrp" class="input" type="number" placeholder="MRP"><input id="pCat" class="input" placeholder="Category *">
+</div>
+<input id="pImg" class="input" placeholder="Image URL - or select from Gallery below">
+<div style="display:flex;gap:6px;overflow:auto;padding:4px 0" id="galleryPick"></div>
+<div style="display:flex;gap:8px"><button class="btn btn-orange" style="flex:1" onclick="saveProduct()">💾 Save</button><button class="btn btn-ghost" onclick="clearProduct()">Clear</button></div>
+</div>
+<div style="display:flex;justify-content:space-between;margin:10px 0"><b>Products <span id="pCount">0</span></b><button class="btn btn-ghost" style="padding:6px 10px" onclick="loadProducts()">Refresh</button></div>
+<div id="productList" class="grid"></div>
+</div>
+
+<!-- GALLERY -->
+<div id="sec-gallery" style="display:none">
+<div class="card">
+<h3>🖼️ Image Gallery Upload</h3>
+<div style="font-size:12px;color:var(--text2);margin:6px 0">Phone gallery pora upload korok - Direct URL generate hobo</div>
+<input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="uploadGallery(this)">
+<div style="display:flex;gap:8px"><button class="btn btn-orange" onclick="$('fileInput').click()">📁 Choose from Gallery</button><button class="btn btn-ghost" onclick="pasteUrl()">🔗 Paste URL</button></div>
+<input id="urlInput" class="input" placeholder="Paste image URL https://..." style="margin-top:10px;display:none">
+<button id="urlBtn" class="btn btn-dark" style="display:none;width:100%" onclick="addUrlToGallery()">Add URL → Gallery</button>
+</div>
+<div class="card"><b>Gallery Images (Click to select for Product)</b><div id="galleryList" class="gallery" style="margin-top:10px"></div></div>
+</div>
+
+<!-- BANNERS -->
+<div id="sec-banners" style="display:none">
+<div class="card">
+<h3>📢 Demo Ad Banner</h3>
+<input id="bTitle" class="input" placeholder="Title" style="margin-top:8px"><input id="bSub" class="input" placeholder="Subtitle"><input id="bTag" class="input" placeholder="Tag"><input id="bImg" class="input" placeholder="Image URL">
+<div style="display:flex;gap:8px"><button class="btn btn-orange" style="flex:1" onclick="saveBanner()">Save Ad</button><button class="btn btn-ghost" onclick="clearBanner()">Clear</button></div>
+</div>
+<div id="bannerList"></div>
+</div>
+
+<!-- ORDERS -->
+<div id="sec-orders" style="display:none">
+<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><b>📦 Orders</b><div style="font-size:11px;color:var(--text2)">Rider pick lock + OTP delivery</div></div><button class="btn btn-orange" style="padding:6px 10px" onclick="loadOrders()">Refresh</button></div>
+<div id="orderList"></div>
+</div>
+
+<!-- AREAS -->
+<div id="sec-areas" style="display:none">
+<div class="card">
+<h3>📍 27 Areas</h3>
+<div id="areaList" style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0"></div>
+<div style="display:flex;gap:8px"><input id="newArea" class="input" placeholder="New area" style="margin:0"><button class="btn btn-orange" onclick="addArea()">+ Add</button></div>
+<button class="btn btn-dark" style="width:100%;margin-top:8px" onclick="resetAreas()">Reset 27 Default</button>
+<div style="font-size:11px;color:var(--text2);margin-top:8px">Staff cannot add/edit/delete areas</div>
+</div>
+</div>
+
+<!-- USERS -->
+<div id="sec-users" style="display:none">
+<div class="card">
+<h3>👥 Create Staff / Rider Login</h3>
+<select id="uRole" class="input"><option value="STAFF">STAFF</option><option value="RIDER">RIDER</option><option value="ADMIN">ADMIN</option></select>
+<input id="uPhone" class="input" placeholder="Phone 10 digits">
+<input id="uName" class="input" placeholder="Name">
+<input id="uPass" class="input" placeholder="Password min 6">
+<button class="btn btn-orange" style="width:100%" onclick="createUser()">Create User ✅</button>
+<div style="font-size:11px;color:var(--text2);margin-top:6px">Password reset only via default admin WA OTP. Staff cannot reset password.</div>
+</div>
+<div id="userList"></div>
+</div>
+
+<!-- SETTINGS -->
+<div id="sec-settings" style="display:none">
+<div class="card">
+<h3>⚙️ Settings + Header Logo/Name (Admin Only)</h3>
+<input id="sWa" class="input" placeholder="Default WA 918761958928" style="margin-top:8px">
+<input id="sWaAdmins" class="input" placeholder="Admin WA comma separated">
+<input id="sDel" class="input" type="number" placeholder="Free min ₹ 299">
+<input id="sCharge" class="input" type="number" placeholder="Delivery charge 30">
+<hr style="margin:12px 0;border:none;border-top:1px solid var(--border)">
+<h4>Header Logo / Name Change (Admin Only)</h4>
+<input id="hLogo" class="input" placeholder="Logo Text ex: DK / 🛒" style="margin-top:8px">
+<input id="hName" class="input" placeholder="Header Name ex: DailyKart">
+<input id="hLogoImg" class="input" placeholder="Logo Image URL (optional)">
+<button class="btn btn-orange" style="width:100%" onclick="saveSettings()">Save All Settings ✅</button>
+<div style="font-size:11px;color:var(--text2);margin-top:6px">Staff cannot edit header / banner / password reset. Rider only orders.</div>
+</div>
+</div>
 </div>
 
 <script>
-let AREAS_DEFAULT=["Dirak Charali","Aamguri","Bordirak","Khatua","Hunjan","Navajyoti","Simoluguri","Uttar Bisrampur","Dakhin Bisrampur","Kailashpur","Dimbujora","Tongona","Gutibari","Tongona-Nagaon","Dirakgate","Modarkhat","Digholi-pothar","Huwonipothar","Namhullung","Tiniali Nagaon","Betoni","Wathoi","Litong","Talpothar","Hatigarh","Dumsi","Sitpani"];
-let PRODUCTS=[],SETTINGS={},ORDERS=[],COUPONS=[],AREAS=[],STAFF=[],RIDERS=[],AD_BANNERS=[],WA_ADMINS=[];
-let CURRENT_ROLE=null,CURRENT_USER=null,NOTIF_INTERVAL=null,LAST_ORDER_COUNT=0,RESET_OTP=null;
+const firebaseConfig={apiKey:"AIzaSyDRRYLhHv2ecotfSRBfE2L9dElO1UeyFd4",authDomain:"dailykart-tinsukia.firebaseapp.com",databaseURL:"https://dailykart-tinsukia-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"dailykart-tinsukia",storageBucket:"dailykart-tinsukia.firebasestorage.app",messagingSenderId:"279043121985",appId:"1:279043121985:web:57a5c97b9a8827ad2e77c0"};
+firebase.initializeApp(firebaseConfig); const db=firebase.database();
+const DEFAULT_AREAS=["Dirak Charali","Aamguri","Bordirak","Khatua","Hunjan","Navajyoti","Simoluguri","Uttar Bisrampur","Dakhin Bisrampur","Kailashpur","Dimbujora","Tongona","Gutibari","Tongona-Nagaon","Dirakgate","Modarkhat","Digholi-pothar","Huwonipothar","Namhullung","Tiniali Nagaon","Betoni","Wathoi","Litong","Talpothar","Hatigarh","Dumsi","Sitpani"];
 const DEFAULT_ADMIN_WA="918761958928";
-function openReset(){document.getElementById('resetModal').style.display='flex';}
-function closeReset(){document.getElementById('resetModal').style.display='none';}
-function backReset(){document.getElementById('resetStep1').style.display='block';document.getElementById('resetStep2').style.display='none';}
-function sendResetOtp(){let phone=document.getElementById('resetPhone').value.replace(/[^0-9]/g,'');if(phone.length<10){document.getElementById('resetMsg').innerText='Enter valid number';return;}if(phone.length==10)phone='91'+phone;RESET_OTP=Math.floor(100000+Math.random()*900000).toString();localStorage.setItem('dk_reset_otp',RESET_OTP);localStorage.setItem('dk_reset_time',Date.now().toString());let msg=`🔐 DailyKart PIN Reset OTP: *${RESET_OTP}* Valid 5 mins - Mobile App`;window.open(`https://wa.me/${DEFAULT_ADMIN_WA}?text=${encodeURIComponent(msg)}`,'_blank');if(phone!=DEFAULT_ADMIN_WA)setTimeout(()=>window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank'),600);document.getElementById('resetPhoneShow').innerText=phone.slice(-10);document.getElementById('resetStep1').style.display='none';document.getElementById('resetStep2').style.display='block';document.getElementById('resetMsg').innerText='OTP sent to +918761958928';}
-function verifyResetOtp(){let otp=document.getElementById('resetOtpInput').value.trim();let newPin=document.getElementById('newPinInput').value.trim();let saved=localStorage.getItem('dk_reset_otp');let t=parseInt(localStorage.getItem('dk_reset_time')||'0');if(Date.now()-t>5*60*1000){document.getElementById('resetMsg').innerText='Expired';return;}if(otp!=saved){document.getElementById('resetMsg').innerText='Wrong OTP';return;}if(!newPin){document.getElementById('resetMsg').innerText='Enter PIN';return;}localStorage.setItem('dk_admin_pin_override',newPin);saveAll();document.getElementById('resetMsg').style.color='#00C950';document.getElementById('resetMsg').innerText='✅ PIN Reset: '+newPin;setTimeout(()=>{closeReset();document.getElementById('adminPin').value=newPin;},1200);}
-function setRole(r){CURRENT_ROLE=r;document.querySelectorAll('.roleTab div').forEach(d=>d.classList.remove('active'));document.getElementById('role'+r.charAt(0).toUpperCase()+r.slice(1)).classList.add('active');document.getElementById('loginAdmin').style.display=r=='admin'?'block':'none';document.getElementById('loginStaff').style.display=r=='staff'?'block':'none';document.getElementById('loginRider').style.display=r=='rider'?'block':'none';if(r=='staff')renderStaffSelect();if(r=='rider')renderRiderSelect();}
-function renderStaffSelect(){let sel=document.getElementById('staffSelect');sel.innerHTML=STAFF.map(s=>`<option value="${s.id}">${s.name} - ${s.phone}</option>`).join('')||'<option>No staff</option>';}
-function renderRiderSelect(){let sel=document.getElementById('riderSelect');sel.innerHTML=RIDERS.map(r=>`<option value="${r.id}">${r.name} - ${r.phone}</option>`).join('')||'<option>No rider</option>';}
-function loadAll(){
-try{
-PRODUCTS=JSON.parse(localStorage.getItem('dk_v3_products')||'[]');
-SETTINGS=JSON.parse(localStorage.getItem('dk_v3_settings')||'{}');
-if(!SETTINGS.appName){SETTINGS={logo:'DK',appName:'DailyKart',bannerTitle:'🍊 Orange Fast Delivery 30 Min',bannerSub:'27 Areas Covered',bannerImage:'',bannerBg:'',waTemplate:'NEW ORDER #{orderId} {name} {phone} Area:{area} Rs {total} OTP {otp} Items:{items}',shopOpen:true,minOrder:249,upi:'9365822867@ybl',supportPhone:'9365822867',estimateMin:30};}
-ORDERS=JSON.parse(localStorage.getItem('dk_v3_orders')||'[]');
-COUPONS=JSON.parse(localStorage.getItem('dk_v3_coupons')||'[]');if(COUPONS.length==0)COUPONS=[{code:'MODARKHAT10',disc:10}];
-AREAS=JSON.parse(localStorage.getItem('dk_v3_areas')||'null');if(!AREAS)AREAS=AREAS_DEFAULT.map(n=>({name:n,time:'30 min',charge:0,active:true}));
-STAFF=JSON.parse(localStorage.getItem('dk_staff')||'[]');RIDERS=JSON.parse(localStorage.getItem('dk_riders')||'[]');
-AD_BANNERS=JSON.parse(localStorage.getItem('dk_ad_banners')||'[]');
-WA_ADMINS=JSON.parse(localStorage.getItem('dk_wa_admins')||'[]');if(WA_ADMINS.length==0)WA_ADMINS=[{id:Date.now().toString(),number:DEFAULT_ADMIN_WA,name:'Main Admin'}];
-let vault=JSON.parse(localStorage.getItem('dk_admin_vault')||'{}');if(vault.githubRepo)document.getElementById('vGithubRepo').value=vault.githubRepo;if(vault.firebase)document.getElementById('vFirebase').value=vault.firebase;
-}catch(e){}
-try{
-db.ref('dk_v3_products').on('value',s=>{if(s.val()){PRODUCTS=Object.values(s.val());localStorage.setItem('dk_v3_products',JSON.stringify(PRODUCTS));renderDash();renderProducts();}});
-db.ref('dk_v3_orders').on('value',s=>{if(s.val()){let v=Object.values(s.val()).reverse();if(v.length>LAST_ORDER_COUNT&&LAST_ORDER_COUNT>0){showNotif(`🔔 New Order #${String(v[0].id).slice(-6)} - Rs ${v[0].grandTotal}`);sendWhatsAppToAll(v[0]);}ORDERS=v;localStorage.setItem('dk_v3_orders',JSON.stringify(ORDERS));LAST_ORDER_COUNT=ORDERS.length;renderDash();renderOrders('all');}});
-db.ref('dk_v3_settings').on('value',s=>{if(s.val()){SETTINGS={...SETTINGS,...s.val()};localStorage.setItem('dk_v3_settings',JSON.stringify(SETTINGS));updateShopUI();renderBanner();}});
-db.ref('dk_v3_areas').on('value',s=>{if(s.val()){AREAS=Object.values(s.val());localStorage.setItem('dk_v3_areas',JSON.stringify(AREAS));renderAreas();}});
-db.ref('dk_v3_coupons').on('value',s=>{if(s.val()){COUPONS=Object.values(s.val());localStorage.setItem('dk_v3_coupons',JSON.stringify(COUPONS));renderCoupons();}});
-db.ref('dk_ad_banners').on('value',s=>{if(s.val()){AD_BANNERS=Object.values(s.val());localStorage.setItem('dk_ad_banners',JSON.stringify(AD_BANNERS));renderAdBanners();}});
-db.ref('dk_wa_admins').on('value',s=>{if(s.val()){WA_ADMINS=Object.values(s.val());localStorage.setItem('dk_wa_admins',JSON.stringify(WA_ADMINS));renderWa();renderDashWa();}});
-}catch(e){}
-renderDash();renderOrders('all');renderProducts();renderAreas();renderCoupons();renderAdBanners();renderWa();renderStaff();renderRiders();renderCustomers();
+let currentUser=null, currentRole="ADMIN";
+const $=id=>document.getElementById(id);
+function toast(m){let t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000);}
+function toggleTheme(){let cur=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",cur);localStorage.setItem("dk_theme",cur);$("themeBtn").textContent=cur==="dark"?"☀️":"🌙";}
+(function(){let s=localStorage.getItem("dk_theme")||"light";document.documentElement.setAttribute("data-theme",s);$("themeBtn").textContent=s==="dark"?"☀️":"🌙";})();
+
+// LOGIN LOGIC
+async function initUsers(){
+  let snap=await db.ref("dk_users").once("value"); let val=snap.val()||{};
+  if(!Object.keys(val).length){
+    let defaults={
+      "user_8761958928":{phone:"8761958928",name:"Default Admin",role:"ADMIN",pass:"admin123",created:Date.now()},
+      "user_6000000001":{phone:"6000000001",name:"Staff 1",role:"STAFF",pass:"staff123",created:Date.now()},
+      "user_7000000001":{phone:"7000000001",name:"Rider 1",role:"RIDER",pass:"rider123",created:Date.now()}
+    };
+    await db.ref("dk_users").set(defaults);
+  }
 }
-function saveAll(){
-localStorage.setItem('dk_v3_products',JSON.stringify(PRODUCTS));localStorage.setItem('dk_v3_settings',JSON.stringify(SETTINGS));localStorage.setItem('dk_v3_orders',JSON.stringify(ORDERS));localStorage.setItem('dk_v3_coupons',JSON.stringify(COUPONS));localStorage.setItem('dk_v3_areas',JSON.stringify(AREAS));localStorage.setItem('dk_staff',JSON.stringify(STAFF));localStorage.setItem('dk_riders',JSON.stringify(RIDERS));localStorage.setItem('dk_ad_banners',JSON.stringify(AD_BANNERS));localStorage.setItem('dk_wa_admins',JSON.stringify(WA_ADMINS));
-try{
-db.ref('dk_v3_products').set(Object.fromEntries(PRODUCTS.map(p=>[p.id,p])));
-db.ref('dk_v3_orders').set(Object.fromEntries(ORDERS.map(o=>[o.id,o])));
-db.ref('dk_v3_settings').set(SETTINGS);
-db.ref('dk_v3_areas').set(AREAS);
-db.ref('dk_v3_coupons').set(COUPONS);
-db.ref('dk_ad_banners').set(Object.fromEntries(AD_BANNERS.map(a=>[a.id,a])));
-db.ref('dk_wa_admins').set(Object.fromEntries(WA_ADMINS.map(w=>[w.id,w])));
-db.ref('dk_staff').set(Object.fromEntries(STAFF.map(s=>[s.id,s])));
-db.ref('dk_riders').set(Object.fromEntries(RIDERS.map(r=>[r.id,r])));
-document.getElementById('fbStatus').innerText='● SAVED';setTimeout(()=>{document.getElementById('fbStatus').innerText='● LIVE'},1500);
-}catch(e){}
+initUsers();
+
+function fillDemo(){let r=$("loginRole").value; if(r==="ADMIN"){$("loginPhone").value="8761958928";$("loginPass").value="admin123";} if(r==="STAFF"){$("loginPhone").value="6000000001";$("loginPass").value="staff123";} if(r==="RIDER"){$("loginPhone").value="7000000001";$("loginPass").value="rider123";}}
+
+async function doLogin(){
+  let role=$("loginRole").value, phone=$("loginPhone").value.trim().replace(/\D/g,"").slice(-10), pass=$("loginPass").value.trim();
+  if(phone.length!==10||!pass){toast("Phone + Pass required");return;}
+  try{
+    let snap=await db.ref("dk_users").once("value"); let users=Object.values(snap.val()||{});
+    let u=users.find(x=>x.phone===phone && x.pass===pass && x.role===role);
+    if(!u){toast("Invalid login ❌");return;}
+    currentUser=u; currentRole=u.role;
+    localStorage.setItem("dk_admin_user",JSON.stringify(u));
+    $("loginM").classList.remove("open");
+    $("roleInfo").textContent=u.role+" • "+u.name+" • "+u.phone;
+    applyRolePermissions();
+    loadProducts(); loadGallery(); loadHeader();
+    toast("Welcome "+u.name+" ✅ "+u.role);
+  }catch(e){toast(e.message);}
 }
-function loginAdmin(){let pin=document.getElementById('adminPin').value.trim();let over=localStorage.getItem('dk_admin_pin_override');if(pin=='1234'||(over&&pin==over)){CURRENT_ROLE='admin';CURRENT_USER={id:'admin',name:'Admin'};enterApp();}else alert('Wrong PIN - 1234');}
-function loginStaff(){let id=document.getElementById('staffSelect').value;let pin=document.getElementById('staffPin').value.trim();let s=STAFF.find(x=>x.id==id);if(s&&s.pin==pin){CURRENT_ROLE='staff';CURRENT_USER=s;enterApp();}else alert('Wrong PIN');}
-function loginRider(){let id=document.getElementById('riderSelect').value;let pin=document.getElementById('riderPin').value.trim();let r=RIDERS.find(x=>x.id==id);if(r&&r.pin==pin){CURRENT_ROLE='rider';CURRENT_USER=r;enterApp();}else alert('Wrong PIN');}
-function enterApp(){document.getElementById('loginScreen').style.display='none';loadAll();document.getElementById('roleBadge').innerText=CURRENT_ROLE.toUpperCase();document.getElementById('userName').innerText=CURRENT_USER.name;setInterval(()=>{let el=document.getElementById('liveTime');if(el)el.innerText=new Date().toLocaleTimeString();},1000);}
-function goTab(tab,el){document.querySelectorAll('[id^="tab-"]').forEach(x=>x.style.display='none');let t=document.getElementById('tab-'+tab);if(t)t.style.display='block';document.querySelectorAll('.bNavItem').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');if(tab=='dash')renderDash();if(tab=='orders')renderOrders('all');if(tab=='areas')renderAreas();if(tab=='products')renderProducts();if(tab=='banner'){renderBanner();renderAdBanners();}if(tab=='customers')renderCustomers();if(tab=='coupons')renderCoupons();if(tab=='wa')renderWa();}
-function toggleShop(){if(CURRENT_ROLE!='admin'){alert('Only Admin');return;}SETTINGS.shopOpen=!SETTINGS.shopOpen;saveAll();updateShopUI();}
-function updateShopUI(){let sw=document.getElementById('shopSwitch');let st=document.getElementById('shopStatus');if(SETTINGS.shopOpen!==false){sw.classList.add('on');st.innerText='OPEN';st.style.color='var(--green)';}else{sw.classList.remove('on');st.innerText='CLOSED';st.style.color='var(--red)';}}
-function handleImg(input,tId,pId){let file=input.files[0];if(!file)return;let r=new FileReader();r.onload=e=>{document.getElementById(tId).value=e.target.result;let prev=document.getElementById(pId);if(prev){prev.src=e.target.result;prev.style.display='block';}};r.readAsDataURL(file);}
-function renderDash(){document.getElementById('sProd').innerText=PRODUCTS.length;document.getElementById('sOrd').innerText=ORDERS.length;document.getElementById('sPend').innerText=ORDERS.filter(o=>o.status=='pending').length;document.getElementById('sRev').innerText='Rs '+ORDERS.reduce((a,b)=>a+(b.grandTotal||0),0);document.getElementById('sRiders').innerText=RIDERS.length;document.getElementById('recentOrders').innerHTML=ORDERS.slice(0,5).map(o=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--border);font-size:11px"><span>#${String(o.id).slice(-6)} ${o.area} Rs ${o.grandTotal}</span></div>`).join('')||'No orders';renderDashWa();}
-function renderDashWa(){let el=document.getElementById('dashWaList');if(el)el.innerHTML=WA_ADMINS.map(w=>`<span class="wa-chip">📱 ${w.name}</span>`).join('');}
-function getAllWaNumbers(){let list=[...WA_ADMINS];if(!list.some(w=>w.number==DEFAULT_ADMIN_WA))list.unshift({id:'def',number:DEFAULT_ADMIN_WA,name:'Default Admin'});return list;}
-function sendWhatsAppToAll(order){let nums=getAllWaNumbers();let items=(order.items||[]).map(i=>`${i.name} x${i.qty}`).join(', ');let msg=`🛒 NEW ORDER%0A#${String(order.id).slice(-6)}%0A${order.customer?.name} ${order.customer?.phone}%0A${order.area} Rs ${order.grandTotal} OTP ${order.otp}%0A${items}`;let btns='';nums.forEach((w,i)=>{let n=w.number.replace(/[^0-9]/g,'');if(n.length==10)n='91'+n;let url=`https://wa.me/${n}?text=${msg}`;btns+=`<a href="${url}" target="_blank" style="background:#00C950;color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;text-decoration:none;margin:2px;display:inline-block">📱 ${w.name}</a>`;if(i==0)setTimeout(()=>window.open(url,'_blank'),500);});document.getElementById('notifWaBtns').innerHTML=btns;}
-function testWhatsApp(){let fake={id:Date.now().toString(),area:'Test',grandTotal:499,otp:'1234',customer:{name:'Test',phone:'9876543210'},items:[{name:'Test',qty:2}]};sendWhatsAppToAll(fake);showNotif('Test sent to '+getAllWaNumbers().length+' admins - Check WhatsApp');}
-function showNotif(t){document.getElementById('notifText').innerText=t;document.getElementById('notifBox').style.display='block';setTimeout(()=>document.getElementById('notifBox').style.display='none',12000);}
-function closeNotif(){document.getElementById('notifBox').style.display='none';}
-function renderAreas(){document.getElementById('areaList').innerHTML=AREAS.map((a,i)=>`<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:10px"><span><b>${a.name}</b> ${a.active!==false?'<span style="background:var(--green);color:#fff;padding:2px 6px;border-radius:10px;font-size:9px">ON</span>':'OFF'}<br><span style="font-size:10px;color:var(--text2)">${a.time} | Rs ${a.charge}</span></span><div style="display:flex;gap:4px;align-items:center"><div class="switch ${a.active!==false?'on':''}" style="width:40px;height:22px" onclick="toggleArea(${i})"><div style="width:18px;height:18px"></div></div><button class="btn btn-d" style="padding:4px 8px" onclick="delArea(${i})">X</button></div></div>`).join('');}
-function toggleArea(i){AREAS[i].active=AREAS[i].active===false?true:false;saveAll();renderAreas();}
-function addArea(){let name=document.getElementById('newArea').value.trim();let time=document.getElementById('newAreaTime').value.trim()||'30 min';let charge=parseInt(document.getElementById('newAreaCharge').value)||0;if(!name){alert('Enter name');return;}AREAS.push({name,time,charge,active:true});document.getElementById('newArea').value='';saveAll();renderAreas();}
-function delArea(i){if(!confirm('Delete?'))return;AREAS.splice(i,1);saveAll();renderAreas();}
-function renderOrders(filter){let list=document.getElementById('orderList');let filtered=ORDERS;if(filter=='pending')filtered=ORDERS.filter(o=>o.status=='pending');if(filter=='my'&&CURRENT_ROLE=='rider')filtered=ORDERS.filter(o=>o.riderId==CURRENT_USER.id);if(CURRENT_ROLE=='rider')filtered=filtered.filter(o=>!o.riderId||o.riderId==CURRENT_USER.id);list.innerHTML=filtered.map(o=>{let riderName=o.riderId?(RIDERS.find(r=>r.id==o.riderId)?.name||'Rider'):'Unassigned';let canPick=CURRENT_ROLE=='rider'&&!o.riderId&&o.status!='delivered'&&o.status!='cancelled';let isMy=CURRENT_ROLE=='rider'&&o.riderId==CURRENT_USER.id;return `<div class="card orderBox"><b>Order #${String(o.id).slice(-6)} - <span class="badge">${o.status.toUpperCase()}</span></b><div style="margin-top:8px;padding:8px;background:var(--bg);border-radius:10px;border:1.5px solid var(--border);font-size:11px">Items: ${(o.items||[]).map(i=>`${i.name} x${i.qty} = Rs ${i.price*i.qty}`).join(', ')}<br><b>Total: Rs ${o.grandTotal}</b> | OTP: <b style="color:var(--orange)">${o.otp}</b><br>${o.customer?.name} ${o.customer?.phone} | ${o.area} | ${o.customer?.addr||''}</div><div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">${getAllWaNumbers().map(w=>`<a href="https://wa.me/${w.number}?text=Order #${String(o.id).slice(-6)} Rs ${o.grandTotal}" target="_blank" style="background:#E6FFE9;border:1px solid #00C950;color:#00C950;padding:4px 10px;border-radius:12px;font-size:10px;text-decoration:none">📱 ${w.name}</a>`).join(' ')}</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${CURRENT_ROLE!='rider'?`<select class="input" style="width:130px" onchange="updOrd('${o.id}',this.value)"><option value="pending" ${o.status=='pending'?'selected':''}>pending</option><option value="accepted" ${o.status=='accepted'?'selected':''}>accepted</option><option value="packed" ${o.status=='packed'?'selected':''}>packed</option><option value="out" ${o.status=='out'?'selected':''}>out</option><option value="delivered" ${o.status=='delivered'?'selected':''}>delivered</option><option value="cancelled" ${o.status=='cancelled'?'selected':''}>cancelled</option></select><select class="input" style="width:130px" onchange="assignRider('${o.id}',this.value)"><option value="">Assign Rider</option>${RIDERS.map(r=>`<option value="${r.id}" ${o.riderId==r.id?'selected':''}>${r.name}</option>`).join('')}</select>`:''}${canPick?`<button class="btn btn-green" onclick="riderPick('${o.id}')">Pick Order</button>`:''}${isMy?`<button class="btn btn-p" onclick="riderDeliver('${o.id}')">✅ Delivered OTP</button>`:''}</div></div>`;}).join('')||'No orders';}
-function updOrd(id,st){let o=ORDERS.find(x=>x.id==id);if(o){o.status=st;saveAll();renderOrders('all');}}
-function assignRider(id,riderId){let o=ORDERS.find(x=>x.id==id);if(o){o.riderId=riderId||null;if(riderId&&o.status=='pending')o.status='accepted';saveAll();renderOrders('all');}}
-function riderPick(id){let o=ORDERS.find(x=>x.id==id);if(!o)return;if(o.riderId&&o.riderId!=CURRENT_USER.id){alert('Already picked');return;}o.riderId=CURRENT_USER.id;o.status='accepted';o.pickTime=new Date().toLocaleString();saveAll();renderOrders('all');showNotif('You picked #'+String(o.id).slice(-6));}
-function riderDeliver(id){let o=ORDERS.find(x=>x.id==id);if(!o||o.riderId!=CURRENT_USER.id){alert('Not your order');return;}let code=prompt('Enter OTP - Actual: '+o.otp);if(!code)return;if(code==o.otp){o.status='delivered';o.deliveredTime=new Date().toLocaleString();saveAll();renderOrders('my');alert('✅ Delivered!');}else alert('Wrong OTP');}
-function renderProducts(){let q=(document.getElementById('prodSearch')?.value||'').toLowerCase();let filtered=PRODUCTS.filter(p=>!q||p.name.toLowerCase().includes(q));document.getElementById('prodList').innerHTML=filtered.map(p=>`<div class="card" style="display:flex;gap:8px;align-items:center"><img src="${p.image}" class="thumb"><div style="flex:1"><b style="font-size:12px">${p.name}</b> ${p.isAd?'<span class="badge">BIG AD</span>':''}<br><span style="font-size:10px;color:var(--text2)">${p.category} | Rs ${p.price} | Stock ${p.stock}</span></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn btn-g" style="padding:6px 10px" onclick="editProduct('${p.id}')">Edit</button><button class="btn btn-d" style="padding:6px 10px" onclick="deleteProduct('${p.id}')">Del</button></div></div>`).join('')||'No products';}
-function clearPForm(){document.getElementById('pId').value='';['pName','pCategory','pPrice','pMrp','pStock','pUnit','pDisc','pDesc','pImage'].forEach(id=>{let el=document.getElementById(id);if(el)el.value='';});document.getElementById('pIsAd').checked=false;document.getElementById('pActive').checked=true;document.getElementById('pPreview').style.display='none';document.getElementById('pHighlight').value='';}
-function saveProduct(){let id=document.getElementById('pId').value||Date.now().toString();let prod={id,name:document.getElementById('pName').value.trim(),category:document.getElementById('pCategory').value.trim()||'Grocery',price:parseFloat(document.getElementById('pPrice').value)||0,mrp:parseFloat(document.getElementById('pMrp').value)||0,stock:parseInt(document.getElementById('pStock').value)||0,unit:document.getElementById('pUnit').value.trim()||'1pc',disc:parseInt(document.getElementById('pDisc').value)||0,highlight:document.getElementById('pHighlight').value||'',isAd:document.getElementById('pIsAd').checked,desc:document.getElementById('pDesc').value.trim(),image:document.getElementById('pImage').value.trim()||'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600',active:document.getElementById('pActive').checked?1:0};if(!prod.name||!prod.price){alert('Name & Price');return;}let idx=PRODUCTS.findIndex(p=>p.id==id);if(idx>=0)PRODUCTS[idx]=prod;else PRODUCTS.unshift(prod);saveAll();renderProducts();clearPForm();}
-function editProduct(id){let p=PRODUCTS.find(x=>x.id==id);if(!p)return;document.getElementById('pId').value=p.id;document.getElementById('pName').value=p.name;document.getElementById('pCategory').value=p.category;document.getElementById('pPrice').value=p.price;document.getElementById('pMrp').value=p.mrp;document.getElementById('pStock').value=p.stock;document.getElementById('pUnit').value=p.unit;document.getElementById('pDisc').value=p.disc;document.getElementById('pHighlight').value=p.highlight||'';document.getElementById('pIsAd').checked=!!p.isAd;document.getElementById('pDesc').value=p.desc||'';document.getElementById('pImage').value=p.image;document.getElementById('pActive').checked=!!p.active;let prev=document.getElementById('pPreview');prev.src=p.image;prev.style.display='block';goTab('products',document.querySelector(`.bNavItem[onclick*="products"]`));}
-function deleteProduct(id){if(!confirm('Delete?'))return;PRODUCTS=PRODUCTS.filter(p=>p.id!=id);saveAll();renderProducts();}
-function renderBanner(){document.getElementById('sLogo').value=SETTINGS.logo||'DK';document.getElementById('sAppName').value=SETTINGS.appName||'';document.getElementById('sBTitle').value=SETTINGS.bannerTitle||'';document.getElementById('sBSub').value=SETTINGS.bannerSub||'';document.getElementById('sBImage').value=SETTINGS.bannerImage||'';document.getElementById('sBBg').value=SETTINGS.bannerBg||'';let prev=document.getElementById('bPreview');if(SETTINGS.bannerImage){prev.src=SETTINGS.bannerImage;prev.style.display='block';}let logoPrev=document.getElementById('logoPreview');if(SETTINGS.logo&&SETTINGS.logo.startsWith('http')){logoPrev.src=SETTINGS.logo;logoPrev.style.display='block';}renderBannerPreview();}
-function renderBannerPreview(){let t=document.getElementById('sBTitle')?.value||'🍊 Orange Fast Delivery 30 Min';let s=document.getElementById('sBSub')?.value||'27 Areas';let bg=document.getElementById('sBBg')?.value||'linear-gradient(135deg,#FF6B00,#101010)';let el=document.getElementById('bannerPreview');if(el){el.innerHTML=t+'<br><span style="font-size:11px;opacity:.9">'+s+'</span>';el.style.background=bg;}}
-function saveBanner(){SETTINGS.logo=document.getElementById('sLogo').value.trim()||'DK';SETTINGS.appName=document.getElementById('sAppName').value.trim()||'DailyKart';SETTINGS.bannerTitle=document.getElementById('sBTitle').value.trim();SETTINGS.bannerSub=document.getElementById('sBSub').value.trim();SETTINGS.bannerImage=document.getElementById('sBImage').value.trim();SETTINGS.bannerBg=document.getElementById('sBBg').value.trim();saveAll();alert('Saved - Firebase Live - Logo/Banner updated on customer app too! Mobile Only!');}
-function deleteLogo(){SETTINGS.logo='';saveAll();renderBanner();alert('Logo deleted');}
-function deleteBanner(){SETTINGS.bannerImage='';SETTINGS.bannerTitle='';SETTINGS.bannerSub='';saveAll();renderBanner();alert('Banner deleted');}
-function renderAdBanners(){let list=document.getElementById('adList');if(!list)return;list.innerHTML=AD_BANNERS.map(ad=>`<div class="card" style="display:flex;gap:8px;align-items:center"><img src="${ad.image}" style="width:60px;height:40px;object-fit:cover;border-radius:10px;border:2px solid var(--border)"><div style="flex:1"><b style="font-size:12px">${ad.title||'Ad Banner'}</b><br><span style="font-size:10px;color:var(--text2)">${ad.sub||''} | ${ad.link||''}</span></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn btn-g" style="padding:4px 8px" onclick="editAd('${ad.id}')">Edit</button><button class="btn btn-d" style="padding:4px 8px" onclick="delAd('${ad.id}')">Del</button></div></div>`).join('')||'<p style="font-size:11px;color:var(--text2)">No ad banners - Add one! Mobile Only</p>';}
-function addAdvertisement(){let title=document.getElementById('adTitle').value.trim();let sub=document.getElementById('adSub').value.trim();let image=document.getElementById('adImage').value.trim();let link=document.getElementById('adLink').value.trim();if(!image){alert('Ad Image URL required');return;}AD_BANNERS.push({id:Date.now().toString(),title,sub,image,link});saveAll();renderAdBanners();['adTitle','adSub','adImage','adLink'].forEach(id=>document.getElementById(id).value='');document.getElementById('adPreview').style.display='none';alert('Ad Banner Added - Customer mobile app t dekhabo!');}
-function editAd(id){let ad=AD_BANNERS.find(a=>a.id==id);if(!ad)return;document.getElementById('adTitle').value=ad.title||'';document.getElementById('adSub').value=ad.sub||'';document.getElementById('adImage').value=ad.image||'';document.getElementById('adLink').value=ad.link||'';let prev=document.getElementById('adPreview');prev.src=ad.image;prev.style.display='block';AD_BANNERS=AD_BANNERS.filter(a=>a.id!=id);}
-function delAd(id){if(!confirm('Delete ad banner?'))return;AD_BANNERS=AD_BANNERS.filter(a=>a.id!=id);saveAll();renderAdBanners();}
-function renderCustomers(){let map={};ORDERS.forEach(o=>{let key=o.customer?.phone||o.customer?.name;if(!key)return;if(!map[key])map[key]={name:o.customer?.name,phone:o.customer?.phone,orders:0,total:0};map[key].orders++;map[key].total+=o.grandTotal||0;});let arr=Object.values(map);document.getElementById('customerList').innerHTML=arr.map(c=>`<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--border);font-size:11px"><span><b>${c.name}</b> ${c.phone}<br>${c.orders} orders | Rs ${c.total}</span></div>`).join('')||'<p style="font-size:11px;color:var(--text2)">No customers</p>';}
-function renderCoupons(){document.getElementById('couponList').innerHTML=COUPONS.map((c,i)=>`<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--border);font-size:11px"><span><b>${c.code}</b> ${c.disc}% OFF</span><button class="btn btn-d" style="padding:4px 8px" onclick="delCoupon(${i})">X</button></div>`).join('');}
-function addCoupon(){let code=document.getElementById('cCode').value.trim().toUpperCase();let disc=parseInt(document.getElementById('cDisc').value)||0;if(!code||!disc){alert('Enter');return;}COUPONS.push({code,disc,min:249});saveAll();renderCoupons();}
-function delCoupon(i){COUPONS.splice(i,1);saveAll();renderCoupons();}
-function renderWa(){let list=document.getElementById('waList');if(!list)return;let nums=getAllWaNumbers();list.innerHTML=nums.map(w=>`<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--border);font-size:11px;align-items:center"><span>📱 <b>${w.name}</b> - ${w.number} ${w.number==DEFAULT_ADMIN_WA?'<span style="background:#00C950;color:#fff;padding:2px 8px;border-radius:10px;font-size:9px">DEFAULT</span>':''}</span><button class="btn btn-d" style="padding:4px 8px" onclick="delWaAdmin('${w.id}')" ${w.number==DEFAULT_ADMIN_WA?'disabled style="opacity:0.3"':''}>X</button></div>`).join('');document.getElementById('waTpl').value=SETTINGS.waTemplate||'NEW ORDER #{orderId} {name} {phone} Area:{area} Rs {total} OTP {otp} Items:{items}';}
-function addWa(){let num=document.getElementById('waNumber').value.replace(/[^0-9]/g,'');let name=document.getElementById('waName').value.trim()||'Admin-'+num.slice(-4);if(num.length<10){alert('Enter 10 digit number');return;}if(num.length==10)num='91'+num;if(WA_ADMINS.some(w=>w.number==num)){alert('Number already added');return;}WA_ADMINS.push({id:Date.now().toString(),number:num,name});saveAll();renderWa();renderDashWa();document.getElementById('waNumber').value='';document.getElementById('waName').value='';}
-function delWaAdmin(id){WA_ADMINS=WA_ADMINS.filter(w=>w.id!=id);if(WA_ADMINS.length==0||!WA_ADMINS.some(w=>w.number==DEFAULT_ADMIN_WA)){WA_ADMINS.unshift({id:Date.now().toString(),number:DEFAULT_ADMIN_WA,name:'Main Admin'});}saveAll();renderWa();renderDashWa();}
-function saveWaTpl(){SETTINGS.waTemplate=document.getElementById('waTpl').value.trim();saveAll();alert('Template Saved - Firebase - Mobile Only');}
-function renderStaff(){document.getElementById('staffList').innerHTML=STAFF.map((s,i)=>`<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--border);font-size:11px"><span><b>${s.name}</b> ${s.phone} PIN ${s.pin}<br>${s.role||''}</span><button class="btn btn-d" style="padding:4px 8px" onclick="delStaff(${i})">X</button></div>`).join('')||'<p style="font-size:11px;color:var(--text2)">No staff</p>';}
-function addStaff(){let name=document.getElementById('staffName').value.trim();let phone=document.getElementById('staffPhone').value.trim();let pin=document.getElementById('staffPinInput').value.trim();let role=document.getElementById('staffRole').value.trim()||'Manager';if(!name||!pin){alert('Name & PIN');return;}STAFF.push({id:Date.now().toString(),name,phone,pin,role,active:true});saveAll();renderStaff();renderStaffSelect();document.getElementById('staffName').value='';document.getElementById('staffPhone').value='';document.getElementById('staffPinInput').value='';}
-function delStaff(i){if(!confirm('Delete?'))return;STAFF.splice(i,1);saveAll();renderStaff();renderStaffSelect();}
-function renderRiders(){document.getElementById('riderList').innerHTML=RIDERS.map((r,i)=>`<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--border);font-size:11px"><span><b>${r.name}</b> ${r.phone} PIN ${r.pin}<br>${r.vehicle||'Bike'} | Orders ${ORDERS.filter(o=>o.riderId==r.id).length}</span><button class="btn btn-d" style="padding:4px 8px" onclick="delRider(${i})">X</button></div>`).join('')||'<p style="font-size:11px;color:var(--text2)">No riders</p>';}
-function addRider(){let name=document.getElementById('riderName').value.trim();let phone=document.getElementById('riderPhone').value.trim();let pin=document.getElementById('riderPinInput').value.trim();let vehicle=document.getElementById('riderVehicle').value.trim()||'Bike';if(!name||!pin){alert('Name & PIN');return;}RIDERS.push({id:Date.now().toString(),name,phone,pin,vehicle,active:true});saveAll();renderRiders();renderRiderSelect();document.getElementById('riderName').value='';document.getElementById('riderPhone').value='';document.getElementById('riderPinInput').value='';}
-function delRider(i){if(!confirm('Delete?'))return;RIDERS.splice(i,1);saveAll();renderRiders();renderRiderSelect();}
-function saveSettings2(){SETTINGS.minOrder=parseInt(document.getElementById('setMin').value)||249;SETTINGS.upi=document.getElementById('setUpi').value.trim();SETTINGS.supportPhone=document.getElementById('setPhone').value.trim();SETTINGS.estimateMin=parseInt(document.getElementById('setEstimate').value)||30;SETTINGS.maintenance=document.getElementById('setMaint').checked;saveAll();alert('Saved - Firebase Live - Mobile Only');}
-function saveVault(){let vault={githubRepo:document.getElementById('vGithubRepo').value.trim(),githubToken:document.getElementById('vGithubToken').value.trim(),firebase:document.getElementById('vFirebase').value.trim(),payKey:document.getElementById('vPayKey').value.trim()};localStorage.setItem('dk_admin_vault',JSON.stringify(vault));alert('Vault Saved - Hide - Mobile Only');}
-function toggleEye(id){let el=document.getElementById(id);el.type=el.type=='password'?'text':'password';}
-function exportAll(){let data={products:PRODUCTS,settings:SETTINGS,orders:ORDERS,coupons:COUPONS,areas:AREAS,staff:STAFF,riders:RIDERS,adBanners:AD_BANNERS,waAdmins:WA_ADMINS,exported:new Date().toISOString()};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='dailykart-mobile-'+Date.now()+'.json';a.click();}
-function logout(){if(NOTIF_INTERVAL)clearInterval(NOTIF_INTERVAL);CURRENT_ROLE=null;CURRENT_USER=null;document.getElementById('loginScreen').style.display='flex';}
-loadAll();
+function checkLogin(){try{let u=JSON.parse(localStorage.getItem("dk_admin_user")||"null"); if(u){currentUser=u; currentRole=u.role; $("loginM").classList.remove("open"); $("roleInfo").textContent=u.role+" • "+u.name; applyRolePermissions(); loadProducts(); loadGallery(); loadHeader();}}catch{}}
+checkLogin();
+function logout(){localStorage.removeItem("dk_admin_user"); location.reload();}
+function applyRolePermissions(){
+  let isAdmin=currentRole==="ADMIN", isStaff=currentRole==="STAFF", isRider=currentRole==="RIDER";
+  // Hide tabs for Rider
+  document.querySelectorAll(".tab").forEach(t=>{
+    let tab=t.dataset.tab;
+    if(isRider && tab!=="orders") t.style.display="none"; else t.style.display="block";
+    if(isStaff && ["users"].includes(tab) &&!isAdmin) {/* staff can see users but not header */ }
+  });
+  if(isRider){setTab("orders",document.querySelector('[data-tab="orders"]'));}
+  // Disable fields for Staff
+  if(isStaff){
+    $("sec-areas").querySelectorAll("input,button").forEach(el=>{ if(el.id==="newArea"||el.textContent.includes("Reset")||el.textContent.includes("Add")) el.disabled=true; });
+    let bannerSec=$("sec-banners"); if(bannerSec) bannerSec.innerHTML="<div class='card'><b>🚫 Staff cannot edit Banners</b><div style='font-size:12px;color:var(--text2)'>Only Admin can edit Demo Ads</div></div>";
+  }
+}
+
+// RESET VIA WA OTP
+let resetOtpCode=null, resetPhoneTemp=null;
+function openReset(){$("resetM").classList.add("open");}
+async function sendResetOtp(){
+  let phone=$("resetPhone").value.trim().replace(/\D/g,"").slice(-10);
+  if(phone.length!==10){toast("10 digit phone");return;}
+  resetOtpCode=Math.floor(1000+Math.random()*9000).toString();
+  resetPhoneTemp=phone;
+  let msg=`DailyKart Password Reset OTP: ${resetOtpCode} for ${phone}. Valid 5 mins.`;
+  // Send to default admin WA
+  window.open(`https://wa.me/${DEFAULT_ADMIN_WA}?text=${encodeURIComponent(msg)}`,"_blank");
+  toast("OTP sent to Admin WA 8761958928: "+resetOtpCode+" (Demo show)");
+  // Save OTP to Firebase for verification
+  await db.ref("dk_reset_otps/"+phone).set({otp:resetOtpCode,created:Date.now()});
+}
+async function confirmReset(){
+  let otp=$("resetOtp").value.trim(), newPass=$("resetNewPass").value.trim();
+  if(!otp||newPass.length<4){toast("OTP + New Pass required");return;}
+  try{
+    let snap=await db.ref("dk_reset_otps/"+resetPhoneTemp).once("value"); let data=snap.val();
+    if(!data||data.otp!==otp){toast("Invalid OTP ❌");return;}
+    let usersSnap=await db.ref("dk_users").once("value"); let users=usersSnap.val()||{};
+    let key=Object.keys(users).find(k=>users[k].phone===resetPhoneTemp);
+    if(!key){toast("User not found");return;}
+    await db.ref("dk_users/"+key+"/pass").set(newPass);
+    await db.ref("dk_reset_otps/"+resetPhoneTemp).remove();
+    toast("Password Reset ✅ Login now");
+    $("resetM").classList.remove("open");
+  }catch(e){toast(e.message);}
+}
+
+// GALLERY UPLOAD
+async function loadGallery(){
+  try{
+    let snap=await db.ref("dk_gallery").once("value"); let val=snap.val()||{};
+    let list=Object.values(val).sort((a,b)=>b.created-a.createdAt);
+    renderGallery(list);
+  }catch{renderGallery([]);}
+}
+function renderGallery(list){
+  window._gallery=list;
+  $("galleryList").innerHTML=list.map((g,i)=>`<div><img src="${g.url}" onclick="selectGallery('${g.url}',this)" title="Click to select"><div style="font-size:10px;text-align:center;margin-top:2px">${g.name||"img"}</div><div style="text-align:center"><span style="font-size:10px;color:#ff3b30;cursor:pointer" onclick="delGallery('${g.id}')">Delete</span></div></div>`).join("")||"<div style='color:var(--text2);font-size:12px'>No images yet - Upload from phone</div>";
+  $("galleryPick").innerHTML=list.slice(0,8).map(g=>`<img src="${g.url}" style="width:60px;height:60px;border-radius:10px;object-fit:cover;cursor:pointer;border:2px solid var(--border)" onclick="pickForProduct('${g.url}')">`).join("");
+}
+function pasteUrl(){$("urlInput").style.display="block"; $("urlBtn").style.display="block";}
+async function addUrlToGallery(){
+  let url=$("urlInput").value.trim(); if(!url){toast("URL required");return;}
+  let id="img_"+Date.now(); await db.ref("dk_gallery/"+id).set({id,url,name:"url_"+Date.now(),created:Date.now()}); toast("Added to Gallery ✅"); $("urlInput").value=""; $("urlInput").style.display="none"; $("urlBtn").style.display="none"; loadGallery();
+}
+async function uploadGallery(input){
+  let files=input.files; if(!files.length)return;
+  for(let file of files){
+    let reader=new FileReader();
+    reader.onload=async e=>{
+      let url=e.target.result; // base64
+      // For demo, store base64 directly (in prod use Cloudinary)
+      let id="img_"+Date.now()+"_"+Math.random().toString(36).slice(2,6);
+      await db.ref("dk_gallery/"+id).set({id,url,name:file.name,created:Date.now()});
+      toast("Uploaded "+file.name+" ✅");
+      loadGallery();
+    };
+    reader.readAsDataURL(file);
+  }
+}
+function selectGallery(url,el){document.querySelectorAll("#galleryList img").forEach(i=>i.classList.remove("sel")); el.classList.add("sel"); $("pImg").value=url; $("bImg").value=url; toast("Selected ✅");}
+function pickForProduct(url){$("pImg").value=url; toast("Image selected for product ✅");}
+async function delGallery(id){if(currentRole!=="ADMIN"){toast("Only Admin can delete");return;} if(!confirm("Delete image?"))return; await db.ref("dk_gallery/"+id).remove(); toast("Deleted"); loadGallery();}
+
+// PRODUCTS (same as before but with role check)
+let editId=null;
+async function loadProducts(){
+  if(currentRole==="RIDER") return;
+  try{let snap=await db.ref("dk_v3_products").once("value"); let val=snap.val()||{}; let list=Object.entries(val).map(([id,o])=>({id,...o})); renderProducts(list);}catch(e){$("productList").innerHTML=e.message;}
+}
+function renderProducts(list){
+  $("pCount").textContent=list.length;
+  $("productList").innerHTML=list.map(p=>`<div class="card" style="padding:10px"><img src="${p.image}" style="width:100%;height:130px;object-fit:cover;border-radius:10px"><div style="margin-top:6px"><div style="font-size:11px;color:#FF7A18;font-weight:800">${p.category||""}</div><b style="font-size:13px">${p.name}</b><div>₹${p.price} <span style="text-decoration:line-through;color:var(--text2);font-size:11px">₹${p.mrp||""}</span></div><div style="display:flex;gap:6px;margin-top:6px"><button class="btn btn-ghost" style="flex:1;padding:6px" onclick="editProduct('${p.id}')">Edit</button><button class="btn btn-dark" style="flex:1;padding:6px" onclick="delProduct('${p.id}')">Del</button></div></div></div>`).join("");
+  window._allProducts=list;
+}
+function clearProduct(){editId=null;["pName","pPrice","pMrp","pCat","pImg"].forEach(id=>$(id).value="");}
+function editProduct(id){if(currentRole==="RIDER"){toast("No permission");return;} let p=(window._allProducts||[]).find(x=>x.id===id); if(!p)return; editId=id; $("pName").value=p.name; $("pPrice").value=p.price; $("pMrp").value=p.mrp; $("pCat").value=p.category; $("pImg").value=p.image; window.scrollTo({top:0});}
+async function saveProduct(){
+  if(currentRole==="RIDER"){toast("Rider cannot edit products");return;}
+  let name=$("pName").value.trim(), price=parseInt($("pPrice").value), mrp=parseInt($("pMrp").value)||price, cat=$("pCat").value.trim(), img=$("pImg").value.trim();
+  if(!name||!price||!cat){toast("Name, Price, Category required");return;}
+  let id=editId||"p_"+Date.now(); await db.ref("dk_v3_products/"+id).set({name,price,mrp,category:cat,image:img,updated:Date.now()}); toast("Saved ✅"); clearProduct(); loadProducts();
+}
+async function delProduct(id){if(currentRole!=="ADMIN" && currentRole!=="STAFF"){toast("No permission");return;} if(!confirm("Delete?"))return; await db.ref("dk_v3_products/"+id).remove(); toast("Deleted"); loadProducts();}
+
+// BANNERS
+let editBId=null;
+async function loadBanners(){
+  if(currentRole!=="ADMIN"){return;}
+  try{let snap=await db.ref("dk_v3_banners").once("value"); let val=snap.val()||{}; let list=Object.entries(val).map(([id,o])=>({id,...o})); renderBanners(list);}catch{}
+}
+function renderBanners(list){
+  $("bannerList").innerHTML=list.map(b=>`<div class="card" style="display:flex;gap:10px;align-items:center"><img src="${b.image}" style="width:60px;height:40px;border-radius:8px;object-fit:cover"><div style="flex:1"><b>${b.title}</b><div style="font-size:11px;color:var(--text2)">${b.subtitle}</div></div><div style="display:flex;gap:4px"><button class="btn btn-ghost" style="padding:6px" onclick="editBanner('${b.id}')">Edit</button><button class="btn btn-dark" style="padding:6px" onclick="delBanner('${b.id}')">Del</button></div></div>`).join("");
+  window._banners=list;
+}
+function clearBanner(){editBId=null;["bTitle","bSub","bTag","bImg"].forEach(id=>$(id).value="");}
+function editBanner(id){let b=(window._banners||[]).find(x=>x.id===id); if(!b)return; editBId=id; $("bTitle").value=b.title; $("bSub").value=b.subtitle; $("bTag").value=b.tag; $("bImg").value=b.image;}
+async function saveBanner(){
+  if(currentRole!=="ADMIN"){toast("Only Admin can edit banners 🚫");return;}
+  let title=$("bTitle").value.trim(), subtitle=$("bSub").value.trim(), tag=$("bTag").value.trim()||"DEMO AD", image=$("bImg").value.trim();
+  if(!title){toast("Title required");return;}
+  let id=editBId||"b_"+Date.now(); await db.ref("dk_v3_banners/"+id).set({title,subtitle,tag,image,updated:Date.now()}); toast("Banner saved ✅"); clearBanner(); loadBanners();
+}
+async function delBanner(id){if(currentRole!=="ADMIN"){toast("Only Admin");return;} if(!confirm("Delete?"))return; await db.ref("dk_v3_banners/"+id).remove(); loadBanners();}
+
+// ORDERS - RIDER LOGIC
+async function loadOrders(){
+  $("orderList").innerHTML="<div style='text-align:center;padding:20px'>Loading...</div>";
+  let snap=await db.ref("dk_v3_orders").once("value"); let val=snap.val()||{}; let list=Object.values(val).sort((a,b)=>b.createdAt-a.createdAt);
+  // For Rider, show only unpicked or picked by self
+  if(currentRole==="RIDER"){
+    list=list.filter(o=>!o.riderId || o.riderId===currentUser.phone);
+  }
+  renderOrders(list);
+}
+function renderOrders(list){
+  if(!list.length){$("orderList").innerHTML="<div style='text-align:center;padding:20px;color:var(--text2)'>No orders</div>";return;}
+  $("orderList").innerHTML=list.map(o=>{
+    let diff=Math.floor((Date.now()-o.createdAt)/1000); let rem=Math.max(0,1800-diff); let mm=Math.floor(rem/60), ss=rem%60;
+    let isPicked=!!o.riderId; let pickedByMe=o.riderId===currentUser?.phone;
+    let canPick=currentRole==="RIDER" &&!isPicked;
+    let canDeliver=currentRole==="RIDER" && pickedByMe;
+    return `<div class="card ${isPicked? (pickedByMe?'role-rider':'role-admin'):''}">
+      <div style="display:flex;justify-content:space-between"><b>${o.orderId}</b><span class="badge">${o.status||"NEW"} ${isPicked?"• Rider:"+o.riderName:""}</span></div>
+      <div style="font-size:12px;color:var(--text2);margin:4px 0">${new Date(o.createdAt).toLocaleString()} • ${o.customer?.area||""} • ${o.customer?.name||""} ${o.customer?.phone||""}</div>
+      <div style="font-size:13px;margin:6px 0">${(o.items||[]).map(i=>i.name+" x"+i.qty).join(", ")} • <b>₹${o.bill?.tot||0}</b></div>
+      <div style="display:flex;gap:6px">
+        <div style="flex:1;background:var(--card2);border-radius:10px;padding:8px;text-align:center"><div style="font-size:10px">COUNTDOWN</div><b style="color:#FF7A18">${rem>0?`${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`:"Over"}</b></div>
+        <div style="flex:1;background:var(--text);color:var(--bg);border-radius:10px;padding:8px;text-align:center"><div style="font-size:10px">CUSTOMER OTP</div><b style="color:#FF7A18;letter-spacing:2px">${o.deliveryOtp||""}</b></div>
+      </div>
+      ${currentRole==="RIDER"?`
+        ${canPick?`<button class="btn btn-orange" style="width:100%;margin-top:8px" onclick="pickOrder('${o.orderId}')">Pick This Order 🛵 (Lock for me)</button>`:``}
+        ${canDeliver?`<div style="margin-top:8px"><input id="otp_${o.orderId}" class="input" placeholder="Enter Customer OTP to Deliver"><button class="btn btn-dark" style="width:100%" onclick="deliverOrder('${o.orderId}')">Verify OTP & Delivered ✅</button><button class="btn btn-ghost" style="width:100%;margin-top:6px" onclick="updateRiderStatus('${o.orderId}','OUT_FOR_DELIVERY')">Out for Delivery</button></div>`:`${isPicked &&!pickedByMe?`<div style="background:#fee;padding:8px;border-radius:10px;margin-top:8px;font-size:12px;color:#991b1b">🚫 Already picked by Rider ${o.riderName} (${o.riderId}) - Locked for you</div>`:""}`}
+      `:`
+        <div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-orange" style="flex:1" onclick="updateStatus('${o.orderId}','DELIVERED')">Delivered (Admin)</button><button class="btn btn-ghost" style="flex:1" onclick="assignRiderPrompt('${o.orderId}')">Assign Rider</button></div>
+      `}
+    </div>`;
+  }).join("");
+}
+async function pickOrder(orderId){
+  let snap=await db.ref("dk_v3_orders/"+orderId).once("value"); let o=snap.val();
+  if(o.riderId){toast("Already picked by "+o.riderName+" 🚫"); loadOrders(); return;}
+  await db.ref("dk_v3_orders/"+orderId).update({riderId:currentUser.phone, riderName:currentUser.name, status:"PICKED", pickedAt:Date.now()});
+  toast("You picked order "+orderId+" ✅ Locked for others");
+  loadOrders();
+}
+async function updateRiderStatus(orderId,status){await db.ref("dk_v3_orders/"+orderId+"/status").set(status); toast(status); loadOrders();}
+async function deliverOrder(orderId){
+  let input=$("otp_"+orderId); let entered=input.value.trim();
+  let snap=await db.ref("dk_v3_orders/"+orderId).once("value"); let o=snap.val();
+  if(entered!==o.deliveryOtp){toast("Wrong OTP! Customer OTP required ❌"); return;}
+  await db.ref("dk_v3_orders/"+orderId+"/status").set("DELIVERED");
+  await db.ref("dk_v3_orders/"+orderId+"/deliveredAt").set(Date.now());
+  toast("Delivered Successfully ✅ OTP Verified!");
+  loadOrders();
+}
+async function updateStatus(id,status){await db.ref("dk_v3_orders/"+id+"/status").set(status); toast(status); loadOrders();}
+async function assignRiderPrompt(orderId){let riderPhone=prompt("Enter Rider Phone 10 digits to assign:"); if(!riderPhone)return; let snap=await db.ref("dk_users").once("value"); let users=Object.values(snap.val()||{}); let rider=users.find(u=>u.phone===riderPhone.replace(/\D/g,"").slice(-10) && u.role==="RIDER"); if(!rider){toast("Rider not found");return;} await db.ref("dk_v3_orders/"+orderId).update({riderId:rider.phone, riderName:rider.name, status:"ASSIGNED"}); toast("Assigned to "+rider.name); loadOrders();}
+
+// AREAS
+function getAreas(){try{let a=JSON.parse(localStorage.getItem("dk_areas")||"null"); if(a&&a.length) return a;}catch{} return [...DEFAULT_AREAS];}
+function renderAreas(){
+  let areas=getAreas();
+  let isStaff=currentRole==="STAFF";
+  $("areaList").innerHTML=areas.map((a,i)=>`<div style="background:var(--card2);border:1px solid var(--border);padding:6px 12px;border-radius:999px;display:flex;gap:6px;align-items:center;font-size:13px">${a} ${isStaff?"":`<span style="cursor:pointer;color:#ff3b30" onclick="removeArea(${i})">✕</span>`}</div>`).join("");
+  localStorage.setItem("dk_areas",JSON.stringify(areas));
+  db.ref("dk_v3_areas").set(areas);
+}
+function addArea(){
+  if(currentRole==="STAFF"){toast("Staff cannot add/edit/delete areas 🚫");return;}
+  let v=$("newArea").value.trim(); if(!v){toast("Area name");return;}
+  let areas=getAreas(); areas.push(v); localStorage.setItem("dk_areas",JSON.stringify(areas)); $("newArea").value=""; renderAreas(); toast("Added "+v);
+}
+function removeArea(i){
+  if(currentRole==="STAFF"){toast("Staff cannot delete areas 🚫");return;}
+  let areas=getAreas(); areas.splice(i,1); localStorage.setItem("dk_areas",JSON.stringify(areas)); renderAreas();
+}
+function resetAreas(){
+  if(currentRole==="STAFF"){toast("Staff cannot reset areas 🚫");return;}
+  if(!confirm("Reset 27?"))return; localStorage.setItem("dk_areas",JSON.stringify(DEFAULT_AREAS)); renderAreas();
+}
+
+// USERS
+async function loadUsers(){
+  let snap=await db.ref("dk_users").once("value"); let val=snap.val()||{};
+  let list=Object.values(val);
+  $("userList").innerHTML=list.map(u=>`<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><b>${u.name}</b> <span class="badge">${u.role}</span><div style="font-size:12px;color:var(--text2)">${u.phone} • Pass: ${currentRole==="ADMIN"?u.pass:"****"}</div></div><div style="display:flex;gap:4px"><button class="btn btn-ghost" style="padding:6px" onclick="editUser('${u.phone}')">Edit</button>${currentRole==="ADMIN"?`<button class="btn btn-dark" style="padding:6px" onclick="delUser('${u.phone}')">Del</button>`:""}</div></div>`).join("");
+}
+async function createUser(){
+  if(currentRole!=="ADMIN"){toast("Only Admin can create users");return;}
+  let role=$("uRole").value, phone=$("uPhone").value.trim().replace(/\D/g,"").slice(-10), name=$("uName").value.trim(), pass=$("uPass").value.trim();
+  if(phone.length!==10||!name||pass.length<4){toast("All fields required, pass min 4");return;}
+  await db.ref("dk_users/user_"+phone).set({phone,name,role,pass,created:Date.now()}); toast(role+" created ✅ "+name); loadUsers();
+}
+async function delUser(phone){if(currentRole!=="ADMIN"){toast("Only Admin");return;} if(phone==="8761958928"){toast("Cannot delete default admin");return;} if(!confirm("Delete "+phone+"?"))return; await db.ref("dk_users/user_"+phone).remove(); toast("Deleted"); loadUsers();}
+function editUser(phone){let newPass=prompt("New password for "+phone+":"); if(!newPass)return; if(currentRole!=="ADMIN"){toast("Staff cannot reset password 🚫");return;} db.ref("dk_users/user_"+phone+"/pass").set(newPass).then(()=>{toast("Password updated ✅"); loadUsers();});}
+
+// SETTINGS + HEADER
+async function loadHeader(){
+  try{let snap=await db.ref("dk_v3_header").once("value"); let h=snap.val()||{}; if(h.name)$("headerName").textContent=h.name; if(h.logo)$("headerLogo").textContent=h.logo; if(h.logoImg){$("headerLogo").innerHTML=`<img src="${h.logoImg}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">`;} }catch{}
+  loadSettings();
+}
+async function loadSettings(){
+  try{let snap=await db.ref("dk_v3_settings").once("value"); let v=snap.val()||{}; $("sWa").value=v.whatsapp||DEFAULT_ADMIN_WA; $("sDel").value=v.freeMin||299; $("sCharge").value=v.charge||30; let wa=await db.ref("dk_wa_admins").once("value"); let admins=wa.val()?Object.values(wa.val()).map(x=>x.number||"").join(","):""; $("sWaAdmins").value=admins||DEFAULT_ADMIN_WA; let hsnap=await db.ref("dk_v3_header").once("value"); let h=hsnap.val()||{}; $("hLogo").value=h.logo||"DK"; $("hName").value=h.name||"DailyKart"; $("hLogoImg").value=h.logoImg||"";}catch{}
+}
+async function saveSettings(){
+  if(currentRole!=="ADMIN"){toast("Only Admin can change header/logo/name 🚫");return;}
+  let data={whatsapp:$("sWa").value.trim()||DEFAULT_ADMIN_WA, freeMin:parseInt($("sDel").value)||299, charge:parseInt($("sCharge").value)||30, updated:Date.now()};
+  await db.ref("dk_v3_settings").set(data);
+  let header={logo:$("hLogo").value.trim()||"DK", name:$("hName").value.trim()||"DailyKart", logoImg:$("hLogoImg").value.trim(), updated:Date.now()};
+  await db.ref("dk_v3_header").set(header);
+  let nums=$("sWaAdmins").value.split(",").map(s=>s.trim().replace(/[^0-9]/g,"").slice(-10)).filter(Boolean); let obj={}; nums.forEach(n=>{obj["wa_"+n]={number:"91"+n}}); await db.ref("dk_wa_admins").set(obj);
+  $("headerName").textContent=header.name; $("headerLogo").textContent=header.logo; if(header.logoImg){$("headerLogo").innerHTML=`<img src="${header.logoImg}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">`;}
+  toast("Settings + Header saved ✅");
+}
+
+function setTab(name,el){
+  if(currentRole==="RIDER" && name!=="orders"){toast("Rider can only access Orders 🚫"); return;}
+  if(currentRole==="STAFF" && name==="settings" &&!confirm("Staff cannot edit header/banner/password - View only. Continue?")) return;
+  ["products","gallery","banners","orders","areas","users","settings"].forEach(t=>{let s=$("sec-"+t); if(s) s.style.display=t===name?"block":"none";});
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active")); if(el) el.classList.add("active");
+  if(name==="products") loadProducts();
+  if(name==="gallery") loadGallery();
+  if(name==="banners") loadBanners();
+  if(name==="orders") loadOrders();
+  if(name==="areas") renderAreas();
+  if(name==="users") loadUsers();
+  if(name==="settings") loadSettings();
+}
+
+// Init
+setTab("products",document.querySelector('[data-tab="products"]'));
+loadHeader();
 </script>
 </body>
 </html>
